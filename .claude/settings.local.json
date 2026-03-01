@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebSearch",
+      "Bash(curl:*)",
+      "Bash(powershell:*)",
+      "Bash(python:*)",
+      "Bash(where node:*)",
+      "Bash(PATH=\"E:/nodejs:$PATH\" powershell:*)",
+      "Bash(/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe:*)",
+      "Bash(/c/Windows/System32/cmd.exe:*)",
+      "Bash(PATH=\"E:/nodejs:C:/Users/Administrator/AppData/Roaming/npm:$PATH\" /c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe:*)",
+      "Bash(git:*)",
+      "Bash(PATH=\"E:/nodejs:C:/Users/Administrator/AppData/Roaming/npm:E:/Git/cmd:$PATH\" /c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe:*)",
+      "Bash(/d/openclaw_exe/run_build_wrapper.ps1:*)",
+      "Bash(node:*)",
+      "Bash(/d/openclaw_exe/runtime/node/node.exe:*)",
+      "Bash(/c/Users/Administrator/AppData/Local/pnpm/.tools/pnpm/10.23.0_tmp_13816/bin/pnpm.CMD:*)",
+      "Bash(/d/openclaw_exe/check_node.ps1:*)",
+      "Bash(/d/nodejs/node.exe --version)",
+      "Bash(/d/openclaw_exe/find_pnpm.ps1:*)",
+      "Bash(/d/nodejs/npm.cmd:*)",
+      "Bash(/d/openclaw_exe/find_pnpm2.ps1:*)",
+      "Bash(/d/openclaw_exe/find_pnpm3.ps1:*)",
+      "Bash(/d/openclaw_exe/setup_pnpm.ps1:*)",
+      "Bash(powershell.exe:*)"
+    ]
+  }
+}
