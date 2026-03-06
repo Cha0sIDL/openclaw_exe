@@ -20,6 +20,7 @@ export declare class QmdMemoryManager implements MemorySearchManager {
     private readonly xdgCacheHome;
     private readonly indexPath;
     private readonly env;
+    private readonly managedCollectionNames;
     private readonly collectionRoots;
     private readonly sources;
     private readonly docPathCache;
@@ -37,10 +38,14 @@ export declare class QmdMemoryManager implements MemorySearchManager {
     private embedBackoffUntil;
     private embedFailureCount;
     private attemptedNullByteCollectionRepair;
+    private attemptedDuplicateDocumentRepair;
     private constructor();
     private initialize;
     private bootstrapCollections;
     private ensureCollections;
+    private listCollectionsBestEffort;
+    private findCollectionByPathPattern;
+    private tryRebindConflictingCollection;
     private migrateLegacyUnscopedCollections;
     private deriveLegacyCollectionName;
     private canMigrateLegacyCollection;
@@ -56,7 +61,10 @@ export declare class QmdMemoryManager implements MemorySearchManager {
     private shouldRebindCollection;
     private pathsMatch;
     private shouldRepairNullByteCollectionError;
+    private shouldRepairDuplicateDocumentConstraint;
+    private rebuildManagedCollectionsForRepair;
     private tryRepairNullByteCollections;
+    private tryRepairDuplicateDocumentConstraint;
     search(query: string, opts?: {
         maxResults?: number;
         minScore?: number;
@@ -107,6 +115,10 @@ export declare class QmdMemoryManager implements MemorySearchManager {
     private pickSessionCollectionName;
     private sanitizeCollectionNameSegment;
     private resolveDocLocation;
+    private resolveDocLocationFromHints;
+    private normalizeDocHints;
+    private parseQmdFileUri;
+    private toCollectionRelativePath;
     private pickDocLocation;
     private extractSnippetLines;
     private readCounts;
@@ -126,8 +138,10 @@ export declare class QmdMemoryManager implements MemorySearchManager {
     private createQmdBusyError;
     private waitForPendingUpdateBeforeSearch;
     private runQueryAcrossCollections;
+    private buildQmdResultKey;
     private runMcporterAcrossCollections;
     private listManagedCollectionNames;
+    private computeManagedCollectionNames;
     private buildCollectionFilterArgs;
     private buildSearchArgs;
 }

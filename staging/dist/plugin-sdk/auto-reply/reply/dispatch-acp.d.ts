@@ -24,6 +24,7 @@ export declare function tryDispatchAcpReply(params: {
     originatingTo?: string;
     shouldSendToolSummaries: boolean;
     bypassForCommand: boolean;
+    onReplyStart?: () => Promise<void> | void;
     recordProcessed: DispatchProcessedRecorder;
     markIdle: (reason: string) => void;
 }): Promise<AcpDispatchAttemptResult | null>;

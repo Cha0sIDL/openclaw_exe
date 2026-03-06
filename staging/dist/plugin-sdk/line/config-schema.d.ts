@@ -53,6 +53,7 @@ export declare const LineConfigSchema: z.ZodObject<{
             skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
         }, z.core.$strict>>>>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
     groups: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
         allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;

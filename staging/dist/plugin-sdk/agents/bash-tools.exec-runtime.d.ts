@@ -3,7 +3,7 @@ import type { ExecAsk, ExecHost, ExecSecurity } from "../infra/exec-approvals.js
 import type { ProcessSession } from "./bash-process-registry.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
-export { applyPathPrepend, normalizePathPrepend } from "../infra/path-prepend.js";
+export { applyPathPrepend, findPathKey, normalizePathPrepend } from "../infra/path-prepend.js";
 export declare function sanitizeHostBaseEnv(env: Record<string, string>): Record<string, string>;
 export declare function validateHostEnv(env: Record<string, string>): void;
 export declare const DEFAULT_MAX_OUTPUT: number;

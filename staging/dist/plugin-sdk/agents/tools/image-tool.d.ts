@@ -1,8 +1,6 @@
 import type { OpenClawConfig } from "../../config/config.js";
-import type { SandboxFsBridge } from "../sandbox/fs-bridge.js";
-import type { ToolFsPolicy } from "../tool-fs-policy.js";
-import type { AnyAgentTool } from "./common.js";
 import { coerceImageAssistantText, decodeDataUrl, type ImageModelConfig } from "./image-tool.helpers.js";
+import { type AnyAgentTool, type SandboxFsBridge, type ToolFsPolicy } from "./tool-runtime.helpers.js";
 export declare const __testing: {
     readonly decodeDataUrl: typeof decodeDataUrl;
     readonly coerceImageAssistantText: typeof coerceImageAssistantText;

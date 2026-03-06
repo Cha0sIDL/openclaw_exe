@@ -32,7 +32,12 @@ export declare function shouldInjectOllamaCompatNumCtx(params: {
     providerId?: string;
 }): boolean;
 export declare function wrapOllamaCompatNumCtx(baseFn: StreamFn | undefined, numCtx: number): StreamFn;
-export declare function wrapStreamFnTrimToolCallNames(baseFn: StreamFn): StreamFn;
+export declare function resolveOllamaBaseUrlForRun(params: {
+    modelBaseUrl?: string;
+    providerBaseUrl?: string;
+}): string;
+export declare function wrapStreamFnTrimToolCallNames(baseFn: StreamFn, allowedToolNames?: Set<string>): StreamFn;
+export declare function decodeHtmlEntitiesInObject(obj: unknown): unknown;
 export declare function resolvePromptBuildHookResult(params: {
     prompt: string;
     messages: unknown[];
@@ -40,6 +45,11 @@ export declare function resolvePromptBuildHookResult(params: {
     hookRunner?: PromptBuildHookRunner | null;
     legacyBeforeAgentStartResult?: PluginHookBeforeAgentStartResult;
 }): Promise<PluginHookBeforePromptBuildResult>;
+export declare function composeSystemPromptWithHookContext(params: {
+    baseSystemPrompt?: string;
+    prependSystemContext?: string;
+    appendSystemContext?: string;
+}): string | undefined;
 export declare function resolvePromptModeForSession(sessionKey?: string): "minimal" | "full";
 export declare function resolveAttemptFsWorkspaceOnly(params: {
     config?: OpenClawConfig;

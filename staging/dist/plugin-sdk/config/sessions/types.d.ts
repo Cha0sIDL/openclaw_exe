@@ -152,7 +152,14 @@ export declare function setSessionRuntimeModel(entry: SessionEntry, runtime: {
     provider: string;
     model: string;
 }): boolean;
+export type SessionEntryMergePolicy = "touch-activity" | "preserve-activity";
+type MergeSessionEntryOptions = {
+    policy?: SessionEntryMergePolicy;
+    now?: number;
+};
+export declare function mergeSessionEntryWithPolicy(existing: SessionEntry | undefined, patch: Partial<SessionEntry>, options?: MergeSessionEntryOptions): SessionEntry;
 export declare function mergeSessionEntry(existing: SessionEntry | undefined, patch: Partial<SessionEntry>): SessionEntry;
+export declare function mergeSessionEntryPreserveActivity(existing: SessionEntry | undefined, patch: Partial<SessionEntry>): SessionEntry;
 export declare function resolveFreshSessionTotalTokens(entry?: Pick<SessionEntry, "totalTokens" | "totalTokensFresh"> | null): number | undefined;
 export declare function isSessionTotalTokensFresh(entry?: Pick<SessionEntry, "totalTokens" | "totalTokensFresh"> | null): boolean;
 export type GroupKeyResolution = {
@@ -183,6 +190,15 @@ export type SessionSystemPromptReport = {
     workspaceDir?: string;
     bootstrapMaxChars?: number;
     bootstrapTotalMaxChars?: number;
+    bootstrapTruncation?: {
+        warningMode?: "off" | "once" | "always";
+        warningShown?: boolean;
+        promptWarningSignature?: string;
+        warningSignaturesSeen?: string[];
+        truncatedFiles?: number;
+        nearLimitFiles?: number;
+        totalNearLimit?: boolean;
+    };
     sandbox?: {
         mode?: string;
         sandboxed?: boolean;
@@ -221,3 +237,4 @@ export type SessionSystemPromptReport = {
 export declare const DEFAULT_RESET_TRIGGER = "/new";
 export declare const DEFAULT_RESET_TRIGGERS: string[];
 export declare const DEFAULT_IDLE_MINUTES = 60;
+export {};

@@ -215,7 +215,7 @@ export declare const VENICE_MODEL_CATALOG: readonly [{
     readonly privacy: "anonymized";
 }, {
     readonly id: "minimax-m21";
-    readonly name: "MiniMax M2.1 (via Venice)";
+    readonly name: "MiniMax M2.5 (via Venice)";
     readonly reasoning: true;
     readonly input: readonly ["text"];
     readonly contextWindow: 202752;

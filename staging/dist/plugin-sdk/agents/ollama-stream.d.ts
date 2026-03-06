@@ -42,5 +42,5 @@ export declare function buildAssistantMessage(response: OllamaChatResponse, mode
     id: string;
 }): AssistantMessage;
 export declare function parseNdjsonStream(reader: ReadableStreamDefaultReader<Uint8Array>): AsyncGenerator<OllamaChatResponse>;
-export declare function createOllamaStreamFn(baseUrl: string): StreamFn;
+export declare function createOllamaStreamFn(baseUrl: string, defaultHeaders?: Record<string, string>): StreamFn;
 export {};

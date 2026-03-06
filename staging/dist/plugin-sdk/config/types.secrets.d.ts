@@ -13,13 +13,39 @@ export type SecretRef = {
 };
 export type SecretInput = string | SecretRef;
 export declare const DEFAULT_SECRET_PROVIDER_ALIAS = "default";
-export declare function isSecretRef(value: unknown): value is SecretRef;
-export declare function parseEnvTemplateSecretRef(value: unknown, provider?: string): SecretRef | null;
-export declare function coerceSecretRef(value: unknown, defaults?: {
+export declare const ENV_SECRET_REF_ID_RE: RegExp;
+type SecretDefaults = {
     env?: string;
     file?: string;
     exec?: string;
-}): SecretRef | null;
+};
+export declare function isValidEnvSecretRefId(value: string): boolean;
+export declare function isSecretRef(value: unknown): value is SecretRef;
+export declare function parseEnvTemplateSecretRef(value: unknown, provider?: string): SecretRef | null;
+export declare function coerceSecretRef(value: unknown, defaults?: SecretDefaults): SecretRef | null;
+export declare function hasConfiguredSecretInput(value: unknown, defaults?: SecretDefaults): boolean;
+export declare function normalizeSecretInputString(value: unknown): string | undefined;
+export declare function assertSecretInputResolved(params: {
+    value: unknown;
+    refValue?: unknown;
+    defaults?: SecretDefaults;
+    path: string;
+}): void;
+export declare function normalizeResolvedSecretInputString(params: {
+    value: unknown;
+    refValue?: unknown;
+    defaults?: SecretDefaults;
+    path: string;
+}): string | undefined;
+export declare function resolveSecretInputRef(params: {
+    value: unknown;
+    refValue?: unknown;
+    defaults?: SecretDefaults;
+}): {
+    explicitRef: SecretRef | null;
+    inlineRef: SecretRef | null;
+    ref: SecretRef | null;
+};
 export type EnvSecretProviderConfig = {
     source: "env";
     /** Optional env var allowlist (exact names). */
@@ -61,3 +87,4 @@ export type SecretsConfig = {
         maxBatchBytes?: number;
     };
 };
+export {};

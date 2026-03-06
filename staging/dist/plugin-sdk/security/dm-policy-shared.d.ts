@@ -1,4 +1,9 @@
 import type { ChannelId } from "../channels/plugins/types.js";
+export declare function resolvePinnedMainDmOwnerFromAllowlist(params: {
+    dmScope?: string | null;
+    allowFrom?: Array<string | number> | null;
+    normalizeEntry: (entry: string) => string | undefined;
+}): string | null;
 export declare function resolveEffectiveAllowFromLists(params: {
     allowFrom?: Array<string | number> | null;
     groupAllowFrom?: Array<string | number> | null;
@@ -22,6 +27,16 @@ export declare const DM_GROUP_ACCESS_REASON: {
     readonly DM_POLICY_NOT_ALLOWLISTED: "dm_policy_not_allowlisted";
 };
 export type DmGroupAccessReasonCode = (typeof DM_GROUP_ACCESS_REASON)[keyof typeof DM_GROUP_ACCESS_REASON];
+type DmGroupAccessInputParams = {
+    isGroup: boolean;
+    dmPolicy?: string | null;
+    groupPolicy?: string | null;
+    allowFrom?: Array<string | number> | null;
+    groupAllowFrom?: Array<string | number> | null;
+    storeAllowFrom?: Array<string | number> | null;
+    groupAllowFromFallbackToAllowFrom?: boolean | null;
+    isSenderAllowed: (allowFrom: string[]) => boolean;
+};
 export declare function readStoreAllowFromForDmPolicy(params: {
     provider: ChannelId;
     accountId: string;
@@ -41,31 +56,14 @@ export declare function resolveDmGroupAccessDecision(params: {
     reasonCode: DmGroupAccessReasonCode;
     reason: string;
 };
-export declare function resolveDmGroupAccessWithLists(params: {
-    isGroup: boolean;
-    dmPolicy?: string | null;
-    groupPolicy?: string | null;
-    allowFrom?: Array<string | number> | null;
-    groupAllowFrom?: Array<string | number> | null;
-    storeAllowFrom?: Array<string | number> | null;
-    groupAllowFromFallbackToAllowFrom?: boolean | null;
-    isSenderAllowed: (allowFrom: string[]) => boolean;
-}): {
+export declare function resolveDmGroupAccessWithLists(params: DmGroupAccessInputParams): {
     decision: DmGroupAccessDecision;
     reasonCode: DmGroupAccessReasonCode;
     reason: string;
     effectiveAllowFrom: string[];
     effectiveGroupAllowFrom: string[];
 };
-export declare function resolveDmGroupAccessWithCommandGate(params: {
-    isGroup: boolean;
-    dmPolicy?: string | null;
-    groupPolicy?: string | null;
-    allowFrom?: Array<string | number> | null;
-    groupAllowFrom?: Array<string | number> | null;
-    storeAllowFrom?: Array<string | number> | null;
-    groupAllowFromFallbackToAllowFrom?: boolean | null;
-    isSenderAllowed: (allowFrom: string[]) => boolean;
+export declare function resolveDmGroupAccessWithCommandGate(params: DmGroupAccessInputParams & {
     command?: {
         useAccessGroups: boolean;
         allowTextCommands: boolean;
@@ -91,3 +89,4 @@ export declare function resolveDmAllowState(params: {
     allowCount: number;
     isMultiUserDm: boolean;
 }>;
+export {};

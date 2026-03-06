@@ -7,6 +7,7 @@
  *
  * This module extracts meaningful keywords from such queries to improve FTS results.
  */
+export declare function isQueryStopWordToken(token: string): boolean;
 /**
  * Extract keywords from a conversational query for FTS search.
  *

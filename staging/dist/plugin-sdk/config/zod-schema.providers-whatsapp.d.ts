@@ -226,6 +226,7 @@ export declare const WhatsAppConfigSchema: z.ZodObject<{
         authDir: z.ZodOptional<z.ZodString>;
         mediaMaxMb: z.ZodOptional<z.ZodNumber>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
     mediaMaxMb: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     actions: z.ZodOptional<z.ZodObject<{
         reactions: z.ZodOptional<z.ZodBoolean>;

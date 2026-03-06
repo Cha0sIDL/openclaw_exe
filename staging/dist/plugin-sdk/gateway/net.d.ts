@@ -65,13 +65,22 @@ export declare function isLoopbackHost(host: string): boolean;
  */
 export declare function isLocalishHost(hostHeader?: string): boolean;
 /**
+ * Check if a hostname or IP refers to a private or loopback address.
+ * Handles the same hostname formats as isLoopbackHost, but also accepts
+ * RFC 1918, link-local, CGNAT, and IPv6 ULA/link-local addresses.
+ */
+export declare function isPrivateOrLoopbackHost(host: string): boolean;
+/**
  * Security check for WebSocket URLs (CWE-319: Cleartext Transmission of Sensitive Information).
  *
  * Returns true if the URL is secure for transmitting data:
  * - wss:// (TLS) is always secure
- * - ws:// is only secure for loopback addresses (localhost, 127.x.x.x, ::1)
+ * - ws:// is secure only for loopback addresses by default
+ * - optional break-glass: private ws:// can be enabled for trusted networks
  *
  * All other ws:// URLs are considered insecure because both credentials
  * AND chat/conversation data would be exposed to network interception.
  */
-export declare function isSecureWebSocketUrl(url: string): boolean;
+export declare function isSecureWebSocketUrl(url: string, opts?: {
+    allowPrivateWs?: boolean;
+}): boolean;

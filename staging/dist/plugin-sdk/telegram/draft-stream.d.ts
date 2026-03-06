@@ -4,8 +4,13 @@ export type TelegramDraftStream = {
     update: (text: string) => void;
     flush: () => Promise<void>;
     messageId: () => number | undefined;
+    previewMode?: () => "message" | "draft";
+    previewRevision?: () => number;
+    lastDeliveredText?: () => string;
     clear: () => Promise<void>;
     stop: () => Promise<void>;
+    /** Convert the current draft preview into a permanent message (sendMessage). */
+    materialize?: () => Promise<number | undefined>;
     /** Reset internal state so the next update creates a new message instead of editing. */
     forceNewMessage: () => void;
 };
@@ -23,6 +28,7 @@ export declare function createTelegramDraftStream(params: {
     chatId: number;
     maxChars?: number;
     thread?: TelegramThreadSpec | null;
+    previewTransport?: "auto" | "message" | "draft";
     replyToMessageId?: number;
     throttleMs?: number;
     /** Minimum chars before sending first message (debounce for push notifications) */

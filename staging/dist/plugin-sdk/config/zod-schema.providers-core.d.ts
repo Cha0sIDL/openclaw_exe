@@ -1,6 +1,7 @@
 import { z } from "zod";
 export declare const TelegramTopicSchema: z.ZodObject<{
     requireMention: z.ZodOptional<z.ZodBoolean>;
+    disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
     groupPolicy: z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
         open: "open";
@@ -10,9 +11,11 @@ export declare const TelegramTopicSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
     allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
     systemPrompt: z.ZodOptional<z.ZodString>;
+    agentId: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const TelegramGroupSchema: z.ZodObject<{
     requireMention: z.ZodOptional<z.ZodBoolean>;
+    disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
     groupPolicy: z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
         open: "open";
@@ -34,6 +37,7 @@ export declare const TelegramGroupSchema: z.ZodObject<{
     systemPrompt: z.ZodOptional<z.ZodString>;
     topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
         groupPolicy: z.ZodOptional<z.ZodEnum<{
             allowlist: "allowlist";
             open: "open";
@@ -43,7 +47,45 @@ export declare const TelegramGroupSchema: z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
         allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
         systemPrompt: z.ZodOptional<z.ZodString>;
+        agentId: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+}, z.core.$strict>;
+export declare const TelegramDirectSchema: z.ZodObject<{
+    dmPolicy: z.ZodOptional<z.ZodEnum<{
+        allowlist: "allowlist";
+        open: "open";
+        disabled: "disabled";
+        pairing: "pairing";
+    }>>;
+    tools: z.ZodOptional<z.ZodObject<{
+        allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    }, z.core.$strict>>;
+    toolsBySender: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+        allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    }, z.core.$strict>>>>;
+    skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    enabled: z.ZodOptional<z.ZodBoolean>;
+    allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+    systemPrompt: z.ZodOptional<z.ZodString>;
+    topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+        requireMention: z.ZodOptional<z.ZodBoolean>;
+        disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
+        groupPolicy: z.ZodOptional<z.ZodEnum<{
+            allowlist: "allowlist";
+            open: "open";
+            disabled: "disabled";
+        }>>;
+        skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+        systemPrompt: z.ZodOptional<z.ZodString>;
+        agentId: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>>>>;
+    requireTopic: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export declare const TelegramAccountSchemaBase: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -79,11 +121,24 @@ export declare const TelegramAccountSchemaBase: z.ZodObject<{
         disabled: "disabled";
         pairing: "pairing";
     }>>>;
-    botToken: z.ZodOptional<z.ZodString>;
+    botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     tokenFile: z.ZodOptional<z.ZodString>;
     replyToMode: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"off">, z.ZodLiteral<"first">, z.ZodLiteral<"all">]>>;
     groups: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
         groupPolicy: z.ZodOptional<z.ZodEnum<{
             allowlist: "allowlist";
             open: "open";
@@ -105,6 +160,7 @@ export declare const TelegramAccountSchemaBase: z.ZodObject<{
         systemPrompt: z.ZodOptional<z.ZodString>;
         topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
             groupPolicy: z.ZodOptional<z.ZodEnum<{
                 allowlist: "allowlist";
                 open: "open";
@@ -114,6 +170,7 @@ export declare const TelegramAccountSchemaBase: z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
             allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
             systemPrompt: z.ZodOptional<z.ZodString>;
+            agentId: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>>>;
     }, z.core.$strict>>>>;
     allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
@@ -128,6 +185,43 @@ export declare const TelegramAccountSchemaBase: z.ZodObject<{
     dmHistoryLimit: z.ZodOptional<z.ZodNumber>;
     dms: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         historyLimit: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>>>;
+    direct: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+        dmPolicy: z.ZodOptional<z.ZodEnum<{
+            allowlist: "allowlist";
+            open: "open";
+            disabled: "disabled";
+            pairing: "pairing";
+        }>>;
+        tools: z.ZodOptional<z.ZodObject<{
+            allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>;
+        toolsBySender: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>>>;
+        skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+        systemPrompt: z.ZodOptional<z.ZodString>;
+        topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
+            groupPolicy: z.ZodOptional<z.ZodEnum<{
+                allowlist: "allowlist";
+                open: "open";
+                disabled: "disabled";
+            }>>;
+            skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+            systemPrompt: z.ZodOptional<z.ZodString>;
+            agentId: z.ZodOptional<z.ZodString>;
+        }, z.core.$strict>>>>;
+        requireTopic: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>>;
     textChunkLimit: z.ZodOptional<z.ZodNumber>;
     chunkMode: z.ZodOptional<z.ZodEnum<{
@@ -173,15 +267,35 @@ export declare const TelegramAccountSchemaBase: z.ZodObject<{
     }, z.core.$strict>>;
     proxy: z.ZodOptional<z.ZodString>;
     webhookUrl: z.ZodOptional<z.ZodString>;
-    webhookSecret: z.ZodOptional<z.ZodString>;
+    webhookSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     webhookHost: z.ZodOptional<z.ZodString>;
     webhookPort: z.ZodOptional<z.ZodNumber>;
     actions: z.ZodOptional<z.ZodObject<{
         reactions: z.ZodOptional<z.ZodBoolean>;
         sendMessage: z.ZodOptional<z.ZodBoolean>;
+        poll: z.ZodOptional<z.ZodBoolean>;
         deleteMessage: z.ZodOptional<z.ZodBoolean>;
         sticker: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strict>>;
+    threadBindings: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        idleHours: z.ZodOptional<z.ZodNumber>;
+        maxAgeHours: z.ZodOptional<z.ZodNumber>;
+        spawnSubagentSessions: z.ZodOptional<z.ZodBoolean>;
+        spawnAcpSessions: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
     reactionNotifications: z.ZodOptional<z.ZodEnum<{
         off: "off";
@@ -237,11 +351,24 @@ export declare const TelegramAccountSchema: z.ZodObject<{
         disabled: "disabled";
         pairing: "pairing";
     }>>>;
-    botToken: z.ZodOptional<z.ZodString>;
+    botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     tokenFile: z.ZodOptional<z.ZodString>;
     replyToMode: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"off">, z.ZodLiteral<"first">, z.ZodLiteral<"all">]>>;
     groups: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
         groupPolicy: z.ZodOptional<z.ZodEnum<{
             allowlist: "allowlist";
             open: "open";
@@ -263,6 +390,7 @@ export declare const TelegramAccountSchema: z.ZodObject<{
         systemPrompt: z.ZodOptional<z.ZodString>;
         topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
             groupPolicy: z.ZodOptional<z.ZodEnum<{
                 allowlist: "allowlist";
                 open: "open";
@@ -272,6 +400,7 @@ export declare const TelegramAccountSchema: z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
             allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
             systemPrompt: z.ZodOptional<z.ZodString>;
+            agentId: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>>>;
     }, z.core.$strict>>>>;
     allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
@@ -286,6 +415,43 @@ export declare const TelegramAccountSchema: z.ZodObject<{
     dmHistoryLimit: z.ZodOptional<z.ZodNumber>;
     dms: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         historyLimit: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>>>;
+    direct: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+        dmPolicy: z.ZodOptional<z.ZodEnum<{
+            allowlist: "allowlist";
+            open: "open";
+            disabled: "disabled";
+            pairing: "pairing";
+        }>>;
+        tools: z.ZodOptional<z.ZodObject<{
+            allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>;
+        toolsBySender: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>>>;
+        skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+        systemPrompt: z.ZodOptional<z.ZodString>;
+        topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
+            groupPolicy: z.ZodOptional<z.ZodEnum<{
+                allowlist: "allowlist";
+                open: "open";
+                disabled: "disabled";
+            }>>;
+            skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+            systemPrompt: z.ZodOptional<z.ZodString>;
+            agentId: z.ZodOptional<z.ZodString>;
+        }, z.core.$strict>>>>;
+        requireTopic: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>>;
     textChunkLimit: z.ZodOptional<z.ZodNumber>;
     chunkMode: z.ZodOptional<z.ZodEnum<{
@@ -331,15 +497,35 @@ export declare const TelegramAccountSchema: z.ZodObject<{
     }, z.core.$strict>>;
     proxy: z.ZodOptional<z.ZodString>;
     webhookUrl: z.ZodOptional<z.ZodString>;
-    webhookSecret: z.ZodOptional<z.ZodString>;
+    webhookSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     webhookHost: z.ZodOptional<z.ZodString>;
     webhookPort: z.ZodOptional<z.ZodNumber>;
     actions: z.ZodOptional<z.ZodObject<{
         reactions: z.ZodOptional<z.ZodBoolean>;
         sendMessage: z.ZodOptional<z.ZodBoolean>;
+        poll: z.ZodOptional<z.ZodBoolean>;
         deleteMessage: z.ZodOptional<z.ZodBoolean>;
         sticker: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strict>>;
+    threadBindings: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        idleHours: z.ZodOptional<z.ZodNumber>;
+        maxAgeHours: z.ZodOptional<z.ZodNumber>;
+        spawnSubagentSessions: z.ZodOptional<z.ZodBoolean>;
+        spawnAcpSessions: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
     reactionNotifications: z.ZodOptional<z.ZodEnum<{
         off: "off";
@@ -395,11 +581,24 @@ export declare const TelegramConfigSchema: z.ZodObject<{
         disabled: "disabled";
         pairing: "pairing";
     }>>>;
-    botToken: z.ZodOptional<z.ZodString>;
+    botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     tokenFile: z.ZodOptional<z.ZodString>;
     replyToMode: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"off">, z.ZodLiteral<"first">, z.ZodLiteral<"all">]>>;
     groups: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
         groupPolicy: z.ZodOptional<z.ZodEnum<{
             allowlist: "allowlist";
             open: "open";
@@ -421,6 +620,7 @@ export declare const TelegramConfigSchema: z.ZodObject<{
         systemPrompt: z.ZodOptional<z.ZodString>;
         topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
             groupPolicy: z.ZodOptional<z.ZodEnum<{
                 allowlist: "allowlist";
                 open: "open";
@@ -430,6 +630,7 @@ export declare const TelegramConfigSchema: z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
             allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
             systemPrompt: z.ZodOptional<z.ZodString>;
+            agentId: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>>>;
     }, z.core.$strict>>>>;
     allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
@@ -444,6 +645,43 @@ export declare const TelegramConfigSchema: z.ZodObject<{
     dmHistoryLimit: z.ZodOptional<z.ZodNumber>;
     dms: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         historyLimit: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>>>;
+    direct: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+        dmPolicy: z.ZodOptional<z.ZodEnum<{
+            allowlist: "allowlist";
+            open: "open";
+            disabled: "disabled";
+            pairing: "pairing";
+        }>>;
+        tools: z.ZodOptional<z.ZodObject<{
+            allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>;
+        toolsBySender: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>>>;
+        skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+        systemPrompt: z.ZodOptional<z.ZodString>;
+        topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
+            groupPolicy: z.ZodOptional<z.ZodEnum<{
+                allowlist: "allowlist";
+                open: "open";
+                disabled: "disabled";
+            }>>;
+            skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+            systemPrompt: z.ZodOptional<z.ZodString>;
+            agentId: z.ZodOptional<z.ZodString>;
+        }, z.core.$strict>>>>;
+        requireTopic: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>>>;
     textChunkLimit: z.ZodOptional<z.ZodNumber>;
     chunkMode: z.ZodOptional<z.ZodEnum<{
@@ -489,15 +727,35 @@ export declare const TelegramConfigSchema: z.ZodObject<{
     }, z.core.$strict>>;
     proxy: z.ZodOptional<z.ZodString>;
     webhookUrl: z.ZodOptional<z.ZodString>;
-    webhookSecret: z.ZodOptional<z.ZodString>;
+    webhookSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     webhookHost: z.ZodOptional<z.ZodString>;
     webhookPort: z.ZodOptional<z.ZodNumber>;
     actions: z.ZodOptional<z.ZodObject<{
         reactions: z.ZodOptional<z.ZodBoolean>;
         sendMessage: z.ZodOptional<z.ZodBoolean>;
+        poll: z.ZodOptional<z.ZodBoolean>;
         deleteMessage: z.ZodOptional<z.ZodBoolean>;
         sticker: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strict>>;
+    threadBindings: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        idleHours: z.ZodOptional<z.ZodNumber>;
+        maxAgeHours: z.ZodOptional<z.ZodNumber>;
+        spawnSubagentSessions: z.ZodOptional<z.ZodBoolean>;
+        spawnAcpSessions: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
     reactionNotifications: z.ZodOptional<z.ZodEnum<{
         off: "off";
@@ -552,11 +810,24 @@ export declare const TelegramConfigSchema: z.ZodObject<{
             disabled: "disabled";
             pairing: "pairing";
         }>>>;
-        botToken: z.ZodOptional<z.ZodString>;
+        botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         tokenFile: z.ZodOptional<z.ZodString>;
         replyToMode: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"off">, z.ZodLiteral<"first">, z.ZodLiteral<"all">]>>;
         groups: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
             groupPolicy: z.ZodOptional<z.ZodEnum<{
                 allowlist: "allowlist";
                 open: "open";
@@ -578,6 +849,7 @@ export declare const TelegramConfigSchema: z.ZodObject<{
             systemPrompt: z.ZodOptional<z.ZodString>;
             topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
                 requireMention: z.ZodOptional<z.ZodBoolean>;
+                disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
                 groupPolicy: z.ZodOptional<z.ZodEnum<{
                     allowlist: "allowlist";
                     open: "open";
@@ -587,6 +859,7 @@ export declare const TelegramConfigSchema: z.ZodObject<{
                 enabled: z.ZodOptional<z.ZodBoolean>;
                 allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
                 systemPrompt: z.ZodOptional<z.ZodString>;
+                agentId: z.ZodOptional<z.ZodString>;
             }, z.core.$strict>>>>;
         }, z.core.$strict>>>>;
         allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
@@ -601,6 +874,43 @@ export declare const TelegramConfigSchema: z.ZodObject<{
         dmHistoryLimit: z.ZodOptional<z.ZodNumber>;
         dms: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             historyLimit: z.ZodOptional<z.ZodNumber>;
+        }, z.core.$strict>>>>;
+        direct: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+            dmPolicy: z.ZodOptional<z.ZodEnum<{
+                allowlist: "allowlist";
+                open: "open";
+                disabled: "disabled";
+                pairing: "pairing";
+            }>>;
+            tools: z.ZodOptional<z.ZodObject<{
+                allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+                alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+                deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            }, z.core.$strict>>;
+            toolsBySender: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+                allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+                alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
+                deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            }, z.core.$strict>>>>;
+            skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+            systemPrompt: z.ZodOptional<z.ZodString>;
+            topics: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
+                requireMention: z.ZodOptional<z.ZodBoolean>;
+                disableAudioPreflight: z.ZodOptional<z.ZodBoolean>;
+                groupPolicy: z.ZodOptional<z.ZodEnum<{
+                    allowlist: "allowlist";
+                    open: "open";
+                    disabled: "disabled";
+                }>>;
+                skills: z.ZodOptional<z.ZodArray<z.ZodString>>;
+                enabled: z.ZodOptional<z.ZodBoolean>;
+                allowFrom: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>>;
+                systemPrompt: z.ZodOptional<z.ZodString>;
+                agentId: z.ZodOptional<z.ZodString>;
+            }, z.core.$strict>>>>;
+            requireTopic: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>>>;
         textChunkLimit: z.ZodOptional<z.ZodNumber>;
         chunkMode: z.ZodOptional<z.ZodEnum<{
@@ -646,15 +956,35 @@ export declare const TelegramConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         proxy: z.ZodOptional<z.ZodString>;
         webhookUrl: z.ZodOptional<z.ZodString>;
-        webhookSecret: z.ZodOptional<z.ZodString>;
+        webhookSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         webhookPath: z.ZodOptional<z.ZodString>;
         webhookHost: z.ZodOptional<z.ZodString>;
         webhookPort: z.ZodOptional<z.ZodNumber>;
         actions: z.ZodOptional<z.ZodObject<{
             reactions: z.ZodOptional<z.ZodBoolean>;
             sendMessage: z.ZodOptional<z.ZodBoolean>;
+            poll: z.ZodOptional<z.ZodBoolean>;
             deleteMessage: z.ZodOptional<z.ZodBoolean>;
             sticker: z.ZodOptional<z.ZodBoolean>;
+        }, z.core.$strict>>;
+        threadBindings: z.ZodOptional<z.ZodObject<{
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            idleHours: z.ZodOptional<z.ZodNumber>;
+            maxAgeHours: z.ZodOptional<z.ZodNumber>;
+            spawnSubagentSessions: z.ZodOptional<z.ZodBoolean>;
+            spawnAcpSessions: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
         reactionNotifications: z.ZodOptional<z.ZodEnum<{
             off: "off";
@@ -676,6 +1006,7 @@ export declare const TelegramConfigSchema: z.ZodObject<{
         responsePrefix: z.ZodOptional<z.ZodString>;
         ackReaction: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const DiscordDmSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
@@ -692,6 +1023,7 @@ export declare const DiscordDmSchema: z.ZodObject<{
 export declare const DiscordGuildChannelSchema: z.ZodObject<{
     allow: z.ZodOptional<z.ZodBoolean>;
     requireMention: z.ZodOptional<z.ZodBoolean>;
+    ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
     tools: z.ZodOptional<z.ZodObject<{
         allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
         alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -713,6 +1045,7 @@ export declare const DiscordGuildChannelSchema: z.ZodObject<{
 export declare const DiscordGuildSchema: z.ZodObject<{
     slug: z.ZodOptional<z.ZodString>;
     requireMention: z.ZodOptional<z.ZodBoolean>;
+    ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
     tools: z.ZodOptional<z.ZodObject<{
         allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
         alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -734,6 +1067,7 @@ export declare const DiscordGuildSchema: z.ZodObject<{
     channels: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         allow: z.ZodOptional<z.ZodBoolean>;
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
         tools: z.ZodOptional<z.ZodObject<{
             allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
             alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -769,9 +1103,21 @@ export declare const DiscordAccountSchema: z.ZodObject<{
         nativeSkills: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"auto">]>>;
     }, z.core.$strict>>;
     configWrites: z.ZodOptional<z.ZodBoolean>;
-    token: z.ZodOptional<z.ZodString>;
+    token: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     proxy: z.ZodOptional<z.ZodString>;
-    allowBots: z.ZodOptional<z.ZodBoolean>;
+    allowBots: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"mentions">]>>;
     dangerouslyAllowNameMatching: z.ZodOptional<z.ZodBoolean>;
     groupPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
@@ -863,6 +1209,7 @@ export declare const DiscordAccountSchema: z.ZodObject<{
     guilds: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         slug: z.ZodOptional<z.ZodString>;
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
         tools: z.ZodOptional<z.ZodObject<{
             allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
             alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -884,6 +1231,7 @@ export declare const DiscordAccountSchema: z.ZodObject<{
         channels: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             allow: z.ZodOptional<z.ZodBoolean>;
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
             tools: z.ZodOptional<z.ZodObject<{
                 allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
                 alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -976,7 +1324,19 @@ export declare const DiscordAccountSchema: z.ZodObject<{
                 allowSeed: z.ZodOptional<z.ZodBoolean>;
             }, z.core.$strict>>;
             elevenlabs: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
                 baseUrl: z.ZodOptional<z.ZodString>;
                 voiceId: z.ZodOptional<z.ZodString>;
                 modelId: z.ZodOptional<z.ZodString>;
@@ -996,7 +1356,20 @@ export declare const DiscordAccountSchema: z.ZodObject<{
                 }, z.core.$strict>>;
             }, z.core.$strict>>;
             openai: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
+                baseUrl: z.ZodOptional<z.ZodString>;
                 model: z.ZodOptional<z.ZodString>;
                 voice: z.ZodOptional<z.ZodString>;
             }, z.core.$strict>>;
@@ -1019,10 +1392,30 @@ export declare const DiscordAccountSchema: z.ZodObject<{
     }, z.core.$strict>>;
     pluralkit: z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
-        token: z.ZodOptional<z.ZodString>;
+        token: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
     }, z.core.$strict>>;
     responsePrefix: z.ZodOptional<z.ZodString>;
     ackReaction: z.ZodOptional<z.ZodString>;
+    ackReactionScope: z.ZodOptional<z.ZodEnum<{
+        direct: "direct";
+        off: "off";
+        all: "all";
+        none: "none";
+        "group-mentions": "group-mentions";
+        "group-all": "group-all";
+    }>>;
     activity: z.ZodOptional<z.ZodString>;
     status: z.ZodOptional<z.ZodEnum<{
         idle: "idle";
@@ -1030,8 +1423,24 @@ export declare const DiscordAccountSchema: z.ZodObject<{
         dnd: "dnd";
         invisible: "invisible";
     }>>;
+    autoPresence: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        intervalMs: z.ZodOptional<z.ZodNumber>;
+        minUpdateIntervalMs: z.ZodOptional<z.ZodNumber>;
+        healthyText: z.ZodOptional<z.ZodString>;
+        degradedText: z.ZodOptional<z.ZodString>;
+        exhaustedText: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>>;
     activityType: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<0>, z.ZodLiteral<1>, z.ZodLiteral<2>, z.ZodLiteral<3>, z.ZodLiteral<4>, z.ZodLiteral<5>]>>;
     activityUrl: z.ZodOptional<z.ZodString>;
+    inboundWorker: z.ZodOptional<z.ZodObject<{
+        runTimeoutMs: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>;
+    eventQueue: z.ZodOptional<z.ZodObject<{
+        listenerTimeout: z.ZodOptional<z.ZodNumber>;
+        maxQueueSize: z.ZodOptional<z.ZodNumber>;
+        maxConcurrency: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>;
 }, z.core.$strict>;
 export declare const DiscordConfigSchema: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -1049,9 +1458,21 @@ export declare const DiscordConfigSchema: z.ZodObject<{
         nativeSkills: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"auto">]>>;
     }, z.core.$strict>>;
     configWrites: z.ZodOptional<z.ZodBoolean>;
-    token: z.ZodOptional<z.ZodString>;
+    token: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     proxy: z.ZodOptional<z.ZodString>;
-    allowBots: z.ZodOptional<z.ZodBoolean>;
+    allowBots: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"mentions">]>>;
     dangerouslyAllowNameMatching: z.ZodOptional<z.ZodBoolean>;
     groupPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
@@ -1143,6 +1564,7 @@ export declare const DiscordConfigSchema: z.ZodObject<{
     guilds: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         slug: z.ZodOptional<z.ZodString>;
         requireMention: z.ZodOptional<z.ZodBoolean>;
+        ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
         tools: z.ZodOptional<z.ZodObject<{
             allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
             alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -1164,6 +1586,7 @@ export declare const DiscordConfigSchema: z.ZodObject<{
         channels: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             allow: z.ZodOptional<z.ZodBoolean>;
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
             tools: z.ZodOptional<z.ZodObject<{
                 allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
                 alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -1256,7 +1679,19 @@ export declare const DiscordConfigSchema: z.ZodObject<{
                 allowSeed: z.ZodOptional<z.ZodBoolean>;
             }, z.core.$strict>>;
             elevenlabs: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
                 baseUrl: z.ZodOptional<z.ZodString>;
                 voiceId: z.ZodOptional<z.ZodString>;
                 modelId: z.ZodOptional<z.ZodString>;
@@ -1276,7 +1711,20 @@ export declare const DiscordConfigSchema: z.ZodObject<{
                 }, z.core.$strict>>;
             }, z.core.$strict>>;
             openai: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
+                baseUrl: z.ZodOptional<z.ZodString>;
                 model: z.ZodOptional<z.ZodString>;
                 voice: z.ZodOptional<z.ZodString>;
             }, z.core.$strict>>;
@@ -1299,10 +1747,30 @@ export declare const DiscordConfigSchema: z.ZodObject<{
     }, z.core.$strict>>;
     pluralkit: z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
-        token: z.ZodOptional<z.ZodString>;
+        token: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
     }, z.core.$strict>>;
     responsePrefix: z.ZodOptional<z.ZodString>;
     ackReaction: z.ZodOptional<z.ZodString>;
+    ackReactionScope: z.ZodOptional<z.ZodEnum<{
+        direct: "direct";
+        off: "off";
+        all: "all";
+        none: "none";
+        "group-mentions": "group-mentions";
+        "group-all": "group-all";
+    }>>;
     activity: z.ZodOptional<z.ZodString>;
     status: z.ZodOptional<z.ZodEnum<{
         idle: "idle";
@@ -1310,8 +1778,24 @@ export declare const DiscordConfigSchema: z.ZodObject<{
         dnd: "dnd";
         invisible: "invisible";
     }>>;
+    autoPresence: z.ZodOptional<z.ZodObject<{
+        enabled: z.ZodOptional<z.ZodBoolean>;
+        intervalMs: z.ZodOptional<z.ZodNumber>;
+        minUpdateIntervalMs: z.ZodOptional<z.ZodNumber>;
+        healthyText: z.ZodOptional<z.ZodString>;
+        degradedText: z.ZodOptional<z.ZodString>;
+        exhaustedText: z.ZodOptional<z.ZodString>;
+    }, z.core.$strict>>;
     activityType: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<0>, z.ZodLiteral<1>, z.ZodLiteral<2>, z.ZodLiteral<3>, z.ZodLiteral<4>, z.ZodLiteral<5>]>>;
     activityUrl: z.ZodOptional<z.ZodString>;
+    inboundWorker: z.ZodOptional<z.ZodObject<{
+        runTimeoutMs: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>;
+    eventQueue: z.ZodOptional<z.ZodObject<{
+        listenerTimeout: z.ZodOptional<z.ZodNumber>;
+        maxQueueSize: z.ZodOptional<z.ZodNumber>;
+        maxConcurrency: z.ZodOptional<z.ZodNumber>;
+    }, z.core.$strict>>;
     accounts: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
         capabilities: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -1328,9 +1812,21 @@ export declare const DiscordConfigSchema: z.ZodObject<{
             nativeSkills: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"auto">]>>;
         }, z.core.$strict>>;
         configWrites: z.ZodOptional<z.ZodBoolean>;
-        token: z.ZodOptional<z.ZodString>;
+        token: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         proxy: z.ZodOptional<z.ZodString>;
-        allowBots: z.ZodOptional<z.ZodBoolean>;
+        allowBots: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"mentions">]>>;
         dangerouslyAllowNameMatching: z.ZodOptional<z.ZodBoolean>;
         groupPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
             allowlist: "allowlist";
@@ -1422,6 +1918,7 @@ export declare const DiscordConfigSchema: z.ZodObject<{
         guilds: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
             slug: z.ZodOptional<z.ZodString>;
             requireMention: z.ZodOptional<z.ZodBoolean>;
+            ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
             tools: z.ZodOptional<z.ZodObject<{
                 allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
                 alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -1443,6 +1940,7 @@ export declare const DiscordConfigSchema: z.ZodObject<{
             channels: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodOptional<z.ZodObject<{
                 allow: z.ZodOptional<z.ZodBoolean>;
                 requireMention: z.ZodOptional<z.ZodBoolean>;
+                ignoreOtherMentions: z.ZodOptional<z.ZodBoolean>;
                 tools: z.ZodOptional<z.ZodObject<{
                     allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
                     alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
@@ -1535,7 +2033,19 @@ export declare const DiscordConfigSchema: z.ZodObject<{
                     allowSeed: z.ZodOptional<z.ZodBoolean>;
                 }, z.core.$strict>>;
                 elevenlabs: z.ZodOptional<z.ZodObject<{
-                    apiKey: z.ZodOptional<z.ZodString>;
+                    apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                        source: z.ZodLiteral<"env">;
+                        provider: z.ZodString;
+                        id: z.ZodString;
+                    }, z.core.$strict>, z.ZodObject<{
+                        source: z.ZodLiteral<"file">;
+                        provider: z.ZodString;
+                        id: z.ZodString;
+                    }, z.core.$strict>, z.ZodObject<{
+                        source: z.ZodLiteral<"exec">;
+                        provider: z.ZodString;
+                        id: z.ZodString;
+                    }, z.core.$strict>], "source">]>>;
                     baseUrl: z.ZodOptional<z.ZodString>;
                     voiceId: z.ZodOptional<z.ZodString>;
                     modelId: z.ZodOptional<z.ZodString>;
@@ -1555,7 +2065,20 @@ export declare const DiscordConfigSchema: z.ZodObject<{
                     }, z.core.$strict>>;
                 }, z.core.$strict>>;
                 openai: z.ZodOptional<z.ZodObject<{
-                    apiKey: z.ZodOptional<z.ZodString>;
+                    apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                        source: z.ZodLiteral<"env">;
+                        provider: z.ZodString;
+                        id: z.ZodString;
+                    }, z.core.$strict>, z.ZodObject<{
+                        source: z.ZodLiteral<"file">;
+                        provider: z.ZodString;
+                        id: z.ZodString;
+                    }, z.core.$strict>, z.ZodObject<{
+                        source: z.ZodLiteral<"exec">;
+                        provider: z.ZodString;
+                        id: z.ZodString;
+                    }, z.core.$strict>], "source">]>>;
+                    baseUrl: z.ZodOptional<z.ZodString>;
                     model: z.ZodOptional<z.ZodString>;
                     voice: z.ZodOptional<z.ZodString>;
                 }, z.core.$strict>>;
@@ -1578,10 +2101,30 @@ export declare const DiscordConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         pluralkit: z.ZodOptional<z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
-            token: z.ZodOptional<z.ZodString>;
+            token: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
         }, z.core.$strict>>;
         responsePrefix: z.ZodOptional<z.ZodString>;
         ackReaction: z.ZodOptional<z.ZodString>;
+        ackReactionScope: z.ZodOptional<z.ZodEnum<{
+            direct: "direct";
+            off: "off";
+            all: "all";
+            none: "none";
+            "group-mentions": "group-mentions";
+            "group-all": "group-all";
+        }>>;
         activity: z.ZodOptional<z.ZodString>;
         status: z.ZodOptional<z.ZodEnum<{
             idle: "idle";
@@ -1589,9 +2132,26 @@ export declare const DiscordConfigSchema: z.ZodObject<{
             dnd: "dnd";
             invisible: "invisible";
         }>>;
+        autoPresence: z.ZodOptional<z.ZodObject<{
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            intervalMs: z.ZodOptional<z.ZodNumber>;
+            minUpdateIntervalMs: z.ZodOptional<z.ZodNumber>;
+            healthyText: z.ZodOptional<z.ZodString>;
+            degradedText: z.ZodOptional<z.ZodString>;
+            exhaustedText: z.ZodOptional<z.ZodString>;
+        }, z.core.$strict>>;
         activityType: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<0>, z.ZodLiteral<1>, z.ZodLiteral<2>, z.ZodLiteral<3>, z.ZodLiteral<4>, z.ZodLiteral<5>]>>;
         activityUrl: z.ZodOptional<z.ZodString>;
+        inboundWorker: z.ZodOptional<z.ZodObject<{
+            runTimeoutMs: z.ZodOptional<z.ZodNumber>;
+        }, z.core.$strict>>;
+        eventQueue: z.ZodOptional<z.ZodObject<{
+            listenerTimeout: z.ZodOptional<z.ZodNumber>;
+            maxQueueSize: z.ZodOptional<z.ZodNumber>;
+            maxConcurrency: z.ZodOptional<z.ZodNumber>;
+        }, z.core.$strict>>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const GoogleChatDmSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
@@ -1957,7 +2517,19 @@ export declare const SlackAccountSchema: z.ZodObject<{
         socket: "socket";
         http: "http";
     }>>;
-    signingSecret: z.ZodOptional<z.ZodString>;
+    signingSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     capabilities: z.ZodOptional<z.ZodArray<z.ZodString>>;
     markdown: z.ZodOptional<z.ZodObject<{
@@ -1973,9 +2545,45 @@ export declare const SlackAccountSchema: z.ZodObject<{
         nativeSkills: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"auto">]>>;
     }, z.core.$strict>>;
     configWrites: z.ZodOptional<z.ZodBoolean>;
-    botToken: z.ZodOptional<z.ZodString>;
-    appToken: z.ZodOptional<z.ZodString>;
-    userToken: z.ZodOptional<z.ZodString>;
+    botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
+    appToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
+    userToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     userTokenReadOnly: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     allowBots: z.ZodOptional<z.ZodBoolean>;
     dangerouslyAllowNameMatching: z.ZodOptional<z.ZodBoolean>;
@@ -2098,6 +2706,7 @@ export declare const SlackAccountSchema: z.ZodObject<{
     }, z.core.$strict>>;
     responsePrefix: z.ZodOptional<z.ZodString>;
     ackReaction: z.ZodOptional<z.ZodString>;
+    typingReaction: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const SlackConfigSchema: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -2115,9 +2724,45 @@ export declare const SlackConfigSchema: z.ZodObject<{
         nativeSkills: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"auto">]>>;
     }, z.core.$strict>>;
     configWrites: z.ZodOptional<z.ZodBoolean>;
-    botToken: z.ZodOptional<z.ZodString>;
-    appToken: z.ZodOptional<z.ZodString>;
-    userToken: z.ZodOptional<z.ZodString>;
+    botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
+    appToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
+    userToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     userTokenReadOnly: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     allowBots: z.ZodOptional<z.ZodBoolean>;
     dangerouslyAllowNameMatching: z.ZodOptional<z.ZodBoolean>;
@@ -2235,11 +2880,24 @@ export declare const SlackConfigSchema: z.ZodObject<{
     }, z.core.$strict>>;
     responsePrefix: z.ZodOptional<z.ZodString>;
     ackReaction: z.ZodOptional<z.ZodString>;
+    typingReaction: z.ZodOptional<z.ZodString>;
     mode: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         socket: "socket";
         http: "http";
     }>>>;
-    signingSecret: z.ZodOptional<z.ZodString>;
+    signingSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodDefault<z.ZodOptional<z.ZodString>>;
     groupPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
@@ -2252,7 +2910,19 @@ export declare const SlackConfigSchema: z.ZodObject<{
             socket: "socket";
             http: "http";
         }>>;
-        signingSecret: z.ZodOptional<z.ZodString>;
+        signingSecret: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         webhookPath: z.ZodOptional<z.ZodString>;
         capabilities: z.ZodOptional<z.ZodArray<z.ZodString>>;
         markdown: z.ZodOptional<z.ZodObject<{
@@ -2268,9 +2938,45 @@ export declare const SlackConfigSchema: z.ZodObject<{
             nativeSkills: z.ZodOptional<z.ZodUnion<readonly [z.ZodBoolean, z.ZodLiteral<"auto">]>>;
         }, z.core.$strict>>;
         configWrites: z.ZodOptional<z.ZodBoolean>;
-        botToken: z.ZodOptional<z.ZodString>;
-        appToken: z.ZodOptional<z.ZodString>;
-        userToken: z.ZodOptional<z.ZodString>;
+        botToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
+        appToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
+        userToken: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         userTokenReadOnly: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
         allowBots: z.ZodOptional<z.ZodBoolean>;
         dangerouslyAllowNameMatching: z.ZodOptional<z.ZodBoolean>;
@@ -2393,7 +3099,9 @@ export declare const SlackConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         responsePrefix: z.ZodOptional<z.ZodString>;
         ackReaction: z.ZodOptional<z.ZodString>;
+        typingReaction: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const SignalAccountSchemaBase: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -2702,6 +3410,7 @@ export declare const SignalConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         responsePrefix: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const IrcGroupSchema: z.ZodObject<{
     requireMention: z.ZodOptional<z.ZodBoolean>;
@@ -2723,7 +3432,19 @@ export declare const IrcGroupSchema: z.ZodObject<{
 export declare const IrcNickServSchema: z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
     service: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     passwordFile: z.ZodOptional<z.ZodString>;
     register: z.ZodOptional<z.ZodBoolean>;
     registerEmail: z.ZodOptional<z.ZodString>;
@@ -2746,12 +3467,36 @@ export declare const IrcAccountSchemaBase: z.ZodObject<{
     nick: z.ZodOptional<z.ZodString>;
     username: z.ZodOptional<z.ZodString>;
     realname: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     passwordFile: z.ZodOptional<z.ZodString>;
     nickserv: z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
         service: z.ZodOptional<z.ZodString>;
-        password: z.ZodOptional<z.ZodString>;
+        password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         passwordFile: z.ZodOptional<z.ZodString>;
         register: z.ZodOptional<z.ZodBoolean>;
         registerEmail: z.ZodOptional<z.ZodString>;
@@ -2831,12 +3576,36 @@ export declare const IrcAccountSchema: z.ZodObject<{
     nick: z.ZodOptional<z.ZodString>;
     username: z.ZodOptional<z.ZodString>;
     realname: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     passwordFile: z.ZodOptional<z.ZodString>;
     nickserv: z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
         service: z.ZodOptional<z.ZodString>;
-        password: z.ZodOptional<z.ZodString>;
+        password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         passwordFile: z.ZodOptional<z.ZodString>;
         register: z.ZodOptional<z.ZodBoolean>;
         registerEmail: z.ZodOptional<z.ZodString>;
@@ -2916,12 +3685,36 @@ export declare const IrcConfigSchema: z.ZodObject<{
     nick: z.ZodOptional<z.ZodString>;
     username: z.ZodOptional<z.ZodString>;
     realname: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     passwordFile: z.ZodOptional<z.ZodString>;
     nickserv: z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
         service: z.ZodOptional<z.ZodString>;
-        password: z.ZodOptional<z.ZodString>;
+        password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         passwordFile: z.ZodOptional<z.ZodString>;
         register: z.ZodOptional<z.ZodBoolean>;
         registerEmail: z.ZodOptional<z.ZodString>;
@@ -3000,12 +3793,36 @@ export declare const IrcConfigSchema: z.ZodObject<{
         nick: z.ZodOptional<z.ZodString>;
         username: z.ZodOptional<z.ZodString>;
         realname: z.ZodOptional<z.ZodString>;
-        password: z.ZodOptional<z.ZodString>;
+        password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         passwordFile: z.ZodOptional<z.ZodString>;
         nickserv: z.ZodOptional<z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
             service: z.ZodOptional<z.ZodString>;
-            password: z.ZodOptional<z.ZodString>;
+            password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             passwordFile: z.ZodOptional<z.ZodString>;
             register: z.ZodOptional<z.ZodBoolean>;
             registerEmail: z.ZodOptional<z.ZodString>;
@@ -3067,6 +3884,7 @@ export declare const IrcConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         responsePrefix: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const IMessageAccountSchemaBase: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -3351,6 +4169,7 @@ export declare const IMessageConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         responsePrefix: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export declare const BlueBubblesAccountSchemaBase: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
@@ -3365,7 +4184,19 @@ export declare const BlueBubblesAccountSchemaBase: z.ZodObject<{
     configWrites: z.ZodOptional<z.ZodBoolean>;
     enabled: z.ZodOptional<z.ZodBoolean>;
     serverUrl: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     dmPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
@@ -3432,7 +4263,19 @@ export declare const BlueBubblesAccountSchema: z.ZodObject<{
     configWrites: z.ZodOptional<z.ZodBoolean>;
     enabled: z.ZodOptional<z.ZodBoolean>;
     serverUrl: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     dmPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
@@ -3499,7 +4342,19 @@ export declare const BlueBubblesConfigSchema: z.ZodObject<{
     configWrites: z.ZodOptional<z.ZodBoolean>;
     enabled: z.ZodOptional<z.ZodBoolean>;
     serverUrl: z.ZodOptional<z.ZodString>;
-    password: z.ZodOptional<z.ZodString>;
+    password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     webhookPath: z.ZodOptional<z.ZodString>;
     dmPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
         allowlist: "allowlist";
@@ -3565,7 +4420,19 @@ export declare const BlueBubblesConfigSchema: z.ZodObject<{
         configWrites: z.ZodOptional<z.ZodBoolean>;
         enabled: z.ZodOptional<z.ZodBoolean>;
         serverUrl: z.ZodOptional<z.ZodString>;
-        password: z.ZodOptional<z.ZodString>;
+        password: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         webhookPath: z.ZodOptional<z.ZodString>;
         dmPolicy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
             allowlist: "allowlist";
@@ -3619,6 +4486,7 @@ export declare const BlueBubblesConfigSchema: z.ZodObject<{
         }, z.core.$strict>>;
         responsePrefix: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>>>;
+    defaultAccount: z.ZodOptional<z.ZodString>;
     actions: z.ZodOptional<z.ZodObject<{
         reactions: z.ZodOptional<z.ZodBoolean>;
         edit: z.ZodOptional<z.ZodBoolean>;
@@ -3697,7 +4565,19 @@ export declare const MSTeamsConfigSchema: z.ZodObject<{
     }, z.core.$strict>>;
     configWrites: z.ZodOptional<z.ZodBoolean>;
     appId: z.ZodOptional<z.ZodString>;
-    appPassword: z.ZodOptional<z.ZodString>;
+    appPassword: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     tenantId: z.ZodOptional<z.ZodString>;
     webhook: z.ZodOptional<z.ZodObject<{
         port: z.ZodOptional<z.ZodNumber>;

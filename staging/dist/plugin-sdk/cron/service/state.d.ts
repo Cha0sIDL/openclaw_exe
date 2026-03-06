@@ -1,6 +1,6 @@
 import type { CronConfig } from "../../config/types.cron.js";
 import type { HeartbeatRunResult } from "../../infra/heartbeat-wake.js";
-import type { CronDeliveryStatus, CronJob, CronJobCreate, CronJobPatch, CronRunOutcome, CronRunStatus, CronRunTelemetry, CronStoreFile } from "../types.js";
+import type { CronDeliveryStatus, CronJob, CronJobCreate, CronJobPatch, CronMessageChannel, CronRunOutcome, CronRunStatus, CronRunTelemetry, CronStoreFile } from "../types.js";
 export type CronEvent = {
     jobId: string;
     action: "added" | "updated" | "removed" | "started" | "finished";
@@ -82,6 +82,14 @@ export type CronServiceDeps = {
          */
         deliveryAttempted?: boolean;
     } & CronRunOutcome & CronRunTelemetry>;
+    sendCronFailureAlert?: (params: {
+        job: CronJob;
+        text: string;
+        channel: CronMessageChannel;
+        to?: string;
+        mode?: "announce" | "webhook";
+        accountId?: string;
+    }) => Promise<void>;
     onEvent?: (evt: CronEvent) => void;
 };
 export type CronServiceDepsInternal = Omit<CronServiceDeps, "nowMs"> & {

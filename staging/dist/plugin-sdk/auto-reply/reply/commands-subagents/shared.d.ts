@@ -1,9 +1,12 @@
-import type { SubagentRunRecord } from "../../../agents/subagent-registry.js";
+import { type SubagentRunRecord } from "../../../agents/subagent-registry.js";
 import { extractAssistantText, stripToolMessages } from "../../../agents/tools/sessions-helpers.js";
 import type { SessionEntry, loadSessionStore as loadSessionStoreFn, resolveStorePath as resolveStorePathFn } from "../../../config/sessions.js";
+import { isDiscordSurface, isTelegramSurface, resolveCommandSurfaceChannel, resolveDiscordAccountId, resolveChannelAccountId } from "../channel-context.js";
 import type { CommandHandler, CommandHandlerResult } from "../commands-types.js";
 import { type SubagentTargetResolution } from "../subagents-utils.js";
+import { resolveTelegramConversationId } from "../telegram-context.js";
 export { extractAssistantText, stripToolMessages };
+export { isDiscordSurface, isTelegramSurface, resolveCommandSurfaceChannel, resolveDiscordAccountId, resolveChannelAccountId, resolveTelegramConversationId, };
 export declare const COMMAND = "/subagents";
 export declare const COMMAND_KILL = "/kill";
 export declare const COMMAND_STEER = "/steer";
@@ -14,12 +17,15 @@ export declare const COMMAND_AGENTS = "/agents";
 export declare const ACTIONS: Set<string>;
 export declare const RECENT_WINDOW_MINUTES = 30;
 export declare const STEER_ABORT_SETTLE_TIMEOUT_MS = 5000;
-export declare function resolveDisplayStatus(entry: SubagentRunRecord): "timeout" | "failed" | "unknown" | "done" | "running";
+export declare function resolveDisplayStatus(entry: SubagentRunRecord, options?: {
+    pendingDescendants?: number;
+}): string;
 export declare function formatSubagentListLine(params: {
     entry: SubagentRunRecord;
     index: number;
     runtimeMs: number;
     sessionEntry?: SessionEntry;
+    pendingDescendants?: number;
 }): string;
 export declare function formatTimestampWithAge(valueMs?: number): string;
 export type SubagentsAction = "list" | "kill" | "log" | "send" | "steer" | "info" | "spawn" | "focus" | "unfocus" | "agents" | "help";
@@ -53,8 +59,6 @@ export type FocusTargetResolution = {
     agentId: string;
     label?: string;
 };
-export declare function isDiscordSurface(params: SubagentsCommandParams): boolean;
-export declare function resolveDiscordAccountId(params: SubagentsCommandParams): string;
 export declare function resolveDiscordChannelIdForFocus(params: SubagentsCommandParams): string | undefined;
 export declare function resolveFocusTargetSession(params: {
     runs: SubagentRunRecord[];

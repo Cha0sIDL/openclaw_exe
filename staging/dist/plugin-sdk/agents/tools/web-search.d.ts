@@ -1,15 +1,13 @@
 import type { OpenClawConfig } from "../../config/config.js";
 import type { AnyAgentTool } from "./common.js";
+import { resolveCitationRedirectUrl } from "./web-search-citation-redirect.js";
+import { CacheEntry } from "./web-shared.js";
 declare const SEARCH_PROVIDERS: readonly ["brave", "perplexity", "grok", "gemini", "kimi"];
+declare function isoToPerplexityDate(iso: string): string | undefined;
+declare function normalizeToIsoDate(value: string): string | undefined;
 type WebSearchConfig = NonNullable<OpenClawConfig["tools"]>["web"] extends infer Web ? Web extends {
     search?: infer Search;
 } ? Search : undefined : undefined;
-type PerplexityConfig = {
-    apiKey?: string;
-    baseUrl?: string;
-    model?: string;
-};
-type PerplexityApiKeySource = "config" | "perplexity_env" | "openrouter_env" | "none";
 type GrokConfig = {
     apiKey?: string;
     model?: string;
@@ -75,27 +73,17 @@ type KimiSearchResponse = {
         content?: string;
     }>;
 };
-type PerplexityBaseUrlHint = "direct" | "openrouter";
 declare function extractGrokContent(data: GrokSearchResponse): {
     text: string | undefined;
     annotationCitations: string[];
 };
 declare function resolveSearchProvider(search?: WebSearchConfig): (typeof SEARCH_PROVIDERS)[number];
-declare function inferPerplexityBaseUrlFromApiKey(apiKey?: string): PerplexityBaseUrlHint | undefined;
-declare function resolvePerplexityBaseUrl(perplexity?: PerplexityConfig, apiKeySource?: PerplexityApiKeySource, apiKey?: string): string;
-declare function isDirectPerplexityBaseUrl(baseUrl: string): boolean;
-declare function resolvePerplexityRequestModel(baseUrl: string, model: string): string;
 declare function resolveGrokApiKey(grok?: GrokConfig): string | undefined;
 declare function resolveGrokModel(grok?: GrokConfig): string;
 declare function resolveGrokInlineCitations(grok?: GrokConfig): boolean;
 declare function resolveKimiApiKey(kimi?: KimiConfig): string | undefined;
 declare function resolveKimiModel(kimi?: KimiConfig): string;
 declare function resolveKimiBaseUrl(kimi?: KimiConfig): string;
-/**
- * Resolve a redirect URL to its final destination using a HEAD request.
- * Returns the original URL if resolution fails or times out.
- */
-declare function resolveRedirectUrl(url: string): Promise<string>;
 declare function normalizeBraveLanguageParams(params: {
     search_lang?: string;
     ui_lang?: string;
@@ -104,12 +92,12 @@ declare function normalizeBraveLanguageParams(params: {
     ui_lang?: string;
     invalidField?: "search_lang" | "ui_lang";
 };
-declare function normalizeFreshness(value: string | undefined): string | undefined;
 /**
- * Map normalized freshness values (pd/pw/pm/py) to Perplexity's
- * search_recency_filter values (day/week/month/year).
+ * Normalizes freshness shortcut to the provider's expected format.
+ * Accepts both Brave format (pd/pw/pm/py) and Perplexity format (day/week/month/year).
+ * For Brave, also accepts date ranges (YYYY-MM-DDtoYYYY-MM-DD).
  */
-declare function freshnessToPerplexityRecency(freshness: string | undefined): string | undefined;
+declare function normalizeFreshness(value: string | undefined, provider: (typeof SEARCH_PROVIDERS)[number]): string | undefined;
 declare function extractKimiCitations(data: KimiSearchResponse): string[];
 export declare function createWebSearchTool(options?: {
     config?: OpenClawConfig;
@@ -117,13 +105,13 @@ export declare function createWebSearchTool(options?: {
 }): AnyAgentTool | null;
 export declare const __testing: {
     readonly resolveSearchProvider: typeof resolveSearchProvider;
-    readonly inferPerplexityBaseUrlFromApiKey: typeof inferPerplexityBaseUrlFromApiKey;
-    readonly resolvePerplexityBaseUrl: typeof resolvePerplexityBaseUrl;
-    readonly isDirectPerplexityBaseUrl: typeof isDirectPerplexityBaseUrl;
-    readonly resolvePerplexityRequestModel: typeof resolvePerplexityRequestModel;
     readonly normalizeBraveLanguageParams: typeof normalizeBraveLanguageParams;
     readonly normalizeFreshness: typeof normalizeFreshness;
-    readonly freshnessToPerplexityRecency: typeof freshnessToPerplexityRecency;
+    readonly normalizeToIsoDate: typeof normalizeToIsoDate;
+    readonly isoToPerplexityDate: typeof isoToPerplexityDate;
+    readonly SEARCH_CACHE: Map<string, CacheEntry<Record<string, unknown>>>;
+    readonly FRESHNESS_TO_RECENCY: Record<string, string>;
+    readonly RECENCY_TO_FRESHNESS: Record<string, string>;
     readonly resolveGrokApiKey: typeof resolveGrokApiKey;
     readonly resolveGrokModel: typeof resolveGrokModel;
     readonly resolveGrokInlineCitations: typeof resolveGrokInlineCitations;
@@ -132,6 +120,6 @@ export declare const __testing: {
     readonly resolveKimiModel: typeof resolveKimiModel;
     readonly resolveKimiBaseUrl: typeof resolveKimiBaseUrl;
     readonly extractKimiCitations: typeof extractKimiCitations;
-    readonly resolveRedirectUrl: typeof resolveRedirectUrl;
+    readonly resolveRedirectUrl: typeof resolveCitationRedirectUrl;
 };
 export {};

@@ -14,6 +14,9 @@ export declare class DiscordVoiceManager {
     private botUserId?;
     private readonly voiceEnabled;
     private autoJoinTask;
+    private readonly ownerAllowFrom;
+    private readonly allowDangerousNameMatching;
+    private readonly speakerContextCache;
     constructor(params: {
         client: Client;
         cfg: OpenClawConfig;
@@ -42,7 +45,12 @@ export declare class DiscordVoiceManager {
     private handleReceiveError;
     private resetDecryptFailureState;
     private recoverFromDecryptFailures;
-    private resolveSpeakerLabel;
+    private resolveSpeakerIsOwner;
+    private resolveSpeakerContextCacheKey;
+    private getCachedSpeakerContext;
+    private setCachedSpeakerContext;
+    private resolveSpeakerContext;
+    private resolveSpeakerIdentity;
 }
 export declare class DiscordVoiceReadyListener extends ReadyListener {
     private manager;

@@ -2,7 +2,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { type FSWatcher } from "chokidar";
 import type { ResolvedMemorySearchConfig } from "../agents/memory-search.js";
 import type { OpenClawConfig } from "../config/config.js";
-import { type EmbeddingProvider, type GeminiEmbeddingClient, type MistralEmbeddingClient, type OpenAiEmbeddingClient, type VoyageEmbeddingClient } from "./embeddings.js";
+import { type EmbeddingProvider, type GeminiEmbeddingClient, type MistralEmbeddingClient, type OllamaEmbeddingClient, type OpenAiEmbeddingClient, type VoyageEmbeddingClient } from "./embeddings.js";
 import { MemoryManagerEmbeddingOps } from "./manager-embedding-ops.js";
 import type { MemoryEmbeddingProbeResult, MemoryProviderStatus, MemorySearchManager, MemorySearchResult, MemorySource, MemorySyncProgressUpdate } from "./types.js";
 export declare class MemoryIndexManager extends MemoryManagerEmbeddingOps implements MemorySearchManager {
@@ -13,13 +13,14 @@ export declare class MemoryIndexManager extends MemoryManagerEmbeddingOps implem
     protected readonly settings: ResolvedMemorySearchConfig;
     protected provider: EmbeddingProvider | null;
     private readonly requestedProvider;
-    protected fallbackFrom?: "openai" | "local" | "gemini" | "voyage" | "mistral";
+    protected fallbackFrom?: "openai" | "local" | "gemini" | "voyage" | "mistral" | "ollama";
     protected fallbackReason?: string;
     private readonly providerUnavailableReason?;
     protected openAi?: OpenAiEmbeddingClient;
     protected gemini?: GeminiEmbeddingClient;
     protected voyage?: VoyageEmbeddingClient;
     protected mistral?: MistralEmbeddingClient;
+    protected ollama?: OllamaEmbeddingClient;
     protected batch: {
         enabled: boolean;
         wait: boolean;

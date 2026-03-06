@@ -79,5 +79,6 @@ export declare function listPluginCommands(): Array<{
 export declare function getPluginCommandSpecs(): Array<{
     name: string;
     description: string;
+    acceptsArgs: boolean;
 }>;
 export {};

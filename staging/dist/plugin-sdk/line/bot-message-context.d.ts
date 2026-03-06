@@ -10,6 +10,7 @@ interface BuildLineMessageContextParams {
     allMedia: MediaRef[];
     cfg: OpenClawConfig;
     account: ResolvedLineAccount;
+    commandAuthorized: boolean;
 }
 export type LineSourceInfo = {
     userId?: string;
@@ -20,8 +21,10 @@ export type LineSourceInfo = {
 export declare function getLineSourceInfo(source: EventSource): LineSourceInfo;
 export declare function buildLineMessageContext(params: BuildLineMessageContextParams): Promise<{
     ctxPayload: {
+        CommandAuthorized: boolean;
         OriginatingChannel: "line";
         OriginatingTo: string;
+        GroupSystemPrompt: string | undefined;
         LocationLat?: number | undefined;
         LocationLon?: number | undefined;
         LocationAccuracy?: number;
@@ -67,10 +70,13 @@ export declare function buildLinePostbackContext(params: {
     event: PostbackEvent;
     cfg: OpenClawConfig;
     account: ResolvedLineAccount;
+    commandAuthorized: boolean;
 }): Promise<{
     ctxPayload: {
+        CommandAuthorized: boolean;
         OriginatingChannel: "line";
         OriginatingTo: string;
+        GroupSystemPrompt: string | undefined;
         LocationLat?: number | undefined;
         LocationLon?: number | undefined;
         LocationAccuracy?: number;

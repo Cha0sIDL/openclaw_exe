@@ -1,5 +1,5 @@
 export declare class SessionActorQueue {
-    private readonly tailBySession;
+    private readonly queue;
     private readonly pendingBySession;
     getTailMapForTesting(): Map<string, Promise<void>>;
     getTotalPendingCount(): number;

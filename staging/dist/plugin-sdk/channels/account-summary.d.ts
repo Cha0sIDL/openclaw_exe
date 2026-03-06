@@ -15,3 +15,14 @@ export declare function formatChannelAllowFrom(params: {
     accountId?: string | null;
     allowFrom: Array<string | number>;
 }): string[];
+export declare function resolveChannelAccountEnabled(params: {
+    plugin: ChannelPlugin;
+    account: unknown;
+    cfg: OpenClawConfig;
+}): boolean;
+export declare function resolveChannelAccountConfigured(params: {
+    plugin: ChannelPlugin;
+    account: unknown;
+    cfg: OpenClawConfig;
+    readAccountConfiguredField?: boolean;
+}): Promise<boolean>;

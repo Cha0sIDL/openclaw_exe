@@ -50,6 +50,9 @@ export declare const ChannelAccountSnapshotSchema: import("@sinclair/typebox").T
     lastStopAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     lastInboundAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     lastOutboundAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    busy: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    activeRuns: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    lastRunActivityAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     lastProbeAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     dmPolicy: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -100,6 +103,9 @@ export declare const ChannelsStatusResultSchema: import("@sinclair/typebox").TOb
         lastStopAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         lastInboundAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         lastOutboundAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        busy: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        activeRuns: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        lastRunActivityAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         lastProbeAt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         dmPolicy: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;

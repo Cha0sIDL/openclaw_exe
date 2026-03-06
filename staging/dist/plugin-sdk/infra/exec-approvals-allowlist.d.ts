@@ -23,8 +23,7 @@ export type SkillBinTrustEntry = {
     name: string;
     resolvedPath: string;
 };
-export declare function evaluateExecAllowlist(params: {
-    analysis: ExecCommandAnalysis;
+type ExecAllowlistContext = {
     allowlist: ExecAllowlistEntry[];
     safeBins: Set<string>;
     safeBinProfiles?: Readonly<Record<string, SafeBinProfile>>;
@@ -33,7 +32,10 @@ export declare function evaluateExecAllowlist(params: {
     trustedSafeBinDirs?: ReadonlySet<string>;
     skillBins?: readonly SkillBinTrustEntry[];
     autoAllowSkills?: boolean;
-}): ExecAllowlistEvaluation;
+};
+export declare function evaluateExecAllowlist(params: {
+    analysis: ExecCommandAnalysis;
+} & ExecAllowlistContext): ExecAllowlistEvaluation;
 export type ExecAllowlistAnalysis = {
     analysisOk: boolean;
     allowlistSatisfied: boolean;
@@ -57,13 +59,6 @@ export declare function resolveAllowAlwaysPatterns(params: {
  */
 export declare function evaluateShellAllowlist(params: {
     command: string;
-    allowlist: ExecAllowlistEntry[];
-    safeBins: Set<string>;
-    safeBinProfiles?: Readonly<Record<string, SafeBinProfile>>;
-    cwd?: string;
     env?: NodeJS.ProcessEnv;
-    trustedSafeBinDirs?: ReadonlySet<string>;
-    skillBins?: readonly SkillBinTrustEntry[];
-    autoAllowSkills?: boolean;
-    platform?: string | null;
-}): ExecAllowlistAnalysis;
+} & ExecAllowlistContext): ExecAllowlistAnalysis;
+export {};

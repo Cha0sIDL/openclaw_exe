@@ -1,3 +1,4 @@
+import { type ParsedChatTarget } from "./target-parsing-helpers.js";
 export type IMessageService = "imessage" | "sms" | "auto";
 export type IMessageTarget = {
     kind: "chat_id";
@@ -13,16 +14,7 @@ export type IMessageTarget = {
     to: string;
     service: IMessageService;
 };
-export type IMessageAllowTarget = {
-    kind: "chat_id";
-    chatId: number;
-} | {
-    kind: "chat_guid";
-    chatGuid: string;
-} | {
-    kind: "chat_identifier";
-    chatIdentifier: string;
-} | {
+export type IMessageAllowTarget = ParsedChatTarget | {
     kind: "handle";
     handle: string;
 };

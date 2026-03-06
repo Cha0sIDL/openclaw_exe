@@ -1,6 +1,7 @@
 import type { Client } from "@buape/carbon";
 import type { RuntimeEnv } from "../../runtime.js";
 import type { DiscordVoiceManager } from "../voice/manager.js";
+import type { DiscordMonitorStatusSink } from "./status.js";
 type ExecApprovalsHandler = {
     start: () => Promise<void>;
     stop: () => Promise<void>;
@@ -21,5 +22,6 @@ export declare function runDiscordGatewayLifecycle(params: {
     };
     pendingGatewayErrors?: unknown[];
     releaseEarlyGatewayErrorGuard?: () => void;
+    statusSink?: DiscordMonitorStatusSink;
 }): Promise<void>;
 export {};

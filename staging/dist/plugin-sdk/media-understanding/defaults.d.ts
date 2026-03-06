@@ -12,3 +12,9 @@ export declare const AUTO_VIDEO_KEY_PROVIDERS: readonly ["google", "moonshot"];
 export declare const DEFAULT_IMAGE_MODELS: Record<string, string>;
 export declare const CLI_OUTPUT_MAX_BUFFER: number;
 export declare const DEFAULT_MEDIA_CONCURRENCY = 2;
+/**
+ * Minimum audio file size in bytes below which transcription is skipped.
+ * Files smaller than this threshold are almost certainly empty or corrupt
+ * and would cause unhelpful API errors from Whisper/transcription providers.
+ */
+export declare const MIN_AUDIO_FILE_BYTES = 1024;

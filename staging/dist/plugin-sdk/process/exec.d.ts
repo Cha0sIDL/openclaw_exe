@@ -28,4 +28,9 @@ export type CommandOptions = {
     windowsVerbatimArguments?: boolean;
     noOutputTimeoutMs?: number;
 };
+export declare function resolveCommandEnv(params: {
+    argv: string[];
+    env?: NodeJS.ProcessEnv;
+    baseEnv?: NodeJS.ProcessEnv;
+}): NodeJS.ProcessEnv;
 export declare function runCommandWithTimeout(argv: string[], optionsOrTimeout: number | CommandOptions): Promise<SpawnResult>;

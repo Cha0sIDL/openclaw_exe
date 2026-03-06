@@ -1,5 +1,9 @@
 export declare const ACP_SPAWN_MODES: readonly ["run", "session"];
 export type SpawnAcpMode = (typeof ACP_SPAWN_MODES)[number];
+export declare const ACP_SPAWN_SANDBOX_MODES: readonly ["inherit", "require"];
+export type SpawnAcpSandboxMode = (typeof ACP_SPAWN_SANDBOX_MODES)[number];
+export declare const ACP_SPAWN_STREAM_TARGETS: readonly ["parent"];
+export type SpawnAcpStreamTarget = (typeof ACP_SPAWN_STREAM_TARGETS)[number];
 export type SpawnAcpParams = {
     task: string;
     label?: string;
@@ -7,6 +11,8 @@ export type SpawnAcpParams = {
     cwd?: string;
     mode?: SpawnAcpMode;
     thread?: boolean;
+    sandbox?: SpawnAcpSandboxMode;
+    streamTo?: SpawnAcpStreamTarget;
 };
 export type SpawnAcpContext = {
     agentSessionKey?: string;
@@ -14,12 +20,14 @@ export type SpawnAcpContext = {
     agentAccountId?: string;
     agentTo?: string;
     agentThreadId?: string | number;
+    sandboxed?: boolean;
 };
 export type SpawnAcpResult = {
     status: "accepted" | "forbidden" | "error";
     childSessionKey?: string;
     runId?: string;
     mode?: SpawnAcpMode;
+    streamLogPath?: string;
     note?: string;
     error?: string;
 };

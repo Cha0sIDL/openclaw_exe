@@ -6,14 +6,22 @@ import { buildModelAliasLines } from "../model-alias-lines.js";
 type InlineModelEntry = ModelDefinitionConfig & {
     provider: string;
     baseUrl?: string;
+    headers?: Record<string, string>;
 };
 type InlineProviderConfig = {
     baseUrl?: string;
     api?: ModelDefinitionConfig["api"];
     models?: ModelDefinitionConfig[];
+    headers?: Record<string, string>;
 };
 export { buildModelAliasLines };
 export declare function buildInlineProviderModels(providers: Record<string, InlineProviderConfig>): InlineModelEntry[];
+export declare function resolveModelWithRegistry(params: {
+    provider: string;
+    modelId: string;
+    modelRegistry: ModelRegistry;
+    cfg?: OpenClawConfig;
+}): Model<Api> | undefined;
 export declare function resolveModel(provider: string, modelId: string, agentDir?: string, cfg?: OpenClawConfig): {
     model?: Model<Api>;
     error?: string;

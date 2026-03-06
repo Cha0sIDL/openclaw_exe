@@ -39,4 +39,5 @@ export declare function buildAgentSessionKey(params: {
     dmScope?: "main" | "per-peer" | "per-channel-peer" | "per-account-channel-peer";
     identityLinks?: Record<string, string[]>;
 }): string;
+export declare function pickFirstExistingAgentId(cfg: OpenClawConfig, agentId: string): string;
 export declare function resolveAgentRoute(input: ResolveAgentRouteInput): ResolvedAgentRoute;

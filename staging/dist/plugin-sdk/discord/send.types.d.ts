@@ -1,4 +1,5 @@
 import type { RequestClient } from "@buape/carbon";
+import type { OpenClawConfig } from "../config/config.js";
 import type { RetryConfig } from "../infra/retry.js";
 export declare class DiscordSendError extends Error {
     kind?: "missing-permissions" | "dm-blocked";
@@ -14,6 +15,7 @@ export type DiscordSendResult = {
     channelId: string;
 };
 export type DiscordReactOpts = {
+    cfg?: OpenClawConfig;
     token?: string;
     accountId?: string;
     rest?: RequestClient;
@@ -58,6 +60,8 @@ export type DiscordThreadCreate = {
     content?: string;
     /** Discord thread type (default: PublicThread for standalone threads). */
     type?: number;
+    /** Tag IDs to apply when creating a forum/media thread (Discord `applied_tags`). */
+    appliedTags?: string[];
 };
 export type DiscordThreadList = {
     guildId: string;

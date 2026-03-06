@@ -1,6 +1,6 @@
 import type { Chat, Message } from "@grammyjs/types";
 import { type NormalizedLocation } from "../../channels/location.js";
-import type { TelegramGroupConfig, TelegramTopicConfig } from "../../config/types.js";
+import type { TelegramDirectConfig, TelegramGroupConfig, TelegramTopicConfig } from "../../config/types.js";
 import { type NormalizedAllowFrom } from "../bot-access.js";
 import type { TelegramStreamMode } from "./types.js";
 export type TelegramThreadSpec = {
@@ -10,17 +10,19 @@ export type TelegramThreadSpec = {
 export declare function resolveTelegramGroupAllowFromContext(params: {
     chatId: string | number;
     accountId?: string;
+    isGroup?: boolean;
     isForum?: boolean;
     messageThreadId?: number | null;
     groupAllowFrom?: Array<string | number>;
     resolveTelegramGroupConfig: (chatId: string | number, messageThreadId?: number) => {
-        groupConfig?: TelegramGroupConfig;
+        groupConfig?: TelegramGroupConfig | TelegramDirectConfig;
         topicConfig?: TelegramTopicConfig;
     };
 }): Promise<{
     resolvedThreadId?: number;
+    dmThreadId?: number;
     storeAllowFrom: string[];
-    groupConfig?: TelegramGroupConfig;
+    groupConfig?: TelegramGroupConfig | TelegramDirectConfig;
     topicConfig?: TelegramTopicConfig;
     groupAllowOverride?: Array<string | number>;
     effectiveGroupAllow: NormalizedAllowFrom;
@@ -70,6 +72,17 @@ export declare function resolveTelegramStreamMode(telegramCfg?: {
     streamMode?: unknown;
 }): TelegramStreamMode;
 export declare function buildTelegramGroupPeerId(chatId: number | string, messageThreadId?: number): string;
+/**
+ * Resolve the direct-message peer identifier for Telegram routing/session keys.
+ *
+ * In some Telegram DM deliveries (for example certain business/chat bridge flows),
+ * `chat.id` can differ from the actual sender user id. Prefer sender id when present
+ * so per-peer DM scopes isolate users correctly.
+ */
+export declare function resolveTelegramDirectPeerId(params: {
+    chatId: number | string;
+    senderId?: number | string | null;
+}): string;
 export declare function buildTelegramGroupFrom(chatId: number | string, messageThreadId?: number): string;
 /**
  * Build parentPeer for forum topic binding inheritance.

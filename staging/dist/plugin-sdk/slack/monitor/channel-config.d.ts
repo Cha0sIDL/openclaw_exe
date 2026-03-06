@@ -38,6 +38,7 @@ export declare function resolveSlackChannelConfig(params: {
     channelId: string;
     channelName?: string;
     channels?: SlackChannelConfigEntries;
+    channelKeys?: string[];
     defaultRequireMention?: boolean;
 }): SlackChannelConfigResolved | null;
 export type { SlackMessageEvent };

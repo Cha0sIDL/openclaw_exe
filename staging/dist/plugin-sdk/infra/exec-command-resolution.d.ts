@@ -3,6 +3,7 @@ export declare const DEFAULT_SAFE_BINS: string[];
 export type CommandResolution = {
     rawExecutable: string;
     resolvedPath?: string;
+    resolvedRealPath?: string;
     executableName: string;
     effectiveArgv?: string[];
     wrapperChain?: string[];

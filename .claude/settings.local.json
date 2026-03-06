@@ -26,7 +26,17 @@
       "Bash(/d/openclaw_exe/find_pnpm2.ps1:*)",
       "Bash(/d/openclaw_exe/find_pnpm3.ps1:*)",
       "Bash(/d/openclaw_exe/setup_pnpm.ps1:*)",
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(where.exe node:*)",
+      "Bash(/tmp/run_build.ps1:*)",
+      "Bash(/tmp/fix_staging.ps1:*)",
+      "Bash(/tmp/fix_staging2.ps1:*)",
+      "Bash(/tmp/test_gateway.ps1:*)",
+      "Bash(/tmp/check_staging.ps1:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(/tmp/check_reparse.ps1:*)",
+      "Bash(/tmp/check_dist.ps1:*)",
+      "Bash(/tmp/size_check.ps1:*)"
     ]
   }
 }

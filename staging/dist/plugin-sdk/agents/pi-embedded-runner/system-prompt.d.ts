@@ -49,6 +49,7 @@ export declare function buildEmbeddedSystemPrompt(params: {
     userTime?: string;
     userTimeFormat?: ResolvedTimeFormat;
     contextFiles?: EmbeddedContextFile[];
+    bootstrapTruncationWarningLines?: string[];
     memoryCitationsMode?: MemoryCitationsMode;
 }): string;
 export declare function createSystemPromptOverride(systemPrompt: string): (defaultPrompt?: string) => string;

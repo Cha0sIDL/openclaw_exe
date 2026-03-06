@@ -13,6 +13,7 @@ import type { OutboundChannel } from "./targets.js";
 export type { NormalizedOutboundPayload } from "./payloads.js";
 export { normalizeOutboundPayloads } from "./payloads.js";
 type SendMatrixMessage = (to: string, text: string, opts?: {
+    cfg?: OpenClawConfig;
     mediaUrl?: string;
     replyToId?: string;
     threadId?: string;
@@ -31,6 +32,7 @@ export type OutboundSendDeps = {
     sendMatrix?: SendMatrixMessage;
     sendMSTeams?: (to: string, text: string, opts?: {
         mediaUrl?: string;
+        mediaLocalRoots?: readonly string[];
     }) => Promise<{
         messageId: string;
         conversationId: string;
@@ -70,6 +72,10 @@ type DeliverOutboundPayloadsCoreParams = {
         agentId?: string;
         text?: string;
         mediaUrls?: string[];
+        /** Whether this message is being sent in a group/channel context */
+        isGroup?: boolean;
+        /** Group or channel identifier for correlation with received events */
+        groupId?: string;
     };
     silent?: boolean;
 };

@@ -1,10 +1,12 @@
 import { type SlackMonitorContext } from "./context.js";
-export declare function resolveSlackEffectiveAllowFrom(ctx: SlackMonitorContext, options?: {
-    includePairingStore?: boolean;
-}): Promise<{
+type ResolvedAllowFromLists = {
     allowFrom: string[];
     allowFromLower: string[];
-}>;
+};
+export declare function resolveSlackEffectiveAllowFrom(ctx: SlackMonitorContext, options?: {
+    includePairingStore?: boolean;
+}): Promise<ResolvedAllowFromLists>;
+export declare function clearSlackAllowFromCacheForTest(): void;
 export declare function isSlackSenderAllowListed(params: {
     allowListLower: string[];
     senderId: string;
@@ -24,3 +26,4 @@ export declare function authorizeSlackSystemEventSender(params: {
     channelType?: string | null;
     expectedSenderId?: string;
 }): Promise<SlackSystemEventAuthResult>;
+export {};

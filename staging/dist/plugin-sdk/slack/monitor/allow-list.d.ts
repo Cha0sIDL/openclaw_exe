@@ -1,7 +1,8 @@
-import type { AllowlistMatch } from "../../channels/allowlist-match.js";
+import { type AllowlistMatch } from "../../channels/allowlist-match.js";
 export declare function normalizeSlackSlug(raw?: string): string;
 export declare function normalizeAllowList(list?: Array<string | number>): string[];
 export declare function normalizeAllowListLower(list?: Array<string | number>): string[];
+export declare function normalizeSlackAllowOwnerEntry(entry: string): string | undefined;
 export type SlackAllowListMatch = AllowlistMatch<"wildcard" | "id" | "prefixed-id" | "prefixed-user" | "name" | "prefixed-name" | "slug">;
 export declare function resolveSlackAllowListMatch(params: {
     allowList: string[];

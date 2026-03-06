@@ -1,6 +1,7 @@
 import type { ChannelId, ChannelMessageActionName, ChannelThreadingToolContext } from "../../channels/plugins/types.js";
 import type { OpenClawConfig } from "../../config/config.js";
-export declare function readBooleanParam(params: Record<string, unknown>, key: string): boolean | undefined;
+import { readBooleanParam as readBooleanParamShared } from "../../plugin-sdk/boolean-param.js";
+export declare const readBooleanParam: typeof readBooleanParamShared;
 export declare function resolveSlackAutoThreadId(params: {
     to: string;
     toolContext?: ChannelThreadingToolContext;

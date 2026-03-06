@@ -1,0 +1,10 @@
+
+Checking prerequisites...
+Required command not found: node. Please install it and re-run.
+ËùÔÚÎ»ÖÃ D:\openclaw_exe\build.ps1:68 ×Ö·û: 9
++         throw "Required command not found: $cmd. Please install it an ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Required comman... it and re-run.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Required command not found: node. Please install it and re-run.
+ 
+Exit code: 1 

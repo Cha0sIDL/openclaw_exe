@@ -121,7 +121,9 @@ export declare const MessagesSchema: z.ZodOptional<z.ZodObject<{
     ackReaction: z.ZodOptional<z.ZodString>;
     ackReactionScope: z.ZodOptional<z.ZodEnum<{
         direct: "direct";
+        off: "off";
         all: "all";
+        none: "none";
         "group-mentions": "group-mentions";
         "group-all": "group-all";
     }>>;
@@ -176,7 +178,19 @@ export declare const MessagesSchema: z.ZodOptional<z.ZodObject<{
             allowSeed: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
         elevenlabs: z.ZodOptional<z.ZodObject<{
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             baseUrl: z.ZodOptional<z.ZodString>;
             voiceId: z.ZodOptional<z.ZodString>;
             modelId: z.ZodOptional<z.ZodString>;
@@ -196,7 +210,20 @@ export declare const MessagesSchema: z.ZodOptional<z.ZodObject<{
             }, z.core.$strict>>;
         }, z.core.$strict>>;
         openai: z.ZodOptional<z.ZodObject<{
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
+            baseUrl: z.ZodOptional<z.ZodString>;
             model: z.ZodOptional<z.ZodString>;
             voice: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>;

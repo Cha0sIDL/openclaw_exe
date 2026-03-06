@@ -10,6 +10,7 @@ export declare function mergeAllowlist(params: {
 }): string[];
 export declare function buildAllowlistResolutionSummary<T extends AllowlistUserResolutionLike>(resolvedUsers: T[], opts?: {
     formatResolved?: (entry: T) => string;
+    formatUnresolved?: (entry: T) => string;
 }): {
     resolvedMap: Map<string, T>;
     mapping: string[];

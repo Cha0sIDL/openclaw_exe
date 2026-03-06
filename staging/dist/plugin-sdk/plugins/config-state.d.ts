@@ -10,6 +10,9 @@ export type NormalizedPluginsConfig = {
     };
     entries: Record<string, {
         enabled?: boolean;
+        hooks?: {
+            allowPromptInjection?: boolean;
+        };
         config?: unknown;
     }>;
 };

@@ -1,3 +1,16 @@
+export declare const AgentInternalEventSchema: import("@sinclair/typebox").TObject<{
+    type: import("@sinclair/typebox").TLiteral<"task_completion">;
+    source: import("@sinclair/typebox").TString;
+    childSessionKey: import("@sinclair/typebox").TString;
+    childSessionId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    announceType: import("@sinclair/typebox").TString;
+    taskLabel: import("@sinclair/typebox").TString;
+    status: import("@sinclair/typebox").TString;
+    statusLabel: import("@sinclair/typebox").TString;
+    result: import("@sinclair/typebox").TString;
+    statsLine: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    replyInstruction: import("@sinclair/typebox").TString;
+}>;
 export declare const AgentEventSchema: import("@sinclair/typebox").TObject<{
     runId: import("@sinclair/typebox").TString;
     seq: import("@sinclair/typebox").TInteger;
@@ -61,6 +74,19 @@ export declare const AgentParamsSchema: import("@sinclair/typebox").TObject<{
     bestEffortDeliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     lane: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     extraSystemPrompt: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    internalEvents: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+        type: import("@sinclair/typebox").TLiteral<"task_completion">;
+        source: import("@sinclair/typebox").TString;
+        childSessionKey: import("@sinclair/typebox").TString;
+        childSessionId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        announceType: import("@sinclair/typebox").TString;
+        taskLabel: import("@sinclair/typebox").TString;
+        status: import("@sinclair/typebox").TString;
+        statusLabel: import("@sinclair/typebox").TString;
+        result: import("@sinclair/typebox").TString;
+        statsLine: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        replyInstruction: import("@sinclair/typebox").TString;
+    }>>>;
     inputProvenance: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
         kind: import("@sinclair/typebox").TString;
         sourceSessionKey: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;

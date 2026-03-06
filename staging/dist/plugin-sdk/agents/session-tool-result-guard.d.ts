@@ -33,5 +33,6 @@ export declare function installSessionToolResultGuard(sessionManager: SessionMan
     beforeMessageWriteHook?: (event: PluginHookBeforeMessageWriteEvent) => PluginHookBeforeMessageWriteResult | undefined;
 }): {
     flushPendingToolResults: () => void;
+    clearPendingToolResults: () => void;
     getPendingIds: () => string[];
 };

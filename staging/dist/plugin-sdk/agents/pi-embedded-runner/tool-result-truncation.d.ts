@@ -11,7 +11,12 @@ type ToolResultTruncationOptions = {
     minKeepChars?: number;
 };
 /**
- * Truncate a single text string to fit within maxChars, preserving the beginning.
+ * Truncate a single text string to fit within maxChars.
+ *
+ * Uses a head+tail strategy when the tail contains important content
+ * (errors, results, JSON structure), otherwise preserves the beginning.
+ * This ensures error messages and summaries at the end of tool output
+ * aren't lost during truncation.
  */
 export declare function truncateToolResultText(text: string, maxChars: number, options?: ToolResultTruncationOptions): string;
 /**

@@ -13,6 +13,10 @@ export type BlockStreamingChunking = {
     breakPreference: "paragraph" | "newline" | "sentence";
     flushOnParagraph?: boolean;
 };
+export declare function clampPositiveInteger(value: unknown, fallback: number, bounds: {
+    min: number;
+    max: number;
+}): number;
 export declare function resolveEffectiveBlockStreamingConfig(params: {
     cfg: OpenClawConfig | undefined;
     provider?: string;

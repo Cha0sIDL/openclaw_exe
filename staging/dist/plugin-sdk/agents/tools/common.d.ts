@@ -32,6 +32,7 @@ export declare function readNumberParam(params: Record<string, unknown>, key: st
     required?: boolean;
     label?: string;
     integer?: boolean;
+    strict?: boolean;
 }): number | undefined;
 export declare function readStringArrayParam(params: Record<string, unknown>, key: string, options: StringParamOptions & {
     required: true;

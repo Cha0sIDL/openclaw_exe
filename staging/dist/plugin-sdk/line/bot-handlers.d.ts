@@ -9,5 +9,12 @@ export interface LineHandlerContext {
     runtime: RuntimeEnv;
     mediaMaxBytes: number;
     processMessage: (ctx: LineInboundContext) => Promise<void>;
+    replayCache?: LineWebhookReplayCache;
 }
+export type LineWebhookReplayCache = {
+    seenEvents: Map<string, number>;
+    inFlightEvents: Map<string, Promise<void>>;
+    lastPruneAtMs: number;
+};
+export declare function createLineWebhookReplayCache(): LineWebhookReplayCache;
 export declare function handleLineWebhookEvents(events: WebhookEvent[], context: LineHandlerContext): Promise<void>;

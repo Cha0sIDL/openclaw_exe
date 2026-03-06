@@ -11,3 +11,4 @@ export declare function selectDefaultNodeFromList(nodes: NodeListNode[], options
 export declare function listNodes(opts: GatewayCallOptions): Promise<NodeListNode[]>;
 export declare function resolveNodeIdFromList(nodes: NodeListNode[], query?: string, allowDefault?: boolean): string;
 export declare function resolveNodeId(opts: GatewayCallOptions, query?: string, allowDefault?: boolean): Promise<string>;
+export declare function resolveNode(opts: GatewayCallOptions, query?: string, allowDefault?: boolean): Promise<NodeListNode>;

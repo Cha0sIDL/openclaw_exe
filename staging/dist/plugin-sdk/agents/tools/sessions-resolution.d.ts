@@ -49,6 +49,16 @@ export type SessionReferenceResolution = {
     status: "error" | "forbidden";
     error: string;
 };
+export type VisibleSessionReferenceResolution = {
+    ok: true;
+    key: string;
+    displayKey: string;
+} | {
+    ok: false;
+    status: "forbidden";
+    error: string;
+    displayKey: string;
+};
 export declare function resolveSessionReference(params: {
     sessionKey: string;
     alias: string;
@@ -56,4 +66,12 @@ export declare function resolveSessionReference(params: {
     requesterInternalKey?: string;
     restrictToSpawned: boolean;
 }): Promise<SessionReferenceResolution>;
+export declare function resolveVisibleSessionReference(params: {
+    resolvedSession: Extract<SessionReferenceResolution, {
+        ok: true;
+    }>;
+    requesterSessionKey: string;
+    restrictToSpawned: boolean;
+    visibilitySessionKey: string;
+}): Promise<VisibleSessionReferenceResolution>;
 export declare function normalizeOptionalKey(value?: string): string | undefined;

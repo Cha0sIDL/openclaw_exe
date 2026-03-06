@@ -1,5 +1,5 @@
 import type { OpenClawConfig } from "../config/config.js";
-import { type AuthProfileStore } from "./auth-profiles.js";
+import { type AuthCredentialReasonCode, type AuthProfileStore } from "./auth-profiles.js";
 export type AuthProfileSource = "store";
 export type AuthProfileHealthStatus = "ok" | "expiring" | "expired" | "missing" | "static";
 export type AuthProfileHealth = {
@@ -7,6 +7,7 @@ export type AuthProfileHealth = {
     provider: string;
     type: "oauth" | "token" | "api_key";
     status: AuthProfileHealthStatus;
+    reasonCode?: AuthCredentialReasonCode;
     expiresAt?: number;
     remainingMs?: number;
     source: AuthProfileSource;

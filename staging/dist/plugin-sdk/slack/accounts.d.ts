@@ -7,8 +7,10 @@ export type ResolvedSlackAccount = {
     name?: string;
     botToken?: string;
     appToken?: string;
+    userToken?: string;
     botTokenSource: SlackTokenSource;
     appTokenSource: SlackTokenSource;
+    userTokenSource: SlackTokenSource;
     config: SlackAccountConfig;
     groupPolicy?: SlackAccountConfig["groupPolicy"];
     textChunkLimit?: SlackAccountConfig["textChunkLimit"];

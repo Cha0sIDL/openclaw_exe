@@ -19,9 +19,11 @@ export declare const CronPayloadSchema: import("@sinclair/typebox").TUnion<[impo
     kind: import("@sinclair/typebox").TLiteral<"agentTurn">;
     message: TSchema;
     model: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    fallbacks: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
     thinking: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     timeoutSeconds: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     allowUnsafeExternalContent: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    lightContext: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     deliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -34,31 +36,65 @@ export declare const CronPayloadPatchSchema: import("@sinclair/typebox").TUnion<
     kind: import("@sinclair/typebox").TLiteral<"agentTurn">;
     message: TSchema;
     model: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    fallbacks: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
     thinking: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     timeoutSeconds: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     allowUnsafeExternalContent: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    lightContext: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     deliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     bestEffortDeliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
 }>]>;
+export declare const CronFailureAlertSchema: import("@sinclair/typebox").TObject<{
+    after: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+    to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    cooldownMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+    accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+}>;
+export declare const CronFailureDestinationSchema: import("@sinclair/typebox").TObject<{
+    channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+    to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+}>;
 export declare const CronDeliverySchema: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TObject<{
     to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
     accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+    }>>;
     mode: import("@sinclair/typebox").TLiteral<"none">;
 }>, import("@sinclair/typebox").TObject<{
     to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
     accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+    }>>;
     mode: import("@sinclair/typebox").TLiteral<"announce">;
 }>, import("@sinclair/typebox").TObject<{
     to: import("@sinclair/typebox").TString;
     channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
     accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+    }>>;
     mode: import("@sinclair/typebox").TLiteral<"webhook">;
 }>]>;
 export declare const CronDeliveryPatchSchema: import("@sinclair/typebox").TObject<{
@@ -66,6 +102,12 @@ export declare const CronDeliveryPatchSchema: import("@sinclair/typebox").TObjec
     channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
     accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+    failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+    }>>;
     mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"none">, import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
 }>;
 export declare const CronJobStateSchema: import("@sinclair/typebox").TObject<{
@@ -80,6 +122,7 @@ export declare const CronJobStateSchema: import("@sinclair/typebox").TObject<{
     lastDelivered: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     lastDeliveryStatus: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"delivered">, import("@sinclair/typebox").TLiteral<"not-delivered">, import("@sinclair/typebox").TLiteral<"unknown">, import("@sinclair/typebox").TLiteral<"not-requested">]>>;
     lastDeliveryError: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    lastFailureAlertAtMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
 }>;
 export declare const CronJobSchema: import("@sinclair/typebox").TObject<{
     id: import("@sinclair/typebox").TString;
@@ -113,9 +156,11 @@ export declare const CronJobSchema: import("@sinclair/typebox").TObject<{
         kind: import("@sinclair/typebox").TLiteral<"agentTurn">;
         message: TSchema;
         model: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        fallbacks: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
         thinking: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         timeoutSeconds: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         allowUnsafeExternalContent: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        lightContext: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         deliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -126,19 +171,45 @@ export declare const CronJobSchema: import("@sinclair/typebox").TObject<{
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TLiteral<"none">;
     }>, import("@sinclair/typebox").TObject<{
         to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TLiteral<"announce">;
     }>, import("@sinclair/typebox").TObject<{
         to: import("@sinclair/typebox").TString;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TLiteral<"webhook">;
+    }>]>>;
+    failureAlert: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<false>, import("@sinclair/typebox").TObject<{
+        after: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        cooldownMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     }>]>>;
     state: import("@sinclair/typebox").TObject<{
         nextRunAtMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
@@ -152,6 +223,7 @@ export declare const CronJobSchema: import("@sinclair/typebox").TObject<{
         lastDelivered: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         lastDeliveryStatus: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"delivered">, import("@sinclair/typebox").TLiteral<"not-delivered">, import("@sinclair/typebox").TLiteral<"unknown">, import("@sinclair/typebox").TLiteral<"not-requested">]>>;
         lastDeliveryError: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        lastFailureAlertAtMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     }>;
 }>;
 export declare const CronListParamsSchema: import("@sinclair/typebox").TObject<{
@@ -187,9 +259,11 @@ export declare const CronAddParamsSchema: import("@sinclair/typebox").TObject<{
         kind: import("@sinclair/typebox").TLiteral<"agentTurn">;
         message: TSchema;
         model: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        fallbacks: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
         thinking: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         timeoutSeconds: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         allowUnsafeExternalContent: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        lightContext: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         deliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -200,19 +274,45 @@ export declare const CronAddParamsSchema: import("@sinclair/typebox").TObject<{
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TLiteral<"none">;
     }>, import("@sinclair/typebox").TObject<{
         to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TLiteral<"announce">;
     }>, import("@sinclair/typebox").TObject<{
         to: import("@sinclair/typebox").TString;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TLiteral<"webhook">;
+    }>]>>;
+    failureAlert: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<false>, import("@sinclair/typebox").TObject<{
+        after: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        cooldownMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     }>]>>;
     agentId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;
     sessionKey: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;
@@ -244,9 +344,11 @@ export declare const CronJobPatchSchema: import("@sinclair/typebox").TObject<{
         kind: import("@sinclair/typebox").TLiteral<"agentTurn">;
         message: TSchema;
         model: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        fallbacks: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
         thinking: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         timeoutSeconds: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         allowUnsafeExternalContent: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        lightContext: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         deliver: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -257,8 +359,22 @@ export declare const CronJobPatchSchema: import("@sinclair/typebox").TObject<{
         channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
         accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         bestEffort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
+        failureDestination: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
+            channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+            to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+            mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        }>>;
         mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"none">, import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
     }>>;
+    failureAlert: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<false>, import("@sinclair/typebox").TObject<{
+        after: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        channel: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"last">, import("@sinclair/typebox").TString]>>;
+        to: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        cooldownMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+        mode: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"announce">, import("@sinclair/typebox").TLiteral<"webhook">]>>;
+        accountId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    }>]>>;
     state: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
         nextRunAtMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         runningAtMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
@@ -271,6 +387,7 @@ export declare const CronJobPatchSchema: import("@sinclair/typebox").TObject<{
         lastDelivered: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
         lastDeliveryStatus: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"delivered">, import("@sinclair/typebox").TLiteral<"not-delivered">, import("@sinclair/typebox").TLiteral<"unknown">, import("@sinclair/typebox").TLiteral<"not-requested">]>>;
         lastDeliveryError: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+        lastFailureAlertAtMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     }>>;
     agentId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;
     sessionKey: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>>;

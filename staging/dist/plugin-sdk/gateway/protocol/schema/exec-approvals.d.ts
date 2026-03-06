@@ -148,8 +148,7 @@ export declare const ExecApprovalRequestParamsSchema: import("@sinclair/typebox"
     id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     command: import("@sinclair/typebox").TString;
     commandArgv: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
-    systemRunPlanV2: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
-        version: import("@sinclair/typebox").TLiteral<2>;
+    systemRunPlan: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
         argv: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>;
         cwd: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         rawCommand: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;

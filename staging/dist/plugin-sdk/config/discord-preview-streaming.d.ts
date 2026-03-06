@@ -23,3 +23,5 @@ export declare function resolveSlackNativeStreaming(params?: {
     nativeStreaming?: unknown;
     streaming?: unknown;
 }): boolean;
+export declare function formatSlackStreamModeMigrationMessage(pathPrefix: string, resolvedStreaming: string): string;
+export declare function formatSlackStreamingBooleanMigrationMessage(pathPrefix: string, resolvedNativeStreaming: boolean): string;

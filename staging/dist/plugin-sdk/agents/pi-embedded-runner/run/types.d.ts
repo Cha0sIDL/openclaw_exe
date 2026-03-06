@@ -24,6 +24,8 @@ export type EmbeddedRunAttemptResult = {
     timedOutDuringCompaction: boolean;
     promptError: unknown;
     sessionIdUsed: string;
+    bootstrapPromptWarningSignaturesSeen?: string[];
+    bootstrapPromptWarningSignature?: string;
     systemPromptReport?: SessionSystemPromptReport;
     messagesSnapshot: AgentMessage[];
     assistantTexts: string[];

@@ -40,6 +40,7 @@ export declare function formatInboundEnvelope(params: {
     sender?: SenderLabelParams;
     previousTimestamp?: number | Date;
     envelope?: EnvelopeFormatOptions;
+    fromMe?: boolean;
 }): string;
 export declare function formatInboundFromLabel(params: {
     isGroup: boolean;

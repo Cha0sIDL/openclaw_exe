@@ -17,6 +17,7 @@ export declare const HeartbeatSchema: z.ZodOptional<z.ZodObject<{
     prompt: z.ZodOptional<z.ZodString>;
     ackMaxChars: z.ZodOptional<z.ZodNumber>;
     suppressToolErrorWarnings: z.ZodOptional<z.ZodBoolean>;
+    lightContext: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>>;
 export declare const SandboxDockerSchema: z.ZodOptional<z.ZodObject<{
     image: z.ZodOptional<z.ZodString>;
@@ -28,7 +29,7 @@ export declare const SandboxDockerSchema: z.ZodOptional<z.ZodObject<{
     user: z.ZodOptional<z.ZodString>;
     capDrop: z.ZodOptional<z.ZodArray<z.ZodString>>;
     env: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
-    setupCommand: z.ZodOptional<z.ZodString>;
+    setupCommand: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string, string | string[]>>>;
     pidsLimit: z.ZodOptional<z.ZodNumber>;
     memory: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
     memorySwap: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
@@ -74,26 +75,86 @@ export declare const ToolPolicySchema: z.ZodOptional<z.ZodObject<{
 export declare const ToolsWebSearchSchema: z.ZodOptional<z.ZodObject<{
     enabled: z.ZodOptional<z.ZodBoolean>;
     provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"brave">, z.ZodLiteral<"perplexity">, z.ZodLiteral<"grok">, z.ZodLiteral<"gemini">, z.ZodLiteral<"kimi">]>>;
-    apiKey: z.ZodOptional<z.ZodString>;
+    apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+        source: z.ZodLiteral<"env">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"file">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>, z.ZodObject<{
+        source: z.ZodLiteral<"exec">;
+        provider: z.ZodString;
+        id: z.ZodString;
+    }, z.core.$strict>], "source">]>>;
     maxResults: z.ZodOptional<z.ZodNumber>;
     timeoutSeconds: z.ZodOptional<z.ZodNumber>;
     cacheTtlMinutes: z.ZodOptional<z.ZodNumber>;
     perplexity: z.ZodOptional<z.ZodObject<{
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         baseUrl: z.ZodOptional<z.ZodString>;
         model: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>;
     grok: z.ZodOptional<z.ZodObject<{
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         model: z.ZodOptional<z.ZodString>;
         inlineCitations: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
     gemini: z.ZodOptional<z.ZodObject<{
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         model: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>;
     kimi: z.ZodOptional<z.ZodObject<{
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         baseUrl: z.ZodOptional<z.ZodString>;
         model: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>;
@@ -111,26 +172,86 @@ export declare const ToolsWebSchema: z.ZodOptional<z.ZodObject<{
     search: z.ZodOptional<z.ZodObject<{
         enabled: z.ZodOptional<z.ZodBoolean>;
         provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"brave">, z.ZodLiteral<"perplexity">, z.ZodLiteral<"grok">, z.ZodLiteral<"gemini">, z.ZodLiteral<"kimi">]>>;
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         maxResults: z.ZodOptional<z.ZodNumber>;
         timeoutSeconds: z.ZodOptional<z.ZodNumber>;
         cacheTtlMinutes: z.ZodOptional<z.ZodNumber>;
         perplexity: z.ZodOptional<z.ZodObject<{
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             baseUrl: z.ZodOptional<z.ZodString>;
             model: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>;
         grok: z.ZodOptional<z.ZodObject<{
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             model: z.ZodOptional<z.ZodString>;
             inlineCitations: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
         gemini: z.ZodOptional<z.ZodObject<{
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             model: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>;
         kimi: z.ZodOptional<z.ZodObject<{
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             baseUrl: z.ZodOptional<z.ZodString>;
             model: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>;
@@ -170,7 +291,7 @@ export declare const AgentSandboxSchema: z.ZodOptional<z.ZodObject<{
         user: z.ZodOptional<z.ZodString>;
         capDrop: z.ZodOptional<z.ZodArray<z.ZodString>>;
         env: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
-        setupCommand: z.ZodOptional<z.ZodString>;
+        setupCommand: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string, string | string[]>>>;
         pidsLimit: z.ZodOptional<z.ZodNumber>;
         memory: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
         memorySwap: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
@@ -222,9 +343,9 @@ export declare const AgentToolsSchema: z.ZodOptional<z.ZodObject<{
             node: "node";
         }>>;
         security: z.ZodOptional<z.ZodEnum<{
+            full: "full";
             allowlist: "allowlist";
             deny: "deny";
-            full: "full";
         }>>;
         ask: z.ZodOptional<z.ZodEnum<{
             off: "off";
@@ -292,10 +413,22 @@ export declare const MemorySearchSchema: z.ZodOptional<z.ZodObject<{
     experimental: z.ZodOptional<z.ZodObject<{
         sessionMemory: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
-    provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"local">, z.ZodLiteral<"gemini">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">]>>;
+    provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"local">, z.ZodLiteral<"gemini">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">, z.ZodLiteral<"ollama">]>>;
     remote: z.ZodOptional<z.ZodObject<{
         baseUrl: z.ZodOptional<z.ZodString>;
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         headers: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
         batch: z.ZodOptional<z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
@@ -305,7 +438,7 @@ export declare const MemorySearchSchema: z.ZodOptional<z.ZodObject<{
             timeoutMinutes: z.ZodOptional<z.ZodNumber>;
         }, z.core.$strict>>;
     }, z.core.$strict>>;
-    fallback: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"gemini">, z.ZodLiteral<"local">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">, z.ZodLiteral<"none">]>>;
+    fallback: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"gemini">, z.ZodLiteral<"local">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">, z.ZodLiteral<"ollama">, z.ZodLiteral<"none">]>>;
     model: z.ZodOptional<z.ZodString>;
     local: z.ZodOptional<z.ZodObject<{
         modelPath: z.ZodOptional<z.ZodString>;
@@ -376,10 +509,22 @@ export declare const AgentEntrySchema: z.ZodObject<{
         experimental: z.ZodOptional<z.ZodObject<{
             sessionMemory: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
-        provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"local">, z.ZodLiteral<"gemini">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">]>>;
+        provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"local">, z.ZodLiteral<"gemini">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">, z.ZodLiteral<"ollama">]>>;
         remote: z.ZodOptional<z.ZodObject<{
             baseUrl: z.ZodOptional<z.ZodString>;
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             headers: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
             batch: z.ZodOptional<z.ZodObject<{
                 enabled: z.ZodOptional<z.ZodBoolean>;
@@ -389,7 +534,7 @@ export declare const AgentEntrySchema: z.ZodObject<{
                 timeoutMinutes: z.ZodOptional<z.ZodNumber>;
             }, z.core.$strict>>;
         }, z.core.$strict>>;
-        fallback: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"gemini">, z.ZodLiteral<"local">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">, z.ZodLiteral<"none">]>>;
+        fallback: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"gemini">, z.ZodLiteral<"local">, z.ZodLiteral<"voyage">, z.ZodLiteral<"mistral">, z.ZodLiteral<"ollama">, z.ZodLiteral<"none">]>>;
         model: z.ZodOptional<z.ZodString>;
         local: z.ZodOptional<z.ZodObject<{
             modelPath: z.ZodOptional<z.ZodString>;
@@ -463,6 +608,7 @@ export declare const AgentEntrySchema: z.ZodObject<{
         prompt: z.ZodOptional<z.ZodString>;
         ackMaxChars: z.ZodOptional<z.ZodNumber>;
         suppressToolErrorWarnings: z.ZodOptional<z.ZodBoolean>;
+        lightContext: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
     identity: z.ZodOptional<z.ZodObject<{
         name: z.ZodOptional<z.ZodString>;
@@ -499,7 +645,7 @@ export declare const AgentEntrySchema: z.ZodObject<{
             user: z.ZodOptional<z.ZodString>;
             capDrop: z.ZodOptional<z.ZodArray<z.ZodString>>;
             env: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
-            setupCommand: z.ZodOptional<z.ZodString>;
+            setupCommand: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string, string | string[]>>>;
             pidsLimit: z.ZodOptional<z.ZodNumber>;
             memory: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
             memorySwap: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
@@ -551,9 +697,9 @@ export declare const AgentEntrySchema: z.ZodObject<{
                 node: "node";
             }>>;
             security: z.ZodOptional<z.ZodEnum<{
+                full: "full";
                 allowlist: "allowlist";
                 deny: "deny";
-                full: "full";
             }>>;
             ask: z.ZodOptional<z.ZodEnum<{
                 off: "off";
@@ -614,32 +760,106 @@ export declare const AgentEntrySchema: z.ZodObject<{
             profile: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"minimal">, z.ZodLiteral<"coding">, z.ZodLiteral<"messaging">, z.ZodLiteral<"full">]>>;
         }, z.core.$strict>>>;
     }, z.core.$strict>>;
+    runtime: z.ZodOptional<z.ZodUnion<readonly [z.ZodObject<{
+        type: z.ZodLiteral<"embedded">;
+    }, z.core.$strict>, z.ZodObject<{
+        type: z.ZodLiteral<"acp">;
+        acp: z.ZodOptional<z.ZodObject<{
+            agent: z.ZodOptional<z.ZodString>;
+            backend: z.ZodOptional<z.ZodString>;
+            mode: z.ZodOptional<z.ZodEnum<{
+                persistent: "persistent";
+                oneshot: "oneshot";
+            }>>;
+            cwd: z.ZodOptional<z.ZodString>;
+        }, z.core.$strict>>;
+    }, z.core.$strict>]>>;
 }, z.core.$strict>;
 export declare const ToolsSchema: z.ZodOptional<z.ZodObject<{
     web: z.ZodOptional<z.ZodObject<{
         search: z.ZodOptional<z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;
             provider: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"brave">, z.ZodLiteral<"perplexity">, z.ZodLiteral<"grok">, z.ZodLiteral<"gemini">, z.ZodLiteral<"kimi">]>>;
-            apiKey: z.ZodOptional<z.ZodString>;
+            apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                source: z.ZodLiteral<"env">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"file">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>, z.ZodObject<{
+                source: z.ZodLiteral<"exec">;
+                provider: z.ZodString;
+                id: z.ZodString;
+            }, z.core.$strict>], "source">]>>;
             maxResults: z.ZodOptional<z.ZodNumber>;
             timeoutSeconds: z.ZodOptional<z.ZodNumber>;
             cacheTtlMinutes: z.ZodOptional<z.ZodNumber>;
             perplexity: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
                 baseUrl: z.ZodOptional<z.ZodString>;
                 model: z.ZodOptional<z.ZodString>;
             }, z.core.$strict>>;
             grok: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
                 model: z.ZodOptional<z.ZodString>;
                 inlineCitations: z.ZodOptional<z.ZodBoolean>;
             }, z.core.$strict>>;
             gemini: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
                 model: z.ZodOptional<z.ZodString>;
             }, z.core.$strict>>;
             kimi: z.ZodOptional<z.ZodObject<{
-                apiKey: z.ZodOptional<z.ZodString>;
+                apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+                    source: z.ZodLiteral<"env">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"file">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>, z.ZodObject<{
+                    source: z.ZodLiteral<"exec">;
+                    provider: z.ZodString;
+                    id: z.ZodString;
+                }, z.core.$strict>], "source">]>>;
                 baseUrl: z.ZodOptional<z.ZodString>;
                 model: z.ZodOptional<z.ZodString>;
             }, z.core.$strict>>;
@@ -708,6 +928,8 @@ export declare const ToolsSchema: z.ZodOptional<z.ZodObject<{
                 maxChars: z.ZodOptional<z.ZodNumber>;
                 maxBytes: z.ZodOptional<z.ZodNumber>;
             }, z.core.$strict>>>>;
+            echoTranscript: z.ZodOptional<z.ZodBoolean>;
+            echoFormat: z.ZodOptional<z.ZodString>;
             prompt: z.ZodOptional<z.ZodString>;
             timeoutSeconds: z.ZodOptional<z.ZodNumber>;
             language: z.ZodOptional<z.ZodString>;
@@ -764,6 +986,8 @@ export declare const ToolsSchema: z.ZodOptional<z.ZodObject<{
                 maxChars: z.ZodOptional<z.ZodNumber>;
                 maxBytes: z.ZodOptional<z.ZodNumber>;
             }, z.core.$strict>>>>;
+            echoTranscript: z.ZodOptional<z.ZodBoolean>;
+            echoFormat: z.ZodOptional<z.ZodString>;
             prompt: z.ZodOptional<z.ZodString>;
             timeoutSeconds: z.ZodOptional<z.ZodNumber>;
             language: z.ZodOptional<z.ZodString>;
@@ -820,6 +1044,8 @@ export declare const ToolsSchema: z.ZodOptional<z.ZodObject<{
                 maxChars: z.ZodOptional<z.ZodNumber>;
                 maxBytes: z.ZodOptional<z.ZodNumber>;
             }, z.core.$strict>>>>;
+            echoTranscript: z.ZodOptional<z.ZodBoolean>;
+            echoFormat: z.ZodOptional<z.ZodString>;
             prompt: z.ZodOptional<z.ZodString>;
             timeoutSeconds: z.ZodOptional<z.ZodNumber>;
             language: z.ZodOptional<z.ZodString>;
@@ -921,9 +1147,9 @@ export declare const ToolsSchema: z.ZodOptional<z.ZodObject<{
             node: "node";
         }>>;
         security: z.ZodOptional<z.ZodEnum<{
+            full: "full";
             allowlist: "allowlist";
             deny: "deny";
-            full: "full";
         }>>;
         ask: z.ZodOptional<z.ZodEnum<{
             off: "off";
@@ -966,6 +1192,15 @@ export declare const ToolsSchema: z.ZodOptional<z.ZodObject<{
             allow: z.ZodOptional<z.ZodArray<z.ZodString>>;
             alsoAllow: z.ZodOptional<z.ZodArray<z.ZodString>>;
             deny: z.ZodOptional<z.ZodArray<z.ZodString>>;
+        }, z.core.$strict>>;
+    }, z.core.$strict>>;
+    sessions_spawn: z.ZodOptional<z.ZodObject<{
+        attachments: z.ZodOptional<z.ZodObject<{
+            enabled: z.ZodOptional<z.ZodBoolean>;
+            maxTotalBytes: z.ZodOptional<z.ZodNumber>;
+            maxFiles: z.ZodOptional<z.ZodNumber>;
+            maxFileBytes: z.ZodOptional<z.ZodNumber>;
+            retainOnSessionKeep: z.ZodOptional<z.ZodBoolean>;
         }, z.core.$strict>>;
     }, z.core.$strict>>;
     profile: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"minimal">, z.ZodLiteral<"coding">, z.ZodLiteral<"messaging">, z.ZodLiteral<"full">]>>;

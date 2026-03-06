@@ -14,3 +14,8 @@
  * - If you need lossless representation, escape instead of stripping.
  */
 export declare function sanitizeForPromptLiteral(value: string): string;
+export declare function wrapUntrustedPromptDataBlock(params: {
+    label: string;
+    text: string;
+    maxChars?: number;
+}): string;

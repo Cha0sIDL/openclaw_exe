@@ -5,8 +5,7 @@ export type ArchiveLogger = {
 };
 export type ArchiveExtractLimits = {
     /**
-     * Max archive file bytes (compressed). Primarily protects zip extraction
-     * because we currently read the whole archive into memory for parsing.
+     * Max archive file bytes (compressed).
      */
     maxArchiveBytes?: number;
     /** Max number of extracted entries (files + dirs). */
@@ -32,6 +31,17 @@ export declare const DEFAULT_MAX_ENTRY_BYTES: number;
 export declare function resolveArchiveKind(filePath: string): ArchiveKind | null;
 export declare function resolvePackedRootDir(extractDir: string): Promise<string>;
 export declare function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T>;
+export type TarEntryInfo = {
+    path: string;
+    type: string;
+    size: number;
+};
+export declare function createTarEntrySafetyChecker(params: {
+    rootDir: string;
+    stripComponents?: number;
+    limits?: ArchiveExtractLimits;
+    escapeLabel?: string;
+}): (entry: TarEntryInfo) => void;
 export declare function extractArchive(params: {
     archivePath: string;
     destDir: string;

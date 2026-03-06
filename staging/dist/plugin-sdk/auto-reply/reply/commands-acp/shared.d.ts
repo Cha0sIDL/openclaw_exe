@@ -1,10 +1,10 @@
 import type { AcpRuntimeError } from "../../../acp/runtime/errors.js";
 import type { AcpRuntimeSessionMode } from "../../../acp/runtime/types.js";
-import type { OpenClawConfig } from "../../../config/config.js";
 import type { AcpSessionRuntimeOptions } from "../../../config/sessions/types.js";
 import type { CommandHandlerResult, HandleCommandsParams } from "../commands-types.js";
+export { resolveAcpInstallCommandHint, resolveConfiguredAcpBackendId } from "./install-hints.js";
 export declare const COMMAND = "/acp";
-export declare const ACP_SPAWN_USAGE = "Usage: /acp spawn [agentId] [--mode persistent|oneshot] [--thread auto|here|off] [--cwd <path>] [--label <label>].";
+export declare const ACP_SPAWN_USAGE = "Usage: /acp spawn [harness-id] [--mode persistent|oneshot] [--thread auto|here|off] [--cwd <path>] [--label <label>].";
 export declare const ACP_STEER_USAGE = "Usage: /acp steer [--session <session-key|session-id|session-label>] <instruction>";
 export declare const ACP_SET_MODE_USAGE = "Usage: /acp set-mode <mode> [session-key|session-id|session-label]";
 export declare const ACP_SET_USAGE = "Usage: /acp set <key> <value> [session-key|session-id|session-label]";
@@ -79,8 +79,6 @@ export declare function parseOptionalSingleTarget(tokens: string[], usage: strin
     error: string;
 };
 export declare function resolveAcpHelpText(): string;
-export declare function resolveConfiguredAcpBackendId(cfg: OpenClawConfig): string;
-export declare function resolveAcpInstallCommandHint(cfg: OpenClawConfig): string;
 export declare function formatRuntimeOptionsText(options: AcpSessionRuntimeOptions): string;
 export declare function formatAcpCapabilitiesText(controls: string[]): string;
 export declare function resolveCommandRequestId(params: HandleCommandsParams): string;

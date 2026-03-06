@@ -4,7 +4,7 @@ export declare function resolveProfileUnusableUntil(stats: Pick<ProfileUsageStat
 /**
  * Check if a profile is currently in cooldown (due to rate limiting or errors).
  */
-export declare function isProfileInCooldown(store: AuthProfileStore, profileId: string): boolean;
+export declare function isProfileInCooldown(store: AuthProfileStore, profileId: string, now?: number): boolean;
 /**
  * Infer the most likely reason all candidate profiles are currently unavailable.
  *

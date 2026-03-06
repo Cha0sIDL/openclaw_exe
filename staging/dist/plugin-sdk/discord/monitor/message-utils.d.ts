@@ -1,5 +1,6 @@
 import type { ChannelType, Client, Message } from "@buape/carbon";
 import { type APIStickerItem } from "discord-api-types/v10";
+import type { SsrFPolicy } from "../../infra/net/ssrf.js";
 import { type FetchLike } from "../../media/fetch.js";
 export type DiscordMediaInfo = {
     path: string;
@@ -21,8 +22,8 @@ export declare function resolveDiscordMessageChannelId(params: {
 export declare function resolveDiscordChannelInfo(client: Client, channelId: string): Promise<DiscordChannelInfo | null>;
 export declare function resolveDiscordMessageStickers(message: Message): APIStickerItem[];
 export declare function hasDiscordMessageStickers(message: Message): boolean;
-export declare function resolveMediaList(message: Message, maxBytes: number, fetchImpl?: FetchLike): Promise<DiscordMediaInfo[]>;
-export declare function resolveForwardedMediaList(message: Message, maxBytes: number, fetchImpl?: FetchLike): Promise<DiscordMediaInfo[]>;
+export declare function resolveMediaList(message: Message, maxBytes: number, fetchImpl?: FetchLike, ssrfPolicy?: SsrFPolicy): Promise<DiscordMediaInfo[]>;
+export declare function resolveForwardedMediaList(message: Message, maxBytes: number, fetchImpl?: FetchLike, ssrfPolicy?: SsrFPolicy): Promise<DiscordMediaInfo[]>;
 export declare function resolveDiscordEmbedText(embed?: {
     title?: string | null;
     description?: string | null;

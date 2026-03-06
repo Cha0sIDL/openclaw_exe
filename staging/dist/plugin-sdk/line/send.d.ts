@@ -1,4 +1,5 @@
 import { messagingApi } from "@line/bot-sdk";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import type { LineSendResult } from "./types.js";
 type Message = messagingApi.Message;
 type TextMessage = messagingApi.TextMessage;
@@ -8,13 +9,14 @@ type FlexContainer = messagingApi.FlexContainer;
 type TemplateMessage = messagingApi.TemplateMessage;
 type QuickReply = messagingApi.QuickReply;
 interface LineSendOpts {
+    cfg?: OpenClawConfig;
     channelAccessToken?: string;
     accountId?: string;
     verbose?: boolean;
     mediaUrl?: string;
     replyToken?: string;
 }
-type LinePushOpts = Pick<LineSendOpts, "channelAccessToken" | "accountId" | "verbose">;
+type LinePushOpts = Pick<LineSendOpts, "cfg" | "channelAccessToken" | "accountId" | "verbose">;
 export declare function createImageMessage(originalContentUrl: string, previewImageUrl?: string): ImageMessage;
 export declare function createLocationMessage(location: {
     title: string;

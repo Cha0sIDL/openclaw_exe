@@ -1,3 +1,4 @@
+export declare function normalizeWindowsPathForComparison(input: string): string;
 export declare function isNodeError(value: unknown): value is NodeJS.ErrnoException;
 export declare function hasNodeErrorCode(value: unknown, code: string): boolean;
 export declare function isNotFoundPathError(value: unknown): boolean;

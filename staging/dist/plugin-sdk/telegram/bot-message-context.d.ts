@@ -3,7 +3,8 @@ import { type HistoryEntry } from "../auto-reply/reply/history.js";
 import type { MsgContext } from "../auto-reply/templating.js";
 import { type StatusReactionController } from "../channels/status-reactions.js";
 import type { OpenClawConfig } from "../config/config.js";
-import type { DmPolicy, TelegramGroupConfig, TelegramTopicConfig } from "../config/types.js";
+import type { DmPolicy, TelegramDirectConfig, TelegramGroupConfig, TelegramTopicConfig } from "../config/types.js";
+import { type ResolvedAgentRoute } from "../routing/resolve-route.js";
 import type { StickerMetadata, TelegramContext } from "./bot/types.js";
 export type TelegramMediaRef = {
     path: string;
@@ -18,7 +19,7 @@ type TelegramLogger = {
     info: (obj: Record<string, unknown>, msg: string) => void;
 };
 type ResolveTelegramGroupConfig = (chatId: string | number, messageThreadId?: number) => {
-    groupConfig?: TelegramGroupConfig;
+    groupConfig?: TelegramGroupConfig | TelegramDirectConfig;
     topicConfig?: TelegramTopicConfig;
 };
 type ResolveGroupActivation = (params: {
@@ -44,7 +45,7 @@ export type BuildTelegramMessageContextParams = {
     dmPolicy: DmPolicy;
     allowFrom?: Array<string | number>;
     groupAllowFrom?: Array<string | number>;
-    ackReactionScope: "off" | "group-mentions" | "group-all" | "direct" | "all";
+    ackReactionScope: "off" | "none" | "group-mentions" | "group-all" | "direct" | "all";
     logger: TelegramLogger;
     resolveGroupActivation: ResolveGroupActivation;
     resolveGroupRequireMention: ResolveGroupRequireMention;
@@ -132,7 +133,7 @@ export declare const buildTelegramMessageContext: ({ primaryCtx, allMedia, reply
     historyKey: string | undefined;
     historyLimit: number;
     groupHistories: Map<string, HistoryEntry[]>;
-    route: import("../routing/resolve-route.js").ResolvedAgentRoute;
+    route: ResolvedAgentRoute;
     skillFilter: string[] | undefined;
     sendTyping: () => Promise<void>;
     sendRecordVoice: () => Promise<void>;

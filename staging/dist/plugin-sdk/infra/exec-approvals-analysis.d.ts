@@ -36,6 +36,7 @@ export declare function buildSafeShellCommand(params: {
     command?: string;
     reason?: string;
 };
+export declare function resolvePlannedSegmentArgv(segment: ExecCommandSegment): string[] | null;
 /**
  * Rebuilds a shell command and selectively single-quotes argv tokens for segments that
  * must be treated as literal (safeBins hardening) while preserving the rest of the

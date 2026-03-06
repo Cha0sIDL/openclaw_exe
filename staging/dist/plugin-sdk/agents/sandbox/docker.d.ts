@@ -8,6 +8,17 @@ export type ExecDockerRawResult = {
     stderr: Buffer;
     code: number;
 };
+type DockerSpawnRuntime = {
+    platform: NodeJS.Platform;
+    env: NodeJS.ProcessEnv;
+    execPath: string;
+};
+export declare function resolveDockerSpawnInvocation(args: string[], runtime?: DockerSpawnRuntime): {
+    command: string;
+    args: string[];
+    shell?: boolean;
+    windowsHide?: boolean;
+};
 export declare function execDockerRaw(args: string[], opts?: ExecDockerRawOptions): Promise<ExecDockerRawResult>;
 import type { SandboxConfig, SandboxDockerConfig } from "./types.js";
 export type ExecDockerOptions = ExecDockerRawOptions;

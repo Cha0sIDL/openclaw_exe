@@ -14,6 +14,7 @@ export type PersistentDedupeCheckOptions = {
 };
 export type PersistentDedupe = {
     checkAndRecord: (key: string, options?: PersistentDedupeCheckOptions) => Promise<boolean>;
+    warmup: (namespace?: string, onError?: (error: unknown) => void) => Promise<number>;
     clearMemory: () => void;
     memorySize: () => number;
 };

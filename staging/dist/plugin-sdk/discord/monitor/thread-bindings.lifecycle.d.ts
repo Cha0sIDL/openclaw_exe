@@ -1,3 +1,4 @@
+import { type AcpSessionStoreEntry } from "../../acp/runtime/session-meta.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import type { ThreadBindingRecord, ThreadBindingTargetKind } from "./thread-bindings.types.js";
 export type AcpThreadBindingReconciliationResult = {
@@ -5,6 +6,17 @@ export type AcpThreadBindingReconciliationResult = {
     removed: number;
     staleSessionKeys: string[];
 };
+export type AcpThreadBindingHealthStatus = "healthy" | "stale" | "uncertain";
+export type AcpThreadBindingHealthProbe = (params: {
+    cfg: OpenClawConfig;
+    accountId: string;
+    sessionKey: string;
+    binding: ThreadBindingRecord;
+    session: AcpSessionStoreEntry;
+}) => Promise<{
+    status: AcpThreadBindingHealthStatus;
+    reason?: string;
+}>;
 export declare function listThreadBindingsForAccount(accountId?: string): ThreadBindingRecord[];
 export declare function listThreadBindingsBySessionKey(params: {
     targetSessionKey: string;
@@ -43,4 +55,5 @@ export declare function reconcileAcpThreadBindingsOnStartup(params: {
     cfg: OpenClawConfig;
     accountId?: string;
     sendFarewell?: boolean;
-}): AcpThreadBindingReconciliationResult;
+    healthProbe?: AcpThreadBindingHealthProbe;
+}): Promise<AcpThreadBindingReconciliationResult>;

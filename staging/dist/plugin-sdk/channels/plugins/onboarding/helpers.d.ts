@@ -1,5 +1,6 @@
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { DmPolicy, GroupPolicy } from "../../../config/types.js";
+import type { SecretInput } from "../../../config/types.secrets.js";
 import type { WizardPrompter } from "../../../wizard/prompts.js";
 import type { PromptAccountId } from "../onboarding-types.js";
 export declare const promptAccountId: PromptAccountId;
@@ -88,7 +89,7 @@ export declare function applySingleTokenPromptResult(params: {
     tokenPatchKey: "token" | "botToken";
     tokenResult: {
         useEnv: boolean;
-        token: string | null;
+        token: SecretInput | null;
     };
 }): OpenClawConfig;
 export declare function promptSingleChannelToken(params: {
@@ -103,6 +104,29 @@ export declare function promptSingleChannelToken(params: {
     useEnv: boolean;
     token: string | null;
 }>;
+export type SingleChannelSecretInputPromptResult = {
+    action: "keep";
+} | {
+    action: "use-env";
+} | {
+    action: "set";
+    value: SecretInput;
+    resolvedValue: string;
+};
+export declare function promptSingleChannelSecretInput(params: {
+    cfg: OpenClawConfig;
+    prompter: Pick<WizardPrompter, "confirm" | "text" | "select" | "note">;
+    providerHint: string;
+    credentialLabel: string;
+    secretInputMode?: "plaintext" | "ref";
+    accountConfigured: boolean;
+    canUseEnv: boolean;
+    hasConfigToken: boolean;
+    envPrompt: string;
+    keepPrompt: string;
+    inputPrompt: string;
+    preferredEnvVar?: string;
+}): Promise<SingleChannelSecretInputPromptResult>;
 type ParsedAllowFromResult = {
     entries: string[];
     error?: string;

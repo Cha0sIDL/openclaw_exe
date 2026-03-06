@@ -12,6 +12,7 @@ export type SsrFPolicy = {
     allowedHostnames?: string[];
     hostnameAllowlist?: string[];
 };
+export declare function isPrivateNetworkAllowedByPolicy(policy?: SsrFPolicy): boolean;
 export declare function isPrivateIpAddress(address: string, policy?: SsrFPolicy): boolean;
 export declare function isBlockedHostname(hostname: string): boolean;
 export declare function isBlockedHostnameOrIp(hostname: string, policy?: SsrFPolicy): boolean;

@@ -8,4 +8,6 @@ export declare function createNodesTool(options?: {
     currentChannelId?: string;
     currentThreadTs?: string | number;
     config?: OpenClawConfig;
+    modelHasVision?: boolean;
+    allowMediaInvokeCommands?: boolean;
 }): AnyAgentTool;

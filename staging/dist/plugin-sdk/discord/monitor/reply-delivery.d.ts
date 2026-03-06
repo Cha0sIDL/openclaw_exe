@@ -34,4 +34,5 @@ export declare function deliverDiscordReply(params: {
     chunkMode?: ChunkMode;
     sessionKey?: string;
     threadBindings?: DiscordThreadBindingLookup;
+    mediaLocalRoots?: readonly string[];
 }): Promise<void>;

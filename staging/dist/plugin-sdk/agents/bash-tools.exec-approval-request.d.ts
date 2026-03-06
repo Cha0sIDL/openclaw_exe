@@ -1,8 +1,9 @@
-import type { ExecAsk, ExecSecurity } from "../infra/exec-approvals.js";
+import type { ExecAsk, ExecSecurity, SystemRunApprovalPlan } from "../infra/exec-approvals.js";
 export type RequestExecApprovalDecisionParams = {
     id: string;
     command: string;
     commandArgv?: string[];
+    systemRunPlan?: SystemRunApprovalPlan;
     env?: Record<string, string>;
     cwd: string;
     nodeId?: string;
@@ -24,29 +25,16 @@ export type ExecApprovalRegistration = {
 };
 export declare function registerExecApprovalRequest(params: RequestExecApprovalDecisionParams): Promise<ExecApprovalRegistration>;
 export declare function waitForExecApprovalDecision(id: string): Promise<string | null>;
-export declare function requestExecApprovalDecision(params: RequestExecApprovalDecisionParams): Promise<string | null>;
-export declare function requestExecApprovalDecisionForHost(params: {
+export declare function resolveRegisteredExecApprovalDecision(params: {
     approvalId: string;
-    command: string;
-    commandArgv?: string[];
-    env?: Record<string, string>;
-    workdir: string;
-    host: "gateway" | "node";
-    nodeId?: string;
-    security: ExecSecurity;
-    ask: ExecAsk;
-    agentId?: string;
-    resolvedPath?: string;
-    sessionKey?: string;
-    turnSourceChannel?: string;
-    turnSourceTo?: string;
-    turnSourceAccountId?: string;
-    turnSourceThreadId?: string | number;
+    preResolvedDecision: string | null | undefined;
 }): Promise<string | null>;
-export declare function registerExecApprovalRequestForHost(params: {
+export declare function requestExecApprovalDecision(params: RequestExecApprovalDecisionParams): Promise<string | null>;
+type HostExecApprovalParams = {
     approvalId: string;
     command: string;
     commandArgv?: string[];
+    systemRunPlan?: SystemRunApprovalPlan;
     env?: Record<string, string>;
     workdir: string;
     host: "gateway" | "node";
@@ -60,4 +48,23 @@ export declare function registerExecApprovalRequestForHost(params: {
     turnSourceTo?: string;
     turnSourceAccountId?: string;
     turnSourceThreadId?: string | number;
-}): Promise<ExecApprovalRegistration>;
+};
+type ExecApprovalRequesterContext = {
+    agentId?: string;
+    sessionKey?: string;
+};
+export declare function buildExecApprovalRequesterContext(params: ExecApprovalRequesterContext): {
+    agentId?: string;
+    sessionKey?: string;
+};
+type ExecApprovalTurnSourceContext = {
+    turnSourceChannel?: string;
+    turnSourceTo?: string;
+    turnSourceAccountId?: string;
+    turnSourceThreadId?: string | number;
+};
+export declare function buildExecApprovalTurnSourceContext(params: ExecApprovalTurnSourceContext): ExecApprovalTurnSourceContext;
+export declare function requestExecApprovalDecisionForHost(params: HostExecApprovalParams): Promise<string | null>;
+export declare function registerExecApprovalRequestForHost(params: HostExecApprovalParams): Promise<ExecApprovalRegistration>;
+export declare function registerExecApprovalRequestForHostOrThrow(params: HostExecApprovalParams): Promise<ExecApprovalRegistration>;
+export {};

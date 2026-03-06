@@ -10,6 +10,7 @@ export type SafeOpenSyncResult = {
     reason: SafeOpenSyncFailureReason;
     error?: unknown;
 };
+export type SafeOpenSyncAllowedType = "file" | "directory";
 type SafeOpenSyncFs = Pick<typeof fs, "constants" | "lstatSync" | "realpathSync" | "openSync" | "fstatSync" | "closeSync">;
 export declare function sameFileIdentity(left: fs.Stats, right: fs.Stats): boolean;
 export declare function openVerifiedFileSync(params: {
@@ -18,6 +19,7 @@ export declare function openVerifiedFileSync(params: {
     rejectPathSymlink?: boolean;
     rejectHardlinks?: boolean;
     maxBytes?: number;
+    allowedType?: SafeOpenSyncAllowedType;
     ioFs?: SafeOpenSyncFs;
 }): SafeOpenSyncResult;
 export {};

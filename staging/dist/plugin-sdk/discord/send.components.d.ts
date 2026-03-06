@@ -1,7 +1,9 @@
 import { type RequestClient } from "@buape/carbon";
+import { type OpenClawConfig } from "../config/config.js";
 import { type DiscordComponentMessageSpec } from "./components.js";
 import type { DiscordSendResult } from "./send.types.js";
 type DiscordComponentSendOpts = {
+    cfg?: OpenClawConfig;
     accountId?: string;
     token?: string;
     rest?: RequestClient;

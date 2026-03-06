@@ -2,7 +2,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { FSWatcher } from "chokidar";
 import { ResolvedMemorySearchConfig } from "../agents/memory-search.js";
 import { type OpenClawConfig } from "../config/config.js";
-import { type EmbeddingProvider, type GeminiEmbeddingClient, type MistralEmbeddingClient, type OpenAiEmbeddingClient, type VoyageEmbeddingClient } from "./embeddings.js";
+import { type EmbeddingProvider, type GeminiEmbeddingClient, type MistralEmbeddingClient, type OllamaEmbeddingClient, type OpenAiEmbeddingClient, type VoyageEmbeddingClient } from "./embeddings.js";
 import { type MemoryFileEntry } from "./internal.js";
 import type { SessionFileEntry } from "./session-files.js";
 import type { MemorySource, MemorySyncProgressUpdate } from "./types.js";
@@ -21,11 +21,12 @@ export declare abstract class MemoryManagerSyncOps {
     protected abstract readonly workspaceDir: string;
     protected abstract readonly settings: ResolvedMemorySearchConfig;
     protected provider: EmbeddingProvider | null;
-    protected fallbackFrom?: "openai" | "local" | "gemini" | "voyage" | "mistral";
+    protected fallbackFrom?: "openai" | "local" | "gemini" | "voyage" | "mistral" | "ollama";
     protected openAi?: OpenAiEmbeddingClient;
     protected gemini?: GeminiEmbeddingClient;
     protected voyage?: VoyageEmbeddingClient;
     protected mistral?: MistralEmbeddingClient;
+    protected ollama?: OllamaEmbeddingClient;
     protected abstract batch: {
         enabled: boolean;
         wait: boolean;
@@ -64,6 +65,7 @@ export declare abstract class MemoryManagerSyncOps {
         pendingBytes: number;
         pendingMessages: number;
     }>;
+    private lastMetaSerialized;
     protected abstract readonly cache: {
         enabled: boolean;
         maxEntries?: number;

@@ -8,6 +8,7 @@ export declare function replaceSubagentRunAfterSteer(params: {
     nextRunId: string;
     fallback?: SubagentRunRecord;
     runTimeoutSeconds?: number;
+    preserveFrozenResultFallback?: boolean;
 }): boolean;
 export declare function registerSubagentRun(params: {
     runId: string;
@@ -22,6 +23,9 @@ export declare function registerSubagentRun(params: {
     runTimeoutSeconds?: number;
     expectsCompletionMessage?: boolean;
     spawnMode?: "run" | "session";
+    attachmentsDir?: string;
+    attachmentsRootDir?: string;
+    retainAttachmentsOnKeep?: boolean;
 }): void;
 export declare function resetSubagentRegistryForTests(opts?: {
     persist?: boolean;
@@ -33,13 +37,18 @@ export declare function resolveRequesterForChildSession(childSessionKey: string)
     requesterOrigin?: DeliveryContext;
 } | null;
 export declare function isSubagentSessionRunActive(childSessionKey: string): boolean;
+export declare function shouldIgnorePostCompletionAnnounceForSession(childSessionKey: string): boolean;
 export declare function markSubagentRunTerminated(params: {
     runId?: string;
     childSessionKey?: string;
     reason?: string;
 }): number;
-export declare function listSubagentRunsForRequester(requesterSessionKey: string): SubagentRunRecord[];
+export declare function listSubagentRunsForRequester(requesterSessionKey: string, options?: {
+    requesterRunId?: string;
+}): SubagentRunRecord[];
 export declare function countActiveRunsForSession(requesterSessionKey: string): number;
 export declare function countActiveDescendantRuns(rootSessionKey: string): number;
+export declare function countPendingDescendantRuns(rootSessionKey: string): number;
+export declare function countPendingDescendantRunsExcludingRun(rootSessionKey: string, excludeRunId: string): number;
 export declare function listDescendantRunsForRequester(rootSessionKey: string): SubagentRunRecord[];
 export declare function initSubagentRegistry(): void;

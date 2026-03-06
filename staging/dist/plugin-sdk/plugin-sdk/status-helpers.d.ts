@@ -27,6 +27,24 @@ export declare function buildBaseChannelStatusSummary(snapshot: {
     lastStopAt: number | null;
     lastError: string | null;
 };
+export declare function buildProbeChannelStatusSummary<TExtra extends Record<string, unknown>>(snapshot: {
+    configured?: boolean | null;
+    running?: boolean | null;
+    lastStartAt?: number | null;
+    lastStopAt?: number | null;
+    lastError?: string | null;
+    probe?: unknown;
+    lastProbeAt?: number | null;
+}, extra?: TExtra): {
+    configured: boolean;
+    running: boolean;
+    lastStartAt: number | null;
+    lastStopAt: number | null;
+    lastError: string | null;
+} & TExtra & {
+    probe: unknown;
+    lastProbeAt: number | null;
+};
 export declare function buildBaseAccountStatusSnapshot(params: {
     account: {
         accountId: string;

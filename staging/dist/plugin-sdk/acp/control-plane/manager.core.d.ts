@@ -28,6 +28,7 @@ export declare class AcpSessionManager {
     getSessionStatus(params: {
         cfg: OpenClawConfig;
         sessionKey: string;
+        signal?: AbortSignal;
     }): Promise<AcpSessionStatus>;
     setSessionRuntimeMode(params: {
         cfg: OpenClawConfig;
@@ -68,6 +69,7 @@ export declare class AcpSessionManager {
     private reconcileRuntimeSessionIdentifiers;
     private writeSessionMeta;
     private withSessionActor;
+    private throwIfAborted;
     private getCachedRuntimeState;
     private setCachedRuntimeState;
     private clearCachedRuntimeState;

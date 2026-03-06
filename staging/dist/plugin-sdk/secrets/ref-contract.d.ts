@@ -1,4 +1,5 @@
 import { type SecretRef, type SecretRefSource } from "../config/types.secrets.js";
+export declare const SECRET_PROVIDER_ALIAS_PATTERN: RegExp;
 export declare const SINGLE_VALUE_FILE_REF_ID = "value";
 export type SecretRefDefaultsCarrier = {
     secrets?: {
@@ -17,3 +18,4 @@ export declare function resolveDefaultSecretProviderAlias(config: SecretRefDefau
     preferFirstProviderForSource?: boolean;
 }): string;
 export declare function isValidFileSecretRefId(value: string): boolean;
+export declare function isValidSecretProviderAlias(value: string): boolean;

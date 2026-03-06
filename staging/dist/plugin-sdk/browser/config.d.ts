@@ -4,6 +4,8 @@ export type ResolvedBrowserConfig = {
     enabled: boolean;
     evaluateEnabled: boolean;
     controlPort: number;
+    cdpPortRangeStart: number;
+    cdpPortRangeEnd: number;
     cdpProtocol: "http" | "https";
     cdpHost: string;
     cdpIsLoopback: boolean;
@@ -27,6 +29,7 @@ export type ResolvedBrowserProfile = {
     cdpIsLoopback: boolean;
     color: string;
     driver: "openclaw" | "extension";
+    attachOnly: boolean;
 };
 export declare function parseHttpUrl(raw: string, label: string): {
     parsed: URL;

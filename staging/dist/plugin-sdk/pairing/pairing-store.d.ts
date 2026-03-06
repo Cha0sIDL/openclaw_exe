@@ -8,9 +8,10 @@ export type PairingRequest = {
     meta?: Record<string, string>;
 };
 export declare function readLegacyChannelAllowFromStore(channel: PairingChannel, env?: NodeJS.ProcessEnv): Promise<string[]>;
-export declare function readChannelAllowFromStore(channel: PairingChannel, env: NodeJS.ProcessEnv | undefined, accountId: string): Promise<string[]>;
+export declare function readChannelAllowFromStore(channel: PairingChannel, env?: NodeJS.ProcessEnv, accountId?: string): Promise<string[]>;
 export declare function readLegacyChannelAllowFromStoreSync(channel: PairingChannel, env?: NodeJS.ProcessEnv): string[];
-export declare function readChannelAllowFromStoreSync(channel: PairingChannel, env: NodeJS.ProcessEnv | undefined, accountId: string): string[];
+export declare function readChannelAllowFromStoreSync(channel: PairingChannel, env?: NodeJS.ProcessEnv, accountId?: string): string[];
+export declare function clearPairingAllowFromReadCacheForTest(): void;
 type AllowFromStoreEntryUpdateParams = {
     channel: PairingChannel;
     entry: string | number;

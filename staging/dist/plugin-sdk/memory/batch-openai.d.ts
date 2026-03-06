@@ -1,5 +1,4 @@
-import { type EmbeddingBatchStatus, type ProviderBatchOutputLine } from "./batch-provider-common.js";
-import { type EmbeddingBatchExecutionParams } from "./batch-runner.js";
+import { type EmbeddingBatchExecutionParams, type EmbeddingBatchStatus, type ProviderBatchOutputLine } from "./batch-embedding-common.js";
 import type { OpenAiEmbeddingClient } from "./embeddings-openai.js";
 export type OpenAiBatchRequest = {
     custom_id: string;

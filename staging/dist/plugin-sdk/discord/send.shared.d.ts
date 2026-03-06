@@ -2,6 +2,7 @@ import { Embed, RequestClient, type MessagePayloadFile, type MessagePayloadObjec
 import type { RESTAPIPoll } from "discord-api-types/rest/v10";
 import { type APIEmbed } from "discord-api-types/v10";
 import type { ChunkMode } from "../auto-reply/chunk.js";
+import { type OpenClawConfig } from "../config/config.js";
 import type { RetryRunner } from "../infra/retry-policy.js";
 import { type PollInput } from "../polls.js";
 import { createDiscordClient, resolveDiscordRest } from "./client.js";
@@ -27,7 +28,7 @@ declare function parseRecipient(raw: string): DiscordRecipient;
  * @param accountId - Discord account ID to use for directory lookup
  * @returns Parsed DiscordRecipient with resolved user ID if applicable
  */
-export declare function parseAndResolveRecipient(raw: string, accountId?: string): Promise<DiscordRecipient>;
+export declare function parseAndResolveRecipient(raw: string, accountId?: string, cfg?: OpenClawConfig): Promise<DiscordRecipient>;
 declare function normalizeStickerIds(raw: string[]): string[];
 declare function normalizeEmojiName(raw: string, label: string): string;
 declare function normalizeDiscordPollInput(input: PollInput): RESTAPIPoll;

@@ -41,6 +41,8 @@ export declare function createOpenClawTools(options?: {
     };
     /** If true, the model has native vision capability */
     modelHasVision?: boolean;
+    /** If true, nodes action="invoke" can call media-returning commands directly. */
+    allowMediaInvokeCommands?: boolean;
     /** Explicit agent ID override for cron/hook sessions. */
     requesterAgentIdOverride?: string;
     /** Require explicit message targets (no implicit last-route sends). */
@@ -51,4 +53,6 @@ export declare function createOpenClawTools(options?: {
     requesterSenderId?: string | null;
     /** Whether the requesting sender is an owner. */
     senderIsOwner?: boolean;
+    /** Ephemeral session UUID — regenerated on /new and /reset. */
+    sessionId?: string;
 }): AnyAgentTool[];

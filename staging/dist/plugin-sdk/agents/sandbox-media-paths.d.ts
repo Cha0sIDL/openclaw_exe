@@ -4,6 +4,9 @@ export type SandboxedBridgeMediaPathConfig = {
     bridge: SandboxFsBridge;
     workspaceOnly?: boolean;
 };
+export declare function createSandboxBridgeReadFile(params: {
+    sandbox: Pick<SandboxedBridgeMediaPathConfig, "root" | "bridge">;
+}): (filePath: string) => Promise<Buffer>;
 export declare function resolveSandboxedBridgeMediaPath(params: {
     sandbox: SandboxedBridgeMediaPathConfig;
     mediaPath: string;

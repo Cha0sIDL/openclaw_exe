@@ -7,6 +7,7 @@ import type { TelegramInlineButtons } from "./button-types.js";
 type TelegramApi = Bot["api"];
 type TelegramApiOverride = Partial<TelegramApi>;
 type TelegramSendOpts = {
+    cfg?: ReturnType<typeof loadConfig>;
     token?: string;
     accountId?: string;
     verbose?: boolean;
@@ -100,6 +101,7 @@ type TelegramStickerOpts = {
  */
 export declare function sendStickerTelegram(to: string, fileId: string, opts?: TelegramStickerOpts): Promise<TelegramSendResult>;
 type TelegramPollOpts = {
+    cfg?: ReturnType<typeof loadConfig>;
     token?: string;
     accountId?: string;
     verbose?: boolean;

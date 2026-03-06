@@ -17,7 +17,7 @@ export type TokenCredential = {
      */
     type: "token";
     provider: string;
-    token: string;
+    token?: string;
     tokenRef?: SecretRef;
     /** Optional expiry timestamp (ms since epoch). */
     expires?: number;
@@ -30,7 +30,7 @@ export type OAuthCredential = OAuthCredentials & {
     email?: string;
 };
 export type AuthProfileCredential = ApiKeyCredential | TokenCredential | OAuthCredential;
-export type AuthProfileFailureReason = "auth" | "auth_permanent" | "format" | "rate_limit" | "billing" | "timeout" | "model_not_found" | "unknown";
+export type AuthProfileFailureReason = "auth" | "auth_permanent" | "format" | "rate_limit" | "billing" | "timeout" | "model_not_found" | "session_expired" | "unknown";
 /** Per-profile usage statistics for round-robin and cooldown tracking */
 export type ProfileUsageStats = {
     lastUsed?: number;

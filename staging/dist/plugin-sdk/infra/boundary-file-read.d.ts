@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import type { PathAliasPolicy } from "./path-alias-guards.js";
-import { type SafeOpenSyncFailureReason } from "./safe-open-sync.js";
+import { type SafeOpenSyncAllowedType, type SafeOpenSyncFailureReason } from "./safe-open-sync.js";
 type BoundaryReadFs = Pick<typeof fs, "closeSync" | "constants" | "fstatSync" | "lstatSync" | "openSync" | "readFileSync" | "realpathSync">;
 export type BoundaryFileOpenFailureReason = SafeOpenSyncFailureReason | "validation";
 export type BoundaryFileOpenResult = {
@@ -21,6 +21,7 @@ export type OpenBoundaryFileSyncParams = {
     rootRealPath?: string;
     maxBytes?: number;
     rejectHardlinks?: boolean;
+    allowedType?: SafeOpenSyncAllowedType;
     skipLexicalRootCheck?: boolean;
     ioFs?: BoundaryReadFs;
 };

@@ -1,9 +1,10 @@
-import "../../paths-MYHBPf85.js";
-import { ft as isAgentBootstrapEvent, t as createSubsystemLogger } from "../../subsystem-BXiyX1bx.js";
-import { d as loadExtraBootstrapFilesWithDiagnostics, u as filterBootstrapFilesForSession } from "../../workspace-DwThIdv7.js";
-import "../../boolean-Ce2-qkSB.js";
-import "../../frontmatter-CthhXKqf.js";
-import { t as resolveHookConfig } from "../../config-BeIwBEE4.js";
+import "../../paths-C6TxBCvO.js";
+import { t as createSubsystemLogger } from "../../subsystem-D7UWJNhH.js";
+import { d as loadExtraBootstrapFilesWithDiagnostics, u as filterBootstrapFilesForSession } from "../../workspace-B1VBj0cY.js";
+import "../../logger-B-R_-5mh.js";
+import { i as isAgentBootstrapEvent } from "../../legacy-names-BCm4ov65.js";
+import "../../frontmatter-DH91cf0z.js";
+import { t as resolveHookConfig } from "../../config-DWRgGn0l.js";
 
 //#region src/hooks/bundled/bootstrap-extra-files/handler.ts
 const HOOK_KEY = "bootstrap-extra-files";

@@ -84,6 +84,7 @@ export declare const SecretsConfigSchema: z.ZodOptional<z.ZodObject<{
     }, z.core.$strict>>;
 }, z.core.$strict>>;
 export declare const ModelApiSchema: z.ZodEnum<{
+    ollama: "ollama";
     "openai-completions": "openai-completions";
     "openai-responses": "openai-responses";
     "openai-codex-responses": "openai-codex-responses";
@@ -91,7 +92,6 @@ export declare const ModelApiSchema: z.ZodEnum<{
     "google-generative-ai": "google-generative-ai";
     "github-copilot": "github-copilot";
     "bedrock-converse-stream": "bedrock-converse-stream";
-    ollama: "ollama";
 }>;
 export declare const ModelCompatSchema: z.ZodOptional<z.ZodObject<{
     supportsStore: z.ZodOptional<z.ZodBoolean>;
@@ -110,6 +110,7 @@ export declare const ModelDefinitionSchema: z.ZodObject<{
     id: z.ZodString;
     name: z.ZodString;
     api: z.ZodOptional<z.ZodEnum<{
+        ollama: "ollama";
         "openai-completions": "openai-completions";
         "openai-responses": "openai-responses";
         "openai-codex-responses": "openai-codex-responses";
@@ -117,7 +118,6 @@ export declare const ModelDefinitionSchema: z.ZodObject<{
         "google-generative-ai": "google-generative-ai";
         "github-copilot": "github-copilot";
         "bedrock-converse-stream": "bedrock-converse-stream";
-        ollama: "ollama";
     }>>;
     reasoning: z.ZodOptional<z.ZodBoolean>;
     input: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodLiteral<"text">, z.ZodLiteral<"image">]>>>;
@@ -161,6 +161,7 @@ export declare const ModelProviderSchema: z.ZodObject<{
     }, z.core.$strict>], "source">]>>;
     auth: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"api-key">, z.ZodLiteral<"aws-sdk">, z.ZodLiteral<"oauth">, z.ZodLiteral<"token">]>>;
     api: z.ZodOptional<z.ZodEnum<{
+        ollama: "ollama";
         "openai-completions": "openai-completions";
         "openai-responses": "openai-responses";
         "openai-codex-responses": "openai-codex-responses";
@@ -168,7 +169,6 @@ export declare const ModelProviderSchema: z.ZodObject<{
         "google-generative-ai": "google-generative-ai";
         "github-copilot": "github-copilot";
         "bedrock-converse-stream": "bedrock-converse-stream";
-        ollama: "ollama";
     }>>;
     injectNumCtxForOpenAICompat: z.ZodOptional<z.ZodBoolean>;
     headers: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
@@ -177,6 +177,7 @@ export declare const ModelProviderSchema: z.ZodObject<{
         id: z.ZodString;
         name: z.ZodString;
         api: z.ZodOptional<z.ZodEnum<{
+            ollama: "ollama";
             "openai-completions": "openai-completions";
             "openai-responses": "openai-responses";
             "openai-codex-responses": "openai-codex-responses";
@@ -184,7 +185,6 @@ export declare const ModelProviderSchema: z.ZodObject<{
             "google-generative-ai": "google-generative-ai";
             "github-copilot": "github-copilot";
             "bedrock-converse-stream": "bedrock-converse-stream";
-            ollama: "ollama";
         }>>;
         reasoning: z.ZodOptional<z.ZodBoolean>;
         input: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodLiteral<"text">, z.ZodLiteral<"image">]>>>;
@@ -239,6 +239,7 @@ export declare const ModelsConfigSchema: z.ZodOptional<z.ZodObject<{
         }, z.core.$strict>], "source">]>>;
         auth: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"api-key">, z.ZodLiteral<"aws-sdk">, z.ZodLiteral<"oauth">, z.ZodLiteral<"token">]>>;
         api: z.ZodOptional<z.ZodEnum<{
+            ollama: "ollama";
             "openai-completions": "openai-completions";
             "openai-responses": "openai-responses";
             "openai-codex-responses": "openai-codex-responses";
@@ -246,7 +247,6 @@ export declare const ModelsConfigSchema: z.ZodOptional<z.ZodObject<{
             "google-generative-ai": "google-generative-ai";
             "github-copilot": "github-copilot";
             "bedrock-converse-stream": "bedrock-converse-stream";
-            ollama: "ollama";
         }>>;
         injectNumCtxForOpenAICompat: z.ZodOptional<z.ZodBoolean>;
         headers: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
@@ -255,6 +255,7 @@ export declare const ModelsConfigSchema: z.ZodOptional<z.ZodObject<{
             id: z.ZodString;
             name: z.ZodString;
             api: z.ZodOptional<z.ZodEnum<{
+                ollama: "ollama";
                 "openai-completions": "openai-completions";
                 "openai-responses": "openai-responses";
                 "openai-codex-responses": "openai-codex-responses";
@@ -262,7 +263,6 @@ export declare const ModelsConfigSchema: z.ZodOptional<z.ZodObject<{
                 "google-generative-ai": "google-generative-ai";
                 "github-copilot": "github-copilot";
                 "bedrock-converse-stream": "bedrock-converse-stream";
-                ollama: "ollama";
             }>>;
             reasoning: z.ZodOptional<z.ZodBoolean>;
             input: z.ZodOptional<z.ZodArray<z.ZodUnion<readonly [z.ZodLiteral<"text">, z.ZodLiteral<"image">]>>>;
@@ -413,7 +413,19 @@ export declare const TtsConfigSchema: z.ZodOptional<z.ZodObject<{
         allowSeed: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strict>>;
     elevenlabs: z.ZodOptional<z.ZodObject<{
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
         baseUrl: z.ZodOptional<z.ZodString>;
         voiceId: z.ZodOptional<z.ZodString>;
         modelId: z.ZodOptional<z.ZodString>;
@@ -433,7 +445,20 @@ export declare const TtsConfigSchema: z.ZodOptional<z.ZodObject<{
         }, z.core.$strict>>;
     }, z.core.$strict>>;
     openai: z.ZodOptional<z.ZodObject<{
-        apiKey: z.ZodOptional<z.ZodString>;
+        apiKey: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodDiscriminatedUnion<[z.ZodObject<{
+            source: z.ZodLiteral<"env">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"file">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>, z.ZodObject<{
+            source: z.ZodLiteral<"exec">;
+            provider: z.ZodString;
+            id: z.ZodString;
+        }, z.core.$strict>], "source">]>>;
+        baseUrl: z.ZodOptional<z.ZodString>;
         model: z.ZodOptional<z.ZodString>;
         voice: z.ZodOptional<z.ZodString>;
     }, z.core.$strict>>;
@@ -639,6 +664,8 @@ export declare const ToolsMediaUnderstandingSchema: z.ZodOptional<z.ZodObject<{
         maxChars: z.ZodOptional<z.ZodNumber>;
         maxBytes: z.ZodOptional<z.ZodNumber>;
     }, z.core.$strict>>>>;
+    echoTranscript: z.ZodOptional<z.ZodBoolean>;
+    echoFormat: z.ZodOptional<z.ZodString>;
     prompt: z.ZodOptional<z.ZodString>;
     timeoutSeconds: z.ZodOptional<z.ZodNumber>;
     language: z.ZodOptional<z.ZodString>;
@@ -720,6 +747,8 @@ export declare const ToolsMediaSchema: z.ZodOptional<z.ZodObject<{
             maxChars: z.ZodOptional<z.ZodNumber>;
             maxBytes: z.ZodOptional<z.ZodNumber>;
         }, z.core.$strict>>>>;
+        echoTranscript: z.ZodOptional<z.ZodBoolean>;
+        echoFormat: z.ZodOptional<z.ZodString>;
         prompt: z.ZodOptional<z.ZodString>;
         timeoutSeconds: z.ZodOptional<z.ZodNumber>;
         language: z.ZodOptional<z.ZodString>;
@@ -776,6 +805,8 @@ export declare const ToolsMediaSchema: z.ZodOptional<z.ZodObject<{
             maxChars: z.ZodOptional<z.ZodNumber>;
             maxBytes: z.ZodOptional<z.ZodNumber>;
         }, z.core.$strict>>>>;
+        echoTranscript: z.ZodOptional<z.ZodBoolean>;
+        echoFormat: z.ZodOptional<z.ZodString>;
         prompt: z.ZodOptional<z.ZodString>;
         timeoutSeconds: z.ZodOptional<z.ZodNumber>;
         language: z.ZodOptional<z.ZodString>;
@@ -832,6 +863,8 @@ export declare const ToolsMediaSchema: z.ZodOptional<z.ZodObject<{
             maxChars: z.ZodOptional<z.ZodNumber>;
             maxBytes: z.ZodOptional<z.ZodNumber>;
         }, z.core.$strict>>>>;
+        echoTranscript: z.ZodOptional<z.ZodBoolean>;
+        echoFormat: z.ZodOptional<z.ZodString>;
         prompt: z.ZodOptional<z.ZodString>;
         timeoutSeconds: z.ZodOptional<z.ZodNumber>;
         language: z.ZodOptional<z.ZodString>;

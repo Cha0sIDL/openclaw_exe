@@ -18,6 +18,7 @@ export declare function resolveDeferredCleanupDecision(params: {
     now: number;
     activeDescendantRuns: number;
     announceExpiryMs: number;
+    announceCompletionHardExpiryMs: number;
     maxAnnounceRetryCount: number;
     deferDescendantDelayMs: number;
     resolveAnnounceRetryDelayMs: (retryCount: number) => number;

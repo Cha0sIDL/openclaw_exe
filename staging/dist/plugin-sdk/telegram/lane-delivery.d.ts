@@ -10,6 +10,7 @@ export type DraftLaneState = {
 export type ArchivedPreview = {
     messageId: number;
     textSnapshot: string;
+    deleteIfUnused?: boolean;
 };
 export type LaneDeliveryResult = "preview-finalized" | "preview-updated" | "sent" | "skipped";
 export type LaneDeliverySnapshot = {

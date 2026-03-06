@@ -4,6 +4,9 @@ export { DEFAULT_ACCOUNT_ID, normalizeAccountId, normalizeOptionalAccountId, } f
 export declare const DEFAULT_AGENT_ID = "main";
 export declare const DEFAULT_MAIN_KEY = "main";
 export type SessionKeyShape = "missing" | "agent" | "legacy_or_alias" | "malformed_agent";
+export declare function scopedHeartbeatWakeOptions<T extends object>(sessionKey: string, wakeOptions: T): T | (T & {
+    sessionKey: string;
+});
 export declare function normalizeMainKey(value: string | undefined | null): string;
 export declare function toAgentRequestSessionKey(storeKey: string | undefined | null): string | undefined;
 export declare function toAgentStoreSessionKey(params: {
@@ -14,6 +17,7 @@ export declare function toAgentStoreSessionKey(params: {
 export declare function resolveAgentIdFromSessionKey(sessionKey: string | undefined | null): string;
 export declare function classifySessionKeyShape(sessionKey: string | undefined | null): SessionKeyShape;
 export declare function normalizeAgentId(value: string | undefined | null): string;
+export declare function isValidAgentId(value: string | undefined | null): boolean;
 export declare function sanitizeAgentId(value: string | undefined | null): string;
 export declare function buildAgentMainSessionKey(params: {
     agentId: string;

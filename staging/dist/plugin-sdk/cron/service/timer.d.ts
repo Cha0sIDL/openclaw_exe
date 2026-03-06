@@ -13,6 +13,8 @@ export declare function applyJobResult(state: CronServiceState, job: CronJob, re
     delivered?: boolean;
     startedAt: number;
     endedAt: number;
+}, opts?: {
+    preserveSchedule?: boolean;
 }): boolean;
 export declare function armTimer(state: CronServiceState): void;
 export declare function onTimer(state: CronServiceState): Promise<void>;

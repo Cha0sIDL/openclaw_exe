@@ -11,6 +11,9 @@ export type CompactionSafeguardRuntimeValue = {
      * (extensionRunner.initialize() is never called in that path).
      */
     model?: Model<Api>;
+    recentTurnsPreserve?: number;
+    qualityGuardEnabled?: boolean;
+    qualityGuardMaxRetries?: number;
 };
 export declare const setCompactionSafeguardRuntime: (sessionManager: unknown, value: CompactionSafeguardRuntimeValue | null) => void;
 export declare const getCompactionSafeguardRuntime: (sessionManager: unknown) => CompactionSafeguardRuntimeValue | null;

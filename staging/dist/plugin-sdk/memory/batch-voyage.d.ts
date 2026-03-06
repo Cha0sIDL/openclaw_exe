@@ -1,5 +1,4 @@
-import { type EmbeddingBatchStatus, type ProviderBatchOutputLine } from "./batch-provider-common.js";
-import { type EmbeddingBatchExecutionParams } from "./batch-runner.js";
+import { type EmbeddingBatchExecutionParams, type EmbeddingBatchStatus, type ProviderBatchOutputLine } from "./batch-embedding-common.js";
 import type { VoyageEmbeddingClient } from "./embeddings-voyage.js";
 /**
  * Voyage Batch API Input Line format.
