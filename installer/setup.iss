@@ -3,7 +3,7 @@
 
 #define MyAppName "OpenClaw"
 #define MyAppVersion "2026.2.27"
-#define MyAppPublisher "OpenClaw Contributors"
+#define MyAppPublisher "lys46001"
 #define MyAppURL "https://github.com/openclaw/openclaw"
 #define MyAppExeName "start-gateway.bat"
 
