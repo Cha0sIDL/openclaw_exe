@@ -1,60 +1,60 @@
-import { $ as normalizeAgentId, D as runCommandWithTimeout, R as isNotFoundPathError, at as DEFAULT_ACCOUNT_ID, nt as resolveThreadSessionKeys, ot as normalizeAccountId, z as isPathInside } from "./run-with-concurrency-qFOkp49n.js";
-import { a as resolveWhatsAppAuthDir, i as resolveWhatsAppAccount, n as listWhatsAppAccountIds, r as resolveDefaultWhatsAppAccountId, y as createAccountListHelpers } from "./accounts-BevXHlgt.js";
-import { $ as createReplyPrefixOptions, $t as DEFAULT_WEBHOOK_MAX_BODY_BYTES, A as processLineMessage, At as readBooleanParam, B as resolveSlackChannelAllowlist, Bt as resolveDmGroupAccessWithLists, Cn as BLUEBUBBLES_ACTION_NAMES, Ct as formatInboundFromLabel, Dt as resolveAckReaction, Et as resolveTimezone, Ft as DM_GROUP_ACCESS_REASON, G as formatDocsLink, Gt as resetMissingProviderGroupPolicyFallbackWarningsForTesting, H as resolveDiscordUserAllowlist, It as readStoreAllowFromForDmPolicy, J as recordInboundSession, Jt as resolveOpenProviderRuntimeGroupPolicy, K as optionalStringEnum, Kt as resolveAllowlistProviderRuntimeGroupPolicy, L as parseTelegramReplyToMessageId, Lt as resolveDmAllowState, M as createReceiptCard, Mt as extractToolSend, N as attachFooterText, Nt as issuePairingChallenge, Q as createReplyPrefixContext, Qt as DEFAULT_WEBHOOK_BODY_TIMEOUT_MS, R as parseTelegramThreadId, Rt as resolveDmGroupAccessDecision, Sn as BLUEBUBBLES_ACTIONS, Tn as CHANNEL_MESSAGE_ACTION_NAMES, Tt as formatZonedTimestamp, U as resolveDiscordChannelAllowlist, Ut as resolveControlCommandGate, V as detectBinary, Vt as resolveEffectiveAllowFromLists, W as collectDiscordAuditChannelIds, Wt as GROUP_POLICY_BLOCKED_LABEL, X as logInboundDrop, Xt as warnMissingProviderGroupPolicyFallbackOnce, Y as logAckFailure, Yt as resolveRuntimeGroupPolicy, Z as logTypingFailure, Zt as pruneMapToMaxSize, _ as resolveDefaultLineAccountId, _n as listThreadBindingsBySessionKey, an as requestBodyErrorToText, at as resolveMentionGatingWithBypass, bn as resolveAllowlistMatchByCandidates, bt as listDevicePairing, cn as isDangerousNameMatchingEnabled, ct as DEFAULT_GROUP_HISTORY_LIMIT, dn as registerAcpRuntimeBackend, dt as clearHistoryEntries, en as RequestBodyLimitError, et as createTypingCallbacks, fn as requireAcpRuntimeBackend, ft as clearHistoryEntriesIfEnabled, g as normalizeAccountId$1, gn as autoBindSpawnedDiscordSubagent, h as listLineAccountIds, hn as AcpRuntimeError, ht as recordPendingHistoryEntryIfEnabled, in as readRequestBodyWithLimit, it as resolveMentionGating, j as stripMarkdown, jt as buildMediaPayload, k as hasMarkdownToConvert, ln as registerPluginHttpRoute, mn as ACP_ERROR_CODES, mt as recordPendingHistoryEntry, nn as isRequestBodyLimitError, nt as shouldAckReaction, on as KeyedAsyncQueue, ot as mergeAllowlist, pn as unregisterAcpRuntimeBackend, pt as evictOldHistoryKeys, q as stringEnum, qt as resolveDefaultGroupPolicy, rn as readJsonBodyWithLimit, rt as shouldAckReactionForWhatsApp, sn as enqueueKeyedTask, st as summarizeMapping, tn as installRequestBodyLimitGuard, tt as removeAckReactionAfterReply, un as getAcpRuntimeBackend, ut as buildPendingHistoryContextFromMap, v as resolveLineAccount, vn as unbindThreadBindingsBySessionKey, vt as createDedupeCache, wn as BLUEBUBBLES_GROUP_ACTIONS, wt as formatUtcTimestamp, xn as resolveAllowlistMatchSimple, xt as rejectDevicePairing, yn as formatAllowlistMatchMeta, yt as approveDevicePairing, z as resolveSlackUserAllowlist, zt as resolveDmGroupAccessWithCommandGate } from "./reply-z9d8PTON.js";
-import "./paths-MKyEVmEb.js";
-import "./github-copilot-token-D5fdS6xD.js";
-import { A as GroupPolicySchema, Ar as acquireFileLock, At as normalizePluginHttpPath, B as requireOpenAllowFrom, Br as assertSecretInputResolved, D as BlockStreamingCoalesceSchema, E as ToolPolicySchema, F as TtsAutoSchema, Fr as formatCliCommand, Gr as normalizeResolvedSecretInputString, Hr as hasConfiguredSecretInput, I as TtsConfigSchema, Kr as normalizeSecretInputString, L as TtsModeSchema, M as MarkdownTableModeSchema, N as ReplyRuntimeConfigSchemaShape, O as DmConfigSchema, P as SecretInputSchema, R as TtsProviderSchema, Sr as encodeJsonPointerToken, Ur as isSecretRef, Wr as isValidEnvSecretRefId, br as resolveDefaultSecretProviderAlias, c as WhatsAppConfigSchema, d as IMessageConfigSchema, f as MSTeamsConfigSchema, fr as resolveSecretRefString, h as TelegramConfigSchema, j as MarkdownConfigSchema, jr as withFileLock, k as DmPolicySchema, l as DiscordConfigSchema, m as SlackConfigSchema, ni as isTruthyEnvValue, p as SignalConfigSchema, u as GoogleChatConfigSchema, yr as isValidFileSecretRefId, yt as getChatChannelMeta, z as normalizeAllowFrom } from "./config-DcmTo9nX.js";
-import { A as sleep, C as pathExists, D as safeParseJson, K as registerLogTransport, S as normalizeE164, X as resolvePreferredOpenClawTmpDir, _ as escapeRegExp, f as CONFIG_DIR, o as stripAnsi, p as clamp, y as isRecord } from "./logger-z1vqlUc1.js";
-import { A as resolveWhatsAppGroupToolPolicy, B as normalizeWhatsAppMessagingTarget, C as resolveIMessageGroupRequireMention, D as resolveTelegramGroupRequireMention, E as resolveSlackGroupToolPolicy, F as resolveIMessageConfigDefaultTo, H as trimMessagingTarget, I as resolveWhatsAppConfigAllowFrom, K as resolveToolsBySender, L as resolveWhatsAppConfigDefaultTo, M as formatTrimmedAllowFromEntries, N as formatWhatsAppConfigAllowFromEntries, O as resolveTelegramGroupToolPolicy, P as resolveIMessageConfigAllowFrom, R as looksLikeWhatsAppTargetId, S as resolveGoogleChatGroupToolPolicy, T as resolveSlackGroupRequireMention, V as looksLikeHandleOrPhoneTarget, W as resolveChannelGroupRequireMention, _ as resolveBlueBubblesGroupRequireMention, b as resolveDiscordGroupToolPolicy, g as normalizeSignalMessagingTarget, h as looksLikeSignalTargetId, j as buildSlackThreadingToolContext, k as resolveWhatsAppGroupRequireMention, m as resolveWhatsAppMentionStripPatterns, p as resolveWhatsAppGroupIntroHint, v as resolveBlueBubblesGroupToolPolicy, w as resolveIMessageGroupToolPolicy, x as resolveGoogleChatGroupRequireMention, y as resolveDiscordGroupRequireMention, z as normalizeWhatsAppAllowFromEntries } from "./thinking-UWPe_QkL.js";
-import { c as detectMime, l as extensionForMime, u as getFileExtension } from "./image-ops-DQecz92g.js";
-import "./pi-embedded-helpers-CAUCyW-C.js";
-import { A as listConfiguredAccountIds, B as isWhatsAppGroupJid, C as resolveDefaultTelegramAccountId, F as resolveDefaultSlackAccountId, H as inspectDiscordAccount, I as resolveSlackAccount, K as resolveDefaultDiscordAccountId, L as resolveSlackReplyToMode, M as inspectSlackAccount, N as listEnabledSlackAccounts, P as listSlackAccountIds, S as listTelegramAccountIds, V as normalizeWhatsAppTarget, W as listDiscordAccountIds, a as listDiscordDirectoryPeersFromConfig, c as listTelegramDirectoryGroupsFromConfig, d as listWhatsAppDirectoryPeersFromConfig, f as looksLikeSlackTargetId, i as listDiscordDirectoryGroupsFromConfig, j as resolveAccountWithDefaultFallback, l as listTelegramDirectoryPeersFromConfig, o as listSlackDirectoryGroupsFromConfig, p as normalizeSlackMessagingTarget, q as resolveDiscordAccount, s as listSlackDirectoryPeersFromConfig, u as listWhatsAppDirectoryGroupsFromConfig, w as resolveTelegramAccount, y as inspectTelegramAccount } from "./plugins-BDbhbWhL.js";
-import { n as resolveDefaultIMessageAccountId, r as resolveIMessageAccount, t as listIMessageAccountIds } from "./accounts-UcDby2iw.js";
-import { i as resolveSignalAccount, n as listSignalAccountIds, r as resolveDefaultSignalAccountId } from "./accounts-BH2cDwDs.js";
-import { At as resolveChannelEntryMatch, Mt as resolveNestedAllowlistDecision, Ot as buildChannelKeyCandidates, at as parseDiscordTarget, dt as normalizeDiscordSlug, jt as resolveChannelEntryMatchWithFallback, kt as normalizeChannelSlug } from "./send-DlaXdjxT.js";
-import "./paths-NcyWgkDa.js";
-import "./fetch-Bv4TQOMH.js";
-import { t as redactSensitiveText } from "./redact-DIGZ7dEc.js";
-import { r as formatErrorMessage } from "./errors-C-TFeu_U.js";
-import "./channel-activity-Ch2ikp2R.js";
-import "./path-alias-guards-CMpHLrQn.js";
-import { a as openWritableFileWithinRoot, t as SafeOpenError } from "./fs-safe-B8jm0acc.js";
-import { a as isBlockedHostnameOrIp, i as isBlockedHostname, o as isPrivateIpAddress, t as SsrFBlockedError } from "./ssrf-DLMRQ-23.js";
-import { t as fetchWithSsrFGuard } from "./fetch-guard-BYuGI2fv.js";
-import "./local-roots-DkkJU3dK.js";
-import { p as chunkTextByBreakResolver, v as loadWebMedia } from "./ir-BT5t7Puy.js";
-import "./render-HmipMDlP.js";
-import "./tables-BEbGqCTi.js";
-import { c as parseChatAllowTargetPrefixes, d as resolveServicePrefixedTarget, f as formatAllowFromLowercase, l as parseChatTargetPrefixesOrThrow, m as isNormalizedSenderAllowed, o as normalizeIMessageHandle, p as isAllowedParsedChatSender, u as resolveServicePrefixedAllowTarget } from "./send-C18ggIM2.js";
-import { J as isWSL2Sync, K as formatLocationText, X as isWSLSync, Y as isWSLEnv, nt as readJsonFileWithFallback, q as toLocationContext, rt as writeJsonFileAtomically } from "./send-0QroRczT.js";
-import "./tool-images-DlLcyfNA.js";
-import { d as readNumberParam, f as readReactionParams, h as readStringParam, l as jsonResult, n as missingTargetError, o as createActionGate } from "./target-errors-BvLJluYy.js";
-import { s as parseSlackBlocksInput } from "./send-Cx_D9xwx.js";
-import { b as buildRandomTempFilePath, x as withTempDownloadPath } from "./audio-transcription-runner-7CHxE2BQ.js";
-import { a as resolveWindowsSpawnProgramCandidate, i as resolveWindowsSpawnProgram, n as materializeWindowsSpawnProgram, r as resolveWindowsExecutablePath, t as applyWindowsSpawnProgramPolicy } from "./windows-spawn-E2JqbJ-S.js";
-import { i as isSilentReplyText, n as SILENT_REPLY_TOKEN } from "./tokens-DuRErjk3.js";
-import { n as listSkillCommandsForAgents } from "./skill-commands-lTv6eZ9w.js";
-import "./skills-B9E5z-5N.js";
-import { J as rawDataToString } from "./chrome-7WG4RD96.js";
-import { j as resolveChannelMediaMaxBytes } from "./deliver-CgXTYxk5.js";
-import { g as onDiagnosticEvent, h as isDiagnosticsEnabled, m as emitDiagnosticEvent } from "./diagnostic-BXGKZu0V.js";
-import { r as extractOriginalFilename } from "./store-D3PzFwov.js";
-import "./commands-registry-DYXI-DAL.js";
-import { n as normalizeTelegramLookupTarget, r as parseTelegramTarget } from "./targets-D46Aqz9j.js";
-import { t as resolveWhatsAppOutboundTarget } from "./resolve-outbound-target-DJLX0eY1.js";
-import { r as resolveWhatsAppHeartbeatRecipients } from "./channel-web-Hw3F067Q.js";
-import "./image-BD0PKdPB.js";
-import "./api-key-rotation-CHOb7Xyf.js";
-import "./proxy-fetch-DxlXp4Yi.js";
-import "./pi-model-discovery-Cgcbmehy.js";
-import "./send-DmOINze0.js";
-import "./outbound-attachment-CKcwtHk7.js";
-import "./proxy-BFm9FJeW.js";
-import "./manager-VM1F_zdE.js";
-import "./query-expansion-MqRsrBuZ.js";
-import "./outbound-B6wh5B_f.js";
-import "./session-DFR_OeU9.js";
-import { t as loginWeb } from "./login-6He5cqvq.js";
+import { $ as normalizeAgentId, D as runCommandWithTimeout, R as isNotFoundPathError, at as DEFAULT_ACCOUNT_ID, nt as resolveThreadSessionKeys, ot as normalizeAccountId, z as isPathInside } from "./run-with-concurrency-BmqlpGOz.js";
+import { a as resolveWhatsAppAuthDir, b as createAccountListHelpers, i as resolveWhatsAppAccount, n as listWhatsAppAccountIds, r as resolveDefaultWhatsAppAccountId } from "./accounts-pP2x3ZhF.js";
+import { $ as buildMediaPayload, $t as resolveRuntimeGroupPolicy, A as resolveDiscordUserAllowlist, At as extractToolSend, B as createReplyPrefixContext, Bt as readStoreAllowFromForDmPolicy, C as resolveSlackUserAllowlist, Cn as formatAllowlistMatchMeta, D as resolveDefaultLineAccountId, Dn as BLUEBUBBLES_ACTION_NAMES, Dt as stripMarkdown, E as normalizeAccountId$1, En as BLUEBUBBLES_ACTIONS, Et as processLineMessage, Ft as formatInboundFromLabel, G as DEFAULT_GROUP_HISTORY_LIMIT, Gt as resolveEffectiveAllowFromLists, H as logAckFailure, Ht as resolveDmGroupAccessDecision, It as formatUtcTimestamp, J as clearHistoryEntries, Jt as GROUP_POLICY_BLOCKED_LABEL, L as resolveMentionGating, Lt as formatZonedTimestamp, M as mergeAllowlist, N as summarizeMapping, Nt as resolveInboundSessionEnvelopeContext, O as resolveLineAccount, On as BLUEBUBBLES_GROUP_ACTIONS, Ot as createReceiptCard, Q as recordPendingHistoryEntryIfEnabled, Qt as resolveOpenProviderRuntimeGroupPolicy, R as resolveMentionGatingWithBypass, Rt as resolveTimezone, S as createDedupeCache, Sn as unbindThreadBindingsBySessionKey, T as listLineAccountIds, Tn as resolveAllowlistMatchSimple, Tt as hasMarkdownToConvert, U as logInboundDrop, Ut as resolveDmGroupAccessWithCommandGate, V as createReplyPrefixOptions, Vt as resolveDmAllowState, W as logTypingFailure, Wt as resolveDmGroupAccessWithLists, X as evictOldHistoryKeys, Xt as resolveAllowlistProviderRuntimeGroupPolicy, Y as clearHistoryEntriesIfEnabled, Yt as resetMissingProviderGroupPolicyFallbackWarningsForTesting, Z as recordPendingHistoryEntry, Zt as resolveDefaultGroupPolicy, _ as formatDocsLink, _n as unregisterAcpRuntimeBackend, an as installRequestBodyLimitGuard, at as removeAckReactionAfterReply, bn as autoBindSpawnedDiscordSubagent, bt as listDevicePairing, cn as readRequestBodyWithLimit, dn as enqueueKeyedTask, en as warnMissingProviderGroupPolicyFallbackOnce, fn as isDangerousNameMatchingEnabled, g as stringEnum, gn as requireAcpRuntimeBackend, gt as resolveAckReaction, h as optionalStringEnum, hn as registerAcpRuntimeBackend, in as RequestBodyLimitError, it as readBooleanParam, j as resolveDiscordChannelAllowlist, jt as issuePairingChallenge, k as detectBinary, kn as CHANNEL_MESSAGE_ACTION_NAMES, kt as attachFooterText, ln as requestBodyErrorToText, m as parseTelegramThreadId, mn as getAcpRuntimeBackend, n as dispatchReplyFromConfig, nn as DEFAULT_WEBHOOK_BODY_TIMEOUT_MS, nt as collectDiscordAuditChannelIds, on as isRequestBodyLimitError, ot as shouldAckReaction, p as parseTelegramReplyToMessageId, pn as registerPluginHttpRoute, q as buildPendingHistoryContextFromMap, qt as resolveControlCommandGate, rn as DEFAULT_WEBHOOK_MAX_BODY_BYTES, rt as recordInboundSession, sn as readJsonBodyWithLimit, st as shouldAckReactionForWhatsApp, t as withReplyDispatcher, tn as pruneMapToMaxSize, un as KeyedAsyncQueue, vn as ACP_ERROR_CODES, w as resolveSlackChannelAllowlist, wn as resolveAllowlistMatchByCandidates, xn as listThreadBindingsBySessionKey, xt as rejectDevicePairing, yn as AcpRuntimeError, yt as approveDevicePairing, z as createTypingCallbacks, zt as DM_GROUP_ACCESS_REASON } from "./dispatch-DNlJ_bR_.js";
+import "./paths-eFexkPEh.js";
+import "./github-copilot-token-Cxf8QYZb.js";
+import { A as GroupPolicySchema, At as normalizePluginHttpPath, B as requireOpenAllowFrom, Cr as encodeJsonPointerToken, D as BlockStreamingCoalesceSchema, E as ToolPolicySchema, F as TtsAutoSchema, Gr as isValidEnvSecretRefId, I as TtsConfigSchema, Ir as formatCliCommand, Kr as normalizeResolvedSecretInputString, L as TtsModeSchema, M as MarkdownTableModeSchema, Mr as withFileLock, N as ReplyRuntimeConfigSchemaShape, O as DmConfigSchema, P as SecretInputSchema, R as TtsProviderSchema, Rt as registerContextEngine, Ur as hasConfiguredSecretInput, Vr as assertSecretInputResolved, Wr as isSecretRef, br as isValidFileSecretRefId, c as WhatsAppConfigSchema, d as IMessageConfigSchema, f as MSTeamsConfigSchema, h as TelegramConfigSchema, j as MarkdownConfigSchema, jr as acquireFileLock, k as DmPolicySchema, l as DiscordConfigSchema, m as SlackConfigSchema, p as SignalConfigSchema, pr as resolveSecretRefString, qr as normalizeSecretInputString, ri as isTruthyEnvValue, u as GoogleChatConfigSchema, xr as resolveDefaultSecretProviderAlias, yt as getChatChannelMeta, z as normalizeAllowFrom } from "./config-DHj52j9A.js";
+import { A as sleep, C as pathExists, D as safeParseJson, K as registerLogTransport, S as normalizeE164, X as resolvePreferredOpenClawTmpDir, _ as escapeRegExp, f as CONFIG_DIR, o as stripAnsi, p as clamp, y as isRecord } from "./logger-qBtAINSh.js";
+import { A as resolveWhatsAppGroupToolPolicy, B as normalizeWhatsAppMessagingTarget, C as resolveIMessageGroupRequireMention, D as resolveTelegramGroupRequireMention, E as resolveSlackGroupToolPolicy, F as resolveIMessageConfigDefaultTo, H as trimMessagingTarget, I as resolveWhatsAppConfigAllowFrom, K as resolveToolsBySender, L as resolveWhatsAppConfigDefaultTo, M as formatTrimmedAllowFromEntries, N as formatWhatsAppConfigAllowFromEntries, O as resolveTelegramGroupToolPolicy, P as resolveIMessageConfigAllowFrom, R as looksLikeWhatsAppTargetId, S as resolveGoogleChatGroupToolPolicy, T as resolveSlackGroupRequireMention, V as looksLikeHandleOrPhoneTarget, W as resolveChannelGroupRequireMention, _ as resolveBlueBubblesGroupRequireMention, b as resolveDiscordGroupToolPolicy, g as normalizeSignalMessagingTarget, h as looksLikeSignalTargetId, j as buildSlackThreadingToolContext, k as resolveWhatsAppGroupRequireMention, m as resolveWhatsAppMentionStripPatterns, p as resolveWhatsAppGroupIntroHint, v as resolveBlueBubblesGroupToolPolicy, w as resolveIMessageGroupToolPolicy, x as resolveGoogleChatGroupRequireMention, y as resolveDiscordGroupRequireMention, z as normalizeWhatsAppAllowFromEntries } from "./thinking-2GlTi4JB.js";
+import { c as detectMime, l as extensionForMime, u as getFileExtension } from "./image-ops-sbFRyNCD.js";
+import "./pi-embedded-helpers-cW6rlHVs.js";
+import { A as listConfiguredAccountIds, B as isWhatsAppGroupJid, C as resolveDefaultTelegramAccountId, F as resolveDefaultSlackAccountId, H as inspectDiscordAccount, I as resolveSlackAccount, K as resolveDefaultDiscordAccountId, L as resolveSlackReplyToMode, M as inspectSlackAccount, N as listEnabledSlackAccounts, P as listSlackAccountIds, S as listTelegramAccountIds, V as normalizeWhatsAppTarget, W as listDiscordAccountIds, a as listDiscordDirectoryPeersFromConfig, c as listTelegramDirectoryGroupsFromConfig, d as listWhatsAppDirectoryPeersFromConfig, f as looksLikeSlackTargetId, i as listDiscordDirectoryGroupsFromConfig, j as resolveAccountWithDefaultFallback, l as listTelegramDirectoryPeersFromConfig, o as listSlackDirectoryGroupsFromConfig, p as normalizeSlackMessagingTarget, q as resolveDiscordAccount, s as listSlackDirectoryPeersFromConfig, u as listWhatsAppDirectoryGroupsFromConfig, w as resolveTelegramAccount, y as inspectTelegramAccount } from "./plugins-Dpt4e0m6.js";
+import { n as resolveDefaultIMessageAccountId, r as resolveIMessageAccount, t as listIMessageAccountIds } from "./accounts-C_15m-UR.js";
+import { i as resolveSignalAccount, n as listSignalAccountIds, r as resolveDefaultSignalAccountId } from "./accounts-CD68PDP0.js";
+import { At as resolveChannelEntryMatch, Mt as resolveNestedAllowlistDecision, Ot as buildChannelKeyCandidates, at as parseDiscordTarget, dt as normalizeDiscordSlug, jt as resolveChannelEntryMatchWithFallback, kt as normalizeChannelSlug } from "./send-cDq3pCh7.js";
+import "./paths-BT9JjwAc.js";
+import "./fetch-C_ro9dG3.js";
+import { t as redactSensitiveText } from "./redact-Cp8eaEBy.js";
+import { r as formatErrorMessage } from "./errors-CpUQY-jc.js";
+import "./channel-activity-BYemkEfj.js";
+import "./path-alias-guards-DX9xADBA.js";
+import { a as openWritableFileWithinRoot, t as SafeOpenError } from "./fs-safe-CPJX3Pcd.js";
+import { a as isBlockedHostnameOrIp, i as isBlockedHostname, o as isPrivateIpAddress, t as SsrFBlockedError } from "./ssrf-D4R7wohG.js";
+import { t as fetchWithSsrFGuard } from "./fetch-guard-B1-FCmEi.js";
+import "./local-roots-DDvhDgVm.js";
+import { p as chunkTextByBreakResolver, v as loadWebMedia } from "./ir-BmmctvMj.js";
+import "./render-C15_5JiR.js";
+import "./tables-DmnW7rBF.js";
+import { _ as isNormalizedSenderAllowed, c as parseChatTargetPrefixesOrThrow, d as resolveServicePrefixedOrChatAllowTarget, f as resolveServicePrefixedTarget, g as isAllowedParsedChatSender, h as formatAllowFromLowercase, i as normalizeIMessageHandle, l as resolveServicePrefixedAllowTarget, o as createAllowedChatSenderMatcher, s as parseChatAllowTargetPrefixes, u as resolveServicePrefixedChatTarget } from "./send-CybPOeYd.js";
+import { J as toLocationContext, b as isWSLEnv, nt as readJsonFileWithFallback, q as formatLocationText, rt as writeJsonFileAtomically, x as isWSLSync, y as isWSL2Sync } from "./send-6o6aFhC4.js";
+import "./tool-images-CC2MdxgK.js";
+import { d as readNumberParam, f as readReactionParams, h as readStringParam, l as jsonResult, n as missingTargetError, o as createActionGate } from "./target-errors-BN25Wpsh.js";
+import { s as parseSlackBlocksInput } from "./send-D8aXYbvW.js";
+import { x as resolveChannelMediaMaxBytes } from "./deliver-DeGLseCQ.js";
+import { g as onDiagnosticEvent, h as isDiagnosticsEnabled, m as emitDiagnosticEvent } from "./diagnostic-oDtvUlyz.js";
+import "./pi-model-discovery-TFbqKAGC.js";
+import { d as buildRandomTempFilePath, f as withTempDownloadPath } from "./audio-transcription-runner-BaElN0j2.js";
+import "./image-wPyfG0Yr.js";
+import { k as rawDataToString } from "./chrome-CfHLlzSc.js";
+import "./skills-CJD32DuT.js";
+import { r as extractOriginalFilename } from "./store-DPPxADm7.js";
+import { a as resolveWindowsSpawnProgramCandidate, i as resolveWindowsSpawnProgram, n as materializeWindowsSpawnProgram, r as resolveWindowsExecutablePath, t as applyWindowsSpawnProgramPolicy } from "./windows-spawn-BordjUBM.js";
+import "./api-key-rotation-aQ4DTZ2H.js";
+import "./proxy-fetch-CCmPR5IR.js";
+import { i as isSilentReplyText, n as SILENT_REPLY_TOKEN } from "./tokens-DHkY932S.js";
+import "./commands-registry-BKVNcp2d.js";
+import { n as normalizeTelegramLookupTarget, r as parseTelegramTarget } from "./targets-B6NBgHav.js";
+import { n as listSkillCommandsForAgents } from "./skill-commands-BLogM_Js.js";
+import "./send-zizQ_4dP.js";
+import "./proxy-CgXTW63Y.js";
+import "./outbound-attachment-CORICJp3.js";
+import "./manager-C_b8H7ya.js";
+import "./query-expansion-Cz79K2px.js";
+import { t as resolveWhatsAppOutboundTarget } from "./resolve-outbound-target-BUM1hQhi.js";
+import { r as resolveWhatsAppHeartbeatRecipients } from "./channel-web-B5p0tJNI.js";
+import "./outbound-DWj9D_MX.js";
+import "./session-Wae3PdF1.js";
+import { t as loginWeb } from "./login-Cfu1BxB2.js";
 import fs, { createWriteStream } from "node:fs";
 import path from "node:path";
 import os from "node:os";
@@ -67,7 +67,6 @@ import { request } from "node:https";
 import { Readable, Transform } from "node:stream";
 import JSZip from "jszip";
 import * as tar from "tar";
-
 //#region src/plugins/config-schema.ts
 function error(message) {
 	return {
@@ -99,7 +98,48 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
+//#endregion
+//#region src/plugin-sdk/allowlist-resolution.ts
+function mapBasicAllowlistResolutionEntries(entries) {
+	return entries.map((entry) => ({
+		input: entry.input,
+		resolved: entry.resolved,
+		id: entry.id,
+		name: entry.name,
+		note: entry.note
+	}));
+}
+//#endregion
+//#region src/plugin-sdk/request-url.ts
+function resolveRequestUrl(input) {
+	if (typeof input === "string") return input;
+	if (input instanceof URL) return input.toString();
+	if (typeof input === "object" && input && "url" in input && typeof input.url === "string") return input.url;
+	return "";
+}
+//#endregion
+//#region src/plugin-sdk/discord-send.ts
+function buildDiscordSendOptions(input) {
+	return {
+		verbose: false,
+		replyTo: input.replyToId ?? void 0,
+		accountId: input.accountId ?? void 0,
+		silent: input.silent ?? void 0
+	};
+}
+function buildDiscordSendMediaOptions(input) {
+	return {
+		...buildDiscordSendOptions(input),
+		mediaUrl: input.mediaUrl,
+		mediaLocalRoots: input.mediaLocalRoots
+	};
+}
+function tagDiscordChannelResult(result) {
+	return {
+		channel: "discord",
+		...result
+	};
+}
 //#endregion
 //#region src/plugin-sdk/webhook-path.ts
 function normalizeWebhookPath(raw) {
@@ -119,7 +159,6 @@ function resolveWebhookPath(params) {
 	}
 	return params.defaultPath ?? null;
 }
-
 //#endregion
 //#region src/plugin-sdk/webhook-targets.ts
 function registerWebhookTargetWithPluginRoute(params) {
@@ -248,7 +287,6 @@ function rejectNonPostWebhookRequest(req, res) {
 	res.end("Method Not Allowed");
 	return true;
 }
-
 //#endregion
 //#region src/plugin-sdk/webhook-request-guards.ts
 const WEBHOOK_BODY_READ_DEFAULTS = Object.freeze({
@@ -418,7 +456,6 @@ async function readJsonWebhookBodyOrReject(params) {
 		invalidMessage: params.invalidJsonMessage
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/channel-lifecycle.ts
 /**
@@ -462,7 +499,6 @@ async function keepHttpServerTaskAlive(params) {
 	if (abortSignal) abortSignal.removeEventListener("abort", onAbortSignal);
 	await abortTask;
 }
-
 //#endregion
 //#region src/plugin-sdk/agent-media-payload.ts
 function buildAgentMediaPayload(mediaList) {
@@ -478,7 +514,6 @@ function buildAgentMediaPayload(mediaList) {
 		MediaTypes: mediaTypes.length > 0 ? mediaTypes : void 0
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/status-helpers.ts
 function createDefaultChannelRuntimeState(accountId, extra) {
@@ -515,13 +550,35 @@ function buildBaseAccountStatusSnapshot(params) {
 		name: account.name,
 		enabled: account.enabled,
 		configured: account.configured,
+		...buildRuntimeAccountStatusSnapshot({
+			runtime,
+			probe
+		}),
+		lastInboundAt: runtime?.lastInboundAt ?? null,
+		lastOutboundAt: runtime?.lastOutboundAt ?? null
+	};
+}
+function buildComputedAccountStatusSnapshot(params) {
+	const { accountId, name, enabled, configured, runtime, probe } = params;
+	return buildBaseAccountStatusSnapshot({
+		account: {
+			accountId,
+			name,
+			enabled,
+			configured
+		},
+		runtime,
+		probe
+	});
+}
+function buildRuntimeAccountStatusSnapshot(params) {
+	const { runtime, probe } = params;
+	return {
 		running: runtime?.running ?? false,
 		lastStartAt: runtime?.lastStartAt ?? null,
 		lastStopAt: runtime?.lastStopAt ?? null,
 		lastError: runtime?.lastError ?? null,
-		probe,
-		lastInboundAt: runtime?.lastInboundAt ?? null,
-		lastOutboundAt: runtime?.lastOutboundAt ?? null
+		probe
 	};
 }
 function buildTokenChannelStatusSummary(snapshot, opts) {
@@ -549,7 +606,6 @@ function collectStatusIssuesFromLastError(channel, accounts) {
 		}];
 	});
 }
-
 //#endregion
 //#region src/secrets/provider-env-vars.ts
 const PROVIDER_ENV_VARS = {
@@ -578,7 +634,6 @@ const PROVIDER_ENV_VARS = {
 	volcengine: ["VOLCANO_ENGINE_API_KEY"],
 	byteplus: ["BYTEPLUS_API_KEY"]
 };
-
 //#endregion
 //#region src/commands/auth-choice.apply-helpers.ts
 function formatErrorMessage$1(error) {
@@ -714,17 +769,16 @@ async function resolveSecretInputModeForEnvSelection(params) {
 		}]
 	}) === "ref" ? "ref" : "plaintext";
 }
-
 //#endregion
 //#region src/plugin-sdk/onboarding.ts
 async function promptAccountId$1(params) {
 	const existingIds = params.listAccountIds(params.cfg);
-	const initial = params.currentId?.trim() || params.defaultAccountId || DEFAULT_ACCOUNT_ID;
+	const initial = params.currentId?.trim() || params.defaultAccountId || "default";
 	const choice = await params.prompter.select({
 		message: `${params.label} account`,
 		options: [...existingIds.map((id) => ({
 			value: id,
-			label: id === DEFAULT_ACCOUNT_ID ? "default (primary)" : id
+			label: id === "default" ? "default (primary)" : id
 		})), {
 			value: "__new__",
 			label: "Add a new account"
@@ -740,7 +794,6 @@ async function promptAccountId$1(params) {
 	if (String(entered).trim() !== normalized) await params.prompter.note(`Normalized account id to "${normalized}".`, `${params.label} account`);
 	return normalized;
 }
-
 //#endregion
 //#region src/channels/plugins/setup-helpers.ts
 function channelHasAccounts(cfg, channelKey) {
@@ -749,7 +802,7 @@ function channelHasAccounts(cfg, channelKey) {
 }
 function shouldStoreNameInAccounts(params) {
 	if (params.alwaysUseAccounts) return true;
-	if (params.accountId !== DEFAULT_ACCOUNT_ID) return true;
+	if (params.accountId !== "default") return true;
 	return channelHasAccounts(params.cfg, params.channelKey);
 }
 function applyAccountNameToChannelSection(params) {
@@ -763,7 +816,7 @@ function applyAccountNameToChannelSection(params) {
 		channelKey: params.channelKey,
 		accountId,
 		alwaysUseAccounts: params.alwaysUseAccounts
-	}) && accountId === DEFAULT_ACCOUNT_ID) {
+	}) && accountId === "default") {
 		const safeBase = base ?? {};
 		return {
 			...params.cfg,
@@ -778,7 +831,7 @@ function applyAccountNameToChannelSection(params) {
 	}
 	const baseAccounts = base?.accounts ?? {};
 	const existingAccount = baseAccounts[accountId] ?? {};
-	const baseWithoutName = accountId === DEFAULT_ACCOUNT_ID ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
+	const baseWithoutName = accountId === "default" ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
 	return {
 		...params.cfg,
 		channels: {
@@ -802,7 +855,7 @@ function migrateBaseNameToDefaultAccount(params) {
 	const baseName = base?.name?.trim();
 	if (!baseName) return params.cfg;
 	const accounts = { ...base?.accounts };
-	const defaultAccount = accounts[DEFAULT_ACCOUNT_ID] ?? {};
+	const defaultAccount = accounts["default"] ?? {};
 	if (!defaultAccount.name) accounts[DEFAULT_ACCOUNT_ID] = {
 		...defaultAccount,
 		name: baseName
@@ -891,7 +944,6 @@ function moveSingleAccountChannelSectionToDefaultAccount(params) {
 		}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/helpers.ts
 const promptAccountId = async (params) => {
@@ -1052,12 +1104,12 @@ function setOnboardingChannelEnabled(cfg, channel, enabled) {
 }
 function patchConfigForScopedAccount(params) {
 	const { cfg, channel, accountId, patch, ensureEnabled } = params;
-	const seededCfg = accountId === DEFAULT_ACCOUNT_ID ? cfg : moveSingleAccountChannelSectionToDefaultAccount({
+	const seededCfg = accountId === "default" ? cfg : moveSingleAccountChannelSectionToDefaultAccount({
 		cfg,
 		channelKey: channel
 	});
 	const channelConfig = seededCfg.channels?.[channel] ?? {};
-	if (accountId === DEFAULT_ACCOUNT_ID) return {
+	if (accountId === "default") return {
 		...seededCfg,
 		channels: {
 			...seededCfg.channels,
@@ -1290,7 +1342,6 @@ async function promptLegacyChannelAllowFrom(params) {
 		allowFrom: unique
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/provider-auth-result.ts
 function buildOauthProviderAuthResult(params) {
@@ -1313,14 +1364,22 @@ function buildOauthProviderAuthResult(params) {
 		notes: params.notes
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/resolution-notes.ts
 function formatResolvedUnresolvedNote(params) {
 	if (params.resolved.length === 0 && params.unresolved.length === 0) return;
 	return [params.resolved.length > 0 ? `Resolved: ${params.resolved.join(", ")}` : void 0, params.unresolved.length > 0 ? `Unresolved (kept as typed): ${params.unresolved.join(", ")}` : void 0].filter(Boolean).join("\n");
 }
-
+//#endregion
+//#region src/plugin-sdk/channel-send-result.ts
+function buildChannelSendResult(channel, result) {
+	return {
+		channel,
+		ok: result.ok,
+		messageId: result.messageId ?? "",
+		error: result.error ? new Error(result.error) : void 0
+	};
+}
 //#endregion
 //#region src/plugin-sdk/group-access.ts
 function evaluateSenderGroupAccess(params) {
@@ -1356,7 +1415,6 @@ function evaluateSenderGroupAccess(params) {
 		reason: "allowed"
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/command-auth.ts
 function resolveDirectDmAuthorizationOutcome(params) {
@@ -1407,7 +1465,6 @@ async function resolveSenderCommandAuthorization(params) {
 		}) : void 0
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/pairing-access.ts
 function createScopedPairingAccess(params) {
@@ -1429,7 +1486,6 @@ function createScopedPairingAccess(params) {
 		})
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/inbound-envelope.ts
 function createInboundEnvelopeBuilder(params) {
@@ -1487,7 +1543,6 @@ function resolveInboundRouteEnvelopeBuilderWithRuntime(params) {
 		formatAgentEnvelope: params.runtime.reply.formatAgentEnvelope
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/slack-message-actions.ts
 function readSlackBlocksParam(actionParams) {
@@ -1616,7 +1671,6 @@ async function handleSlackMessageAction(params) {
 	}
 	throw new Error(`Action ${action} is not supported for provider ${providerId}.`);
 }
-
 //#endregion
 //#region src/plugin-sdk/reply-payload.ts
 function normalizeOutboundReplyPayload(payload) {
@@ -1636,6 +1690,38 @@ function resolveOutboundMediaUrls(payload) {
 	if (payload.mediaUrls?.length) return payload.mediaUrls;
 	if (payload.mediaUrl) return [payload.mediaUrl];
 	return [];
+}
+async function sendPayloadWithChunkedTextAndMedia(params) {
+	const payload = params.ctx.payload;
+	const text = payload.text ?? "";
+	const urls = resolveOutboundMediaUrls(payload);
+	if (!text && urls.length === 0) return params.emptyResult;
+	if (urls.length > 0) {
+		let lastResult = await params.sendMedia({
+			...params.ctx,
+			text,
+			mediaUrl: urls[0]
+		});
+		for (let i = 1; i < urls.length; i++) lastResult = await params.sendMedia({
+			...params.ctx,
+			text: "",
+			mediaUrl: urls[i]
+		});
+		return lastResult;
+	}
+	const limit = params.textChunkLimit;
+	const chunks = limit && params.chunker ? params.chunker(text, limit) : [text];
+	let lastResult;
+	for (const chunk of chunks) lastResult = await params.sendText({
+		...params.ctx,
+		text: chunk
+	});
+	return lastResult;
+}
+function isNumericTargetId(raw) {
+	const trimmed = raw.trim();
+	if (!trimmed) return false;
+	return /^\d{3,}$/.test(trimmed);
 }
 function formatTextWithAttachmentLinks(text, mediaUrls) {
 	const trimmedText = text?.trim() ?? "";
@@ -1666,7 +1752,296 @@ async function sendMediaWithLeadingCaption(params) {
 	}
 	return true;
 }
-
+//#endregion
+//#region src/line/flex-templates/basic-cards.ts
+/**
+* Create an info card with title, body, and optional footer
+*
+* Editorial design: Clean hierarchy with accent bar, generous spacing,
+* and subtle background zones for visual separation.
+*/
+function createInfoCard(title, body, footer) {
+	const bubble = {
+		type: "bubble",
+		size: "mega",
+		body: {
+			type: "box",
+			layout: "vertical",
+			contents: [{
+				type: "box",
+				layout: "horizontal",
+				contents: [{
+					type: "box",
+					layout: "vertical",
+					contents: [],
+					width: "4px",
+					backgroundColor: "#06C755",
+					cornerRadius: "2px"
+				}, {
+					type: "text",
+					text: title,
+					weight: "bold",
+					size: "xl",
+					color: "#111111",
+					wrap: true,
+					flex: 1,
+					margin: "lg"
+				}]
+			}, {
+				type: "box",
+				layout: "vertical",
+				contents: [{
+					type: "text",
+					text: body,
+					size: "md",
+					color: "#444444",
+					wrap: true,
+					lineSpacing: "6px"
+				}],
+				margin: "xl",
+				paddingAll: "lg",
+				backgroundColor: "#F8F9FA",
+				cornerRadius: "lg"
+			}],
+			paddingAll: "xl",
+			backgroundColor: "#FFFFFF"
+		}
+	};
+	if (footer) attachFooterText(bubble, footer);
+	return bubble;
+}
+/**
+* Create a list card with title and multiple items
+*
+* Editorial design: Numbered/bulleted list with clear visual hierarchy,
+* accent dots for each item, and generous spacing.
+*/
+function createListCard(title, items) {
+	const itemContents = items.slice(0, 8).map((item, index) => {
+		const itemContents = [{
+			type: "text",
+			text: item.title,
+			size: "md",
+			weight: "bold",
+			color: "#1a1a1a",
+			wrap: true
+		}];
+		if (item.subtitle) itemContents.push({
+			type: "text",
+			text: item.subtitle,
+			size: "sm",
+			color: "#888888",
+			wrap: true,
+			margin: "xs"
+		});
+		const itemBox = {
+			type: "box",
+			layout: "horizontal",
+			contents: [{
+				type: "box",
+				layout: "vertical",
+				contents: [{
+					type: "box",
+					layout: "vertical",
+					contents: [],
+					width: "8px",
+					height: "8px",
+					backgroundColor: index === 0 ? "#06C755" : "#DDDDDD",
+					cornerRadius: "4px"
+				}],
+				width: "20px",
+				alignItems: "center",
+				paddingTop: "sm"
+			}, {
+				type: "box",
+				layout: "vertical",
+				contents: itemContents,
+				flex: 1
+			}],
+			margin: index > 0 ? "lg" : void 0
+		};
+		if (item.action) itemBox.action = item.action;
+		return itemBox;
+	});
+	return {
+		type: "bubble",
+		size: "mega",
+		body: {
+			type: "box",
+			layout: "vertical",
+			contents: [
+				{
+					type: "text",
+					text: title,
+					weight: "bold",
+					size: "xl",
+					color: "#111111",
+					wrap: true
+				},
+				{
+					type: "separator",
+					margin: "lg",
+					color: "#EEEEEE"
+				},
+				{
+					type: "box",
+					layout: "vertical",
+					contents: itemContents,
+					margin: "lg"
+				}
+			],
+			paddingAll: "xl",
+			backgroundColor: "#FFFFFF"
+		}
+	};
+}
+/**
+* Create an image card with image, title, and optional body text
+*/
+function createImageCard(imageUrl, title, body, options) {
+	const bubble = {
+		type: "bubble",
+		hero: {
+			type: "image",
+			url: imageUrl,
+			size: "full",
+			aspectRatio: options?.aspectRatio ?? "20:13",
+			aspectMode: options?.aspectMode ?? "cover",
+			action: options?.action
+		},
+		body: {
+			type: "box",
+			layout: "vertical",
+			contents: [{
+				type: "text",
+				text: title,
+				weight: "bold",
+				size: "xl",
+				wrap: true
+			}],
+			paddingAll: "lg"
+		}
+	};
+	if (body && bubble.body) bubble.body.contents.push({
+		type: "text",
+		text: body,
+		size: "md",
+		wrap: true,
+		margin: "md",
+		color: "#666666"
+	});
+	return bubble;
+}
+/**
+* Create an action card with title, body, and action buttons
+*/
+function createActionCard(title, body, actions, options) {
+	const bubble = {
+		type: "bubble",
+		body: {
+			type: "box",
+			layout: "vertical",
+			contents: [{
+				type: "text",
+				text: title,
+				weight: "bold",
+				size: "xl",
+				wrap: true
+			}, {
+				type: "text",
+				text: body,
+				size: "md",
+				wrap: true,
+				margin: "md",
+				color: "#666666"
+			}],
+			paddingAll: "lg"
+		},
+		footer: {
+			type: "box",
+			layout: "vertical",
+			contents: actions.slice(0, 4).map((action, index) => ({
+				type: "button",
+				action: action.action,
+				style: index === 0 ? "primary" : "secondary",
+				margin: index > 0 ? "sm" : void 0
+			})),
+			paddingAll: "md"
+		}
+	};
+	if (options?.imageUrl) bubble.hero = {
+		type: "image",
+		url: options.imageUrl,
+		size: "full",
+		aspectRatio: options.aspectRatio ?? "20:13",
+		aspectMode: "cover"
+	};
+	return bubble;
+}
+//#endregion
+//#region src/plugin-sdk/inbound-reply-dispatch.ts
+async function dispatchReplyFromConfigWithSettledDispatcher(params) {
+	return await withReplyDispatcher({
+		dispatcher: params.dispatcher,
+		onSettled: params.onSettled,
+		run: () => dispatchReplyFromConfig({
+			ctx: params.ctxPayload,
+			cfg: params.cfg,
+			dispatcher: params.dispatcher,
+			replyOptions: params.replyOptions
+		})
+	});
+}
+function buildInboundReplyDispatchBase(params) {
+	return {
+		cfg: params.cfg,
+		channel: params.channel,
+		accountId: params.accountId,
+		agentId: params.route.agentId,
+		routeSessionKey: params.route.sessionKey,
+		storePath: params.storePath,
+		ctxPayload: params.ctxPayload,
+		recordInboundSession: params.core.channel.session.recordInboundSession,
+		dispatchReplyWithBufferedBlockDispatcher: params.core.channel.reply.dispatchReplyWithBufferedBlockDispatcher
+	};
+}
+async function dispatchInboundReplyWithBase(params) {
+	await recordInboundSessionAndDispatchReply({
+		...buildInboundReplyDispatchBase(params),
+		deliver: params.deliver,
+		onRecordError: params.onRecordError,
+		onDispatchError: params.onDispatchError,
+		replyOptions: params.replyOptions
+	});
+}
+async function recordInboundSessionAndDispatchReply(params) {
+	await params.recordInboundSession({
+		storePath: params.storePath,
+		sessionKey: params.ctxPayload.SessionKey ?? params.routeSessionKey,
+		ctx: params.ctxPayload,
+		onRecordError: params.onRecordError
+	});
+	const { onModelSelected, ...prefixOptions } = createReplyPrefixOptions({
+		cfg: params.cfg,
+		agentId: params.agentId,
+		channel: params.channel,
+		accountId: params.accountId
+	});
+	const deliver = createNormalizedOutboundDeliverer(params.deliver);
+	await params.dispatchReplyWithBufferedBlockDispatcher({
+		ctx: params.ctxPayload,
+		cfg: params.cfg,
+		dispatcherOptions: {
+			...prefixOptions,
+			deliver,
+			onError: params.onDispatchError
+		},
+		replyOptions: {
+			...params.replyOptions,
+			onModelSelected
+		}
+	});
+}
 //#endregion
 //#region src/plugin-sdk/outbound-media.ts
 async function loadOutboundMediaFromUrl(mediaUrl, options = {}) {
@@ -1675,14 +2050,12 @@ async function loadOutboundMediaFromUrl(mediaUrl, options = {}) {
 		localRoots: options.mediaLocalRoots
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/config-paths.ts
 function resolveChannelAccountConfigBasePath(params) {
 	const accounts = (params.cfg.channels?.[params.channelKey])?.accounts;
 	return Boolean(accounts?.[params.accountId]) ? `channels.${params.channelKey}.accounts.${params.accountId}.` : `channels.${params.channelKey}.`;
 }
-
 //#endregion
 //#region src/plugin-sdk/runtime.ts
 function createLoggerBackedRuntime(params) {
@@ -1698,7 +2071,16 @@ function createLoggerBackedRuntime(params) {
 		}
 	};
 }
-
+function resolveRuntimeEnv(params) {
+	return params.runtime ?? createLoggerBackedRuntime(params);
+}
+function resolveRuntimeEnvWithUnavailableExit(params) {
+	return resolveRuntimeEnv({
+		runtime: params.runtime,
+		logger: params.logger,
+		exitError: () => new Error(params.unavailableMessage ?? "Runtime exit not available")
+	});
+}
 //#endregion
 //#region src/plugin-sdk/text-chunking.ts
 function chunkTextForOutbound(text, limit) {
@@ -1708,7 +2090,6 @@ function chunkTextForOutbound(text, limit) {
 		return lastNewline > 0 ? lastNewline : lastSpace;
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/oauth-utils.ts
 function toFormUrlEncoded(data) {
@@ -1721,7 +2102,6 @@ function generatePkceVerifierChallenge() {
 		challenge: createHash("sha256").update(verifier).digest("base64url")
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/run-command.ts
 async function runPluginCommandWithTimeout(options) {
@@ -1751,7 +2131,6 @@ async function runPluginCommandWithTimeout(options) {
 		};
 	}
 }
-
 //#endregion
 //#region src/shared/gateway-bind-url.ts
 function resolveGatewayBindUrl(params) {
@@ -1782,7 +2161,6 @@ function resolveGatewayBindUrl(params) {
 	}
 	return null;
 }
-
 //#endregion
 //#region src/shared/tailscale-status.ts
 const TAILSCALE_STATUS_COMMAND_CANDIDATES = ["tailscale", "/Applications/Tailscale.app/Contents/MacOS/Tailscale"];
@@ -1822,7 +2200,6 @@ async function resolveTailnetHostWithRunner(runCommandWithTimeout) {
 	}
 	return null;
 }
-
 //#endregion
 //#region src/plugin-sdk/persistent-dedupe.ts
 const DEFAULT_LOCK_OPTIONS = {
@@ -1934,7 +2311,6 @@ function createPersistentDedupe(options) {
 		memorySize: () => memory.size()
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/webhook-memory-guards.ts
 const WEBHOOK_RATE_LIMIT_DEFAULTS = Object.freeze({
@@ -2059,7 +2435,6 @@ function createWebhookAnomalyTracker(options) {
 		clear: () => counter.clear()
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/ssrf-policy.ts
 function normalizeHostnameSuffix(value) {
@@ -2109,7 +2484,6 @@ function buildHostnameAllowlistPolicyFromSuffixAllowlist(allowHosts) {
 	if (patterns.size === 0) return;
 	return { hostnameAllowlist: Array.from(patterns) };
 }
-
 //#endregion
 //#region src/plugin-sdk/fetch-auth.ts
 function isAuthFailureStatus(status) {
@@ -2144,7 +2518,6 @@ async function fetchWithBearerAuthScopeFallback(params) {
 	} catch {}
 	return firstAttempt;
 }
-
 //#endregion
 //#region src/channels/plugins/config-schema.ts
 function buildChannelConfigSchema(schema) {
@@ -2158,14 +2531,17 @@ function buildChannelConfigSchema(schema) {
 		additionalProperties: true
 	} };
 }
-
 //#endregion
 //#region src/channels/plugins/config-helpers.ts
+function isConfiguredSecretValue(value) {
+	if (typeof value === "string") return value.trim().length > 0;
+	return Boolean(value);
+}
 function setAccountEnabledInConfigSection(params) {
-	const accountKey = params.accountId || DEFAULT_ACCOUNT_ID;
+	const accountKey = params.accountId || "default";
 	const base = params.cfg.channels?.[params.sectionKey];
 	const hasAccounts = Boolean(base?.accounts);
-	if (params.allowTopLevel && accountKey === DEFAULT_ACCOUNT_ID && !hasAccounts) return {
+	if (params.allowTopLevel && accountKey === "default" && !hasAccounts) return {
 		...params.cfg,
 		channels: {
 			...params.cfg.channels,
@@ -2195,11 +2571,11 @@ function setAccountEnabledInConfigSection(params) {
 	};
 }
 function deleteAccountFromConfigSection(params) {
-	const accountKey = params.accountId || DEFAULT_ACCOUNT_ID;
+	const accountKey = params.accountId || "default";
 	const base = params.cfg.channels?.[params.sectionKey];
 	if (!base) return params.cfg;
 	const baseAccounts = base.accounts && typeof base.accounts === "object" ? { ...base.accounts } : void 0;
-	if (accountKey !== DEFAULT_ACCOUNT_ID) {
+	if (accountKey !== "default") {
 		const accounts = baseAccounts ? { ...baseAccounts } : {};
 		delete accounts[accountKey];
 		return {
@@ -2235,17 +2611,49 @@ function deleteAccountFromConfigSection(params) {
 	else delete nextCfg.channels;
 	return nextCfg;
 }
-
+function clearAccountEntryFields(params) {
+	const accountKey = params.accountId || "default";
+	const baseAccounts = params.accounts && typeof params.accounts === "object" ? { ...params.accounts } : void 0;
+	if (!baseAccounts || !(accountKey in baseAccounts)) return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const entry = baseAccounts[accountKey];
+	if (!entry || typeof entry !== "object") return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const nextEntry = { ...entry };
+	if (!params.fields.some((field) => field in nextEntry)) return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const isValueSet = params.isValueSet ?? isConfiguredSecretValue;
+	let cleared = Boolean(params.markClearedOnFieldPresence);
+	for (const field of params.fields) {
+		if (!(field in nextEntry)) continue;
+		if (isValueSet(nextEntry[field])) cleared = true;
+		delete nextEntry[field];
+	}
+	if (Object.keys(nextEntry).length === 0) delete baseAccounts[accountKey];
+	else baseAccounts[accountKey] = nextEntry;
+	return {
+		nextAccounts: Object.keys(baseAccounts).length > 0 ? baseAccounts : void 0,
+		changed: true,
+		cleared
+	};
+}
 //#endregion
 //#region src/channels/plugins/helpers.ts
 function formatPairingApproveHint(channelId) {
 	return `Approve via: ${formatCliCommand(`openclaw pairing list ${channelId}`)} / ${formatCliCommand(`openclaw pairing approve ${channelId} <code>`)}`;
 }
-
 //#endregion
 //#region src/channels/plugins/pairing-message.ts
 const PAIRING_APPROVED_MESSAGE = "✅ OpenClaw access approved. Send a message to start chatting.";
-
 //#endregion
 //#region src/channels/plugins/onboarding/channel-access.ts
 function parseAllowlistEntries(raw) {
@@ -2310,7 +2718,6 @@ async function promptChannelAccessConfig(params) {
 		})
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/channel-access-configure.ts
 async function configureChannelAccessWithAllowlist(params) {
@@ -2335,7 +2742,6 @@ async function configureChannelAccessWithAllowlist(params) {
 		resolved
 	});
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/discord.ts
 const channel$5 = "discord";
@@ -2349,7 +2755,7 @@ async function noteDiscordTokenHelp(prompter) {
 	].join("\n"), "Discord bot token");
 }
 function setDiscordGuildChannelAllowlist(cfg, accountId, entries) {
-	const guilds = { ...accountId === DEFAULT_ACCOUNT_ID ? cfg.channels?.discord?.guilds ?? {} : cfg.channels?.discord?.accounts?.[accountId]?.guilds ?? {} };
+	const guilds = { ...accountId === "default" ? cfg.channels?.discord?.guilds ?? {} : cfg.channels?.discord?.accounts?.[accountId]?.guilds ?? {} };
 	for (const entry of entries) {
 		const guildKey = entry.guildKey || "*";
 		const existing = guilds[guildKey] ?? {};
@@ -2411,19 +2817,6 @@ async function promptDiscordAllowFrom(params) {
 		})
 	});
 }
-const dmPolicy$4 = {
-	label: "Discord",
-	channel: channel$5,
-	policyKey: "channels.discord.dmPolicy",
-	allowFromKey: "channels.discord.allowFrom",
-	getCurrent: (cfg) => cfg.channels?.discord?.dmPolicy ?? cfg.channels?.discord?.dm?.policy ?? "pairing",
-	setPolicy: (cfg, policy) => setLegacyChannelDmPolicyWithAllowFrom({
-		cfg,
-		channel: "discord",
-		dmPolicy: policy
-	}),
-	promptAllowFrom: promptDiscordAllowFrom
-};
 const discordOnboardingAdapter = {
 	channel: channel$5,
 	getStatus: async ({ cfg }) => {
@@ -2580,10 +2973,21 @@ const discordOnboardingAdapter = {
 			accountId: discordAccountId
 		};
 	},
-	dmPolicy: dmPolicy$4,
+	dmPolicy: {
+		label: "Discord",
+		channel: channel$5,
+		policyKey: "channels.discord.dmPolicy",
+		allowFromKey: "channels.discord.allowFrom",
+		getCurrent: (cfg) => cfg.channels?.discord?.dmPolicy ?? cfg.channels?.discord?.dm?.policy ?? "pairing",
+		setPolicy: (cfg, policy) => setLegacyChannelDmPolicyWithAllowFrom({
+			cfg,
+			channel: "discord",
+			dmPolicy: policy
+		}),
+		promptAllowFrom: promptDiscordAllowFrom
+	},
 	disable: (cfg) => setOnboardingChannelEnabled(cfg, channel$5, false)
 };
-
 //#endregion
 //#region src/channels/plugins/normalize/discord.ts
 function normalizeDiscordMessagingTarget(raw) {
@@ -2617,7 +3021,6 @@ function looksLikeDiscordTargetId(raw) {
 	if (/^\d{6,}$/.test(trimmed)) return true;
 	return false;
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/shared.ts
 function asString(value) {
@@ -2653,7 +3056,6 @@ function collectIssuesForEnabledAccounts(params) {
 	}
 	return issues;
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/discord.ts
 function readDiscordAccountStatus(value) {
@@ -2739,7 +3141,6 @@ function collectDiscordStatusIssues(accounts) {
 	}
 	return issues;
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/imessage.ts
 const channel$4 = "imessage";
@@ -2792,19 +3193,6 @@ async function promptIMessageAllowFrom(params) {
 		}
 	});
 }
-const dmPolicy$3 = {
-	label: "iMessage",
-	channel: channel$4,
-	policyKey: "channels.imessage.dmPolicy",
-	allowFromKey: "channels.imessage.allowFrom",
-	getCurrent: (cfg) => cfg.channels?.imessage?.dmPolicy ?? "pairing",
-	setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
-		cfg,
-		channel: "imessage",
-		dmPolicy: policy
-	}),
-	promptAllowFrom: promptIMessageAllowFrom
-};
 const imessageOnboardingAdapter = {
 	channel: channel$4,
 	getStatus: async ({ cfg }) => {
@@ -2868,10 +3256,21 @@ const imessageOnboardingAdapter = {
 			accountId: imessageAccountId
 		};
 	},
-	dmPolicy: dmPolicy$3,
+	dmPolicy: {
+		label: "iMessage",
+		channel: channel$4,
+		policyKey: "channels.imessage.dmPolicy",
+		allowFromKey: "channels.imessage.allowFrom",
+		getCurrent: (cfg) => cfg.channels?.imessage?.dmPolicy ?? "pairing",
+		setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
+			cfg,
+			channel: "imessage",
+			dmPolicy: policy
+		}),
+		promptAllowFrom: promptIMessageAllowFrom
+	},
 	disable: (cfg) => setOnboardingChannelEnabled(cfg, channel$4, false)
 };
-
 //#endregion
 //#region src/channels/plugins/normalize/imessage.ts
 const SERVICE_PREFIXES = [
@@ -2901,7 +3300,6 @@ function looksLikeIMessageTargetId(raw) {
 		prefixPattern: /^(imessage:|sms:|auto:)/i
 	});
 }
-
 //#endregion
 //#region src/slack/message-actions.ts
 function listSlackMessageActions(cfg) {
@@ -2940,7 +3338,6 @@ function extractSlackToolSend(args) {
 		accountId: typeof args.accountId === "string" ? args.accountId.trim() : void 0
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/slack.ts
 const channel$3 = "slack";
@@ -3070,19 +3467,6 @@ async function promptSlackAllowFrom(params) {
 		})
 	});
 }
-const dmPolicy$2 = {
-	label: "Slack",
-	channel: channel$3,
-	policyKey: "channels.slack.dmPolicy",
-	allowFromKey: "channels.slack.allowFrom",
-	getCurrent: (cfg) => cfg.channels?.slack?.dmPolicy ?? cfg.channels?.slack?.dm?.policy ?? "pairing",
-	setPolicy: (cfg, policy) => setLegacyChannelDmPolicyWithAllowFrom({
-		cfg,
-		channel: "slack",
-		dmPolicy: policy
-	}),
-	promptAllowFrom: promptSlackAllowFrom
-};
 const slackOnboardingAdapter = {
 	channel: channel$3,
 	getStatus: async ({ cfg }) => {
@@ -3228,10 +3612,21 @@ const slackOnboardingAdapter = {
 			accountId: slackAccountId
 		};
 	},
-	dmPolicy: dmPolicy$2,
+	dmPolicy: {
+		label: "Slack",
+		channel: channel$3,
+		policyKey: "channels.slack.dmPolicy",
+		allowFromKey: "channels.slack.allowFrom",
+		getCurrent: (cfg) => cfg.channels?.slack?.dmPolicy ?? cfg.channels?.slack?.dm?.policy ?? "pairing",
+		setPolicy: (cfg, policy) => setLegacyChannelDmPolicyWithAllowFrom({
+			cfg,
+			channel: "slack",
+			dmPolicy: policy
+		}),
+		promptAllowFrom: promptSlackAllowFrom
+	},
 	disable: (cfg) => setOnboardingChannelEnabled(cfg, channel$3, false)
 };
-
 //#endregion
 //#region src/channels/telegram/api.ts
 async function fetchTelegramChatId(params) {
@@ -3247,7 +3642,6 @@ async function fetchTelegramChatId(params) {
 		return null;
 	}
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/telegram.ts
 const channel$2 = "telegram";
@@ -3343,19 +3737,6 @@ async function promptTelegramAllowFromForAccount(params) {
 		accountId
 	});
 }
-const dmPolicy$1 = {
-	label: "Telegram",
-	channel: channel$2,
-	policyKey: "channels.telegram.dmPolicy",
-	allowFromKey: "channels.telegram.allowFrom",
-	getCurrent: (cfg) => cfg.channels?.telegram?.dmPolicy ?? "pairing",
-	setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
-		cfg,
-		channel: "telegram",
-		dmPolicy: policy
-	}),
-	promptAllowFrom: promptTelegramAllowFromForAccount
-};
 const telegramOnboardingAdapter = {
 	channel: channel$2,
 	getStatus: async ({ cfg }) => {
@@ -3445,10 +3826,21 @@ const telegramOnboardingAdapter = {
 			accountId: telegramAccountId
 		};
 	},
-	dmPolicy: dmPolicy$1,
+	dmPolicy: {
+		label: "Telegram",
+		channel: channel$2,
+		policyKey: "channels.telegram.dmPolicy",
+		allowFromKey: "channels.telegram.allowFrom",
+		getCurrent: (cfg) => cfg.channels?.telegram?.dmPolicy ?? "pairing",
+		setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
+			cfg,
+			channel: "telegram",
+			dmPolicy: policy
+		}),
+		promptAllowFrom: promptTelegramAllowFromForAccount
+	},
 	disable: (cfg) => setOnboardingChannelEnabled(cfg, channel$2, false)
 };
-
 //#endregion
 //#region src/channels/plugins/normalize/telegram.ts
 const TELEGRAM_PREFIX_RE = /^(telegram|tg):/i;
@@ -3474,7 +3866,6 @@ function normalizeTelegramMessagingTarget(raw) {
 function looksLikeTelegramTargetId(raw) {
 	return normalizeTelegramTargetBody(raw) !== void 0;
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/telegram.ts
 function readTelegramAccountStatus(value) {
@@ -3558,14 +3949,12 @@ function collectTelegramStatusIssues(accounts) {
 	}
 	return issues;
 }
-
 //#endregion
 //#region src/infra/path-safety.ts
 function resolveSafeBaseDir(rootDir) {
 	const resolved = path.resolve(rootDir);
 	return resolved.endsWith(path.sep) ? resolved : `${resolved}${path.sep}`;
 }
-
 //#endregion
 //#region src/infra/archive-path.ts
 function isWindowsDrivePath(value) {
@@ -3599,7 +3988,6 @@ function resolveArchiveOutputPath(params) {
 	if (!outPath.startsWith(safeBase)) throw new Error(`archive entry escapes ${escapeLabel}: ${params.originalPath}`);
 	return outPath;
 }
-
 //#endregion
 //#region src/infra/archive.ts
 var ArchiveSecurityError = class extends Error {
@@ -3609,14 +3997,6 @@ var ArchiveSecurityError = class extends Error {
 		this.name = "ArchiveSecurityError";
 	}
 };
-/** @internal */
-const DEFAULT_MAX_ARCHIVE_BYTES_ZIP = 256 * 1024 * 1024;
-/** @internal */
-const DEFAULT_MAX_ENTRIES = 5e4;
-/** @internal */
-const DEFAULT_MAX_EXTRACTED_BYTES = 512 * 1024 * 1024;
-/** @internal */
-const DEFAULT_MAX_ENTRY_BYTES = 256 * 1024 * 1024;
 const ERROR_ARCHIVE_SIZE_EXCEEDS_LIMIT = "archive size exceeds limit";
 const ERROR_ARCHIVE_ENTRY_COUNT_EXCEEDS_LIMIT = "archive entry count exceeds limit";
 const ERROR_ARCHIVE_ENTRY_EXTRACTED_SIZE_EXCEEDS_LIMIT = "archive entry extracted size exceeds limit";
@@ -3650,10 +4030,10 @@ function clampLimit(value) {
 }
 function resolveExtractLimits(limits) {
 	return {
-		maxArchiveBytes: clampLimit(limits?.maxArchiveBytes) ?? DEFAULT_MAX_ARCHIVE_BYTES_ZIP,
-		maxEntries: clampLimit(limits?.maxEntries) ?? DEFAULT_MAX_ENTRIES,
-		maxExtractedBytes: clampLimit(limits?.maxExtractedBytes) ?? DEFAULT_MAX_EXTRACTED_BYTES,
-		maxEntryBytes: clampLimit(limits?.maxEntryBytes) ?? DEFAULT_MAX_ENTRY_BYTES
+		maxArchiveBytes: clampLimit(limits?.maxArchiveBytes) ?? 268435456,
+		maxEntries: clampLimit(limits?.maxEntries) ?? 5e4,
+		maxExtractedBytes: clampLimit(limits?.maxExtractedBytes) ?? 536870912,
+		maxEntryBytes: clampLimit(limits?.maxEntryBytes) ?? 268435456
 	};
 }
 function assertArchiveEntryCountWithinLimit(entryCount, limits) {
@@ -3927,7 +4307,6 @@ async function extractArchive(params) {
 		limits: params.limits
 	}), params.timeoutMs, label);
 }
-
 //#endregion
 //#region src/infra/brew.ts
 function isExecutable(filePath) {
@@ -3956,7 +4335,6 @@ function resolveBrewExecutable(opts) {
 	candidates.push("/opt/homebrew/bin/brew", "/usr/local/bin/brew");
 	for (const candidate of candidates) if (isExecutable(candidate)) return candidate;
 }
-
 //#endregion
 //#region src/commands/signal-install.ts
 /** @internal Exported for testing. */
@@ -4134,7 +4512,6 @@ async function installSignalCli(runtime) {
 	if (process.platform !== "linux" || process.arch === "x64") return installSignalCliFromRelease(runtime);
 	return installSignalCliViaBrew(runtime);
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/signal.ts
 const channel$1 = "signal";
@@ -4193,19 +4570,6 @@ async function promptSignalAllowFrom(params) {
 		}
 	});
 }
-const dmPolicy = {
-	label: "Signal",
-	channel: channel$1,
-	policyKey: "channels.signal.dmPolicy",
-	allowFromKey: "channels.signal.allowFrom",
-	getCurrent: (cfg) => cfg.channels?.signal?.dmPolicy ?? "pairing",
-	setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
-		cfg,
-		channel: "signal",
-		dmPolicy: policy
-	}),
-	promptAllowFrom: promptSignalAllowFrom
-};
 const signalOnboardingAdapter = {
 	channel: channel$1,
 	getStatus: async ({ cfg }) => {
@@ -4295,237 +4659,21 @@ const signalOnboardingAdapter = {
 			accountId: signalAccountId
 		};
 	},
-	dmPolicy,
+	dmPolicy: {
+		label: "Signal",
+		channel: channel$1,
+		policyKey: "channels.signal.dmPolicy",
+		allowFromKey: "channels.signal.allowFrom",
+		getCurrent: (cfg) => cfg.channels?.signal?.dmPolicy ?? "pairing",
+		setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
+			cfg,
+			channel: "signal",
+			dmPolicy: policy
+		}),
+		promptAllowFrom: promptSignalAllowFrom
+	},
 	disable: (cfg) => setOnboardingChannelEnabled(cfg, channel$1, false)
 };
-
-//#endregion
-//#region src/line/flex-templates/basic-cards.ts
-/**
-* Create an info card with title, body, and optional footer
-*
-* Editorial design: Clean hierarchy with accent bar, generous spacing,
-* and subtle background zones for visual separation.
-*/
-function createInfoCard(title, body, footer) {
-	const bubble = {
-		type: "bubble",
-		size: "mega",
-		body: {
-			type: "box",
-			layout: "vertical",
-			contents: [{
-				type: "box",
-				layout: "horizontal",
-				contents: [{
-					type: "box",
-					layout: "vertical",
-					contents: [],
-					width: "4px",
-					backgroundColor: "#06C755",
-					cornerRadius: "2px"
-				}, {
-					type: "text",
-					text: title,
-					weight: "bold",
-					size: "xl",
-					color: "#111111",
-					wrap: true,
-					flex: 1,
-					margin: "lg"
-				}]
-			}, {
-				type: "box",
-				layout: "vertical",
-				contents: [{
-					type: "text",
-					text: body,
-					size: "md",
-					color: "#444444",
-					wrap: true,
-					lineSpacing: "6px"
-				}],
-				margin: "xl",
-				paddingAll: "lg",
-				backgroundColor: "#F8F9FA",
-				cornerRadius: "lg"
-			}],
-			paddingAll: "xl",
-			backgroundColor: "#FFFFFF"
-		}
-	};
-	if (footer) attachFooterText(bubble, footer);
-	return bubble;
-}
-/**
-* Create a list card with title and multiple items
-*
-* Editorial design: Numbered/bulleted list with clear visual hierarchy,
-* accent dots for each item, and generous spacing.
-*/
-function createListCard(title, items) {
-	const itemContents = items.slice(0, 8).map((item, index) => {
-		const itemContents = [{
-			type: "text",
-			text: item.title,
-			size: "md",
-			weight: "bold",
-			color: "#1a1a1a",
-			wrap: true
-		}];
-		if (item.subtitle) itemContents.push({
-			type: "text",
-			text: item.subtitle,
-			size: "sm",
-			color: "#888888",
-			wrap: true,
-			margin: "xs"
-		});
-		const itemBox = {
-			type: "box",
-			layout: "horizontal",
-			contents: [{
-				type: "box",
-				layout: "vertical",
-				contents: [{
-					type: "box",
-					layout: "vertical",
-					contents: [],
-					width: "8px",
-					height: "8px",
-					backgroundColor: index === 0 ? "#06C755" : "#DDDDDD",
-					cornerRadius: "4px"
-				}],
-				width: "20px",
-				alignItems: "center",
-				paddingTop: "sm"
-			}, {
-				type: "box",
-				layout: "vertical",
-				contents: itemContents,
-				flex: 1
-			}],
-			margin: index > 0 ? "lg" : void 0
-		};
-		if (item.action) itemBox.action = item.action;
-		return itemBox;
-	});
-	return {
-		type: "bubble",
-		size: "mega",
-		body: {
-			type: "box",
-			layout: "vertical",
-			contents: [
-				{
-					type: "text",
-					text: title,
-					weight: "bold",
-					size: "xl",
-					color: "#111111",
-					wrap: true
-				},
-				{
-					type: "separator",
-					margin: "lg",
-					color: "#EEEEEE"
-				},
-				{
-					type: "box",
-					layout: "vertical",
-					contents: itemContents,
-					margin: "lg"
-				}
-			],
-			paddingAll: "xl",
-			backgroundColor: "#FFFFFF"
-		}
-	};
-}
-/**
-* Create an image card with image, title, and optional body text
-*/
-function createImageCard(imageUrl, title, body, options) {
-	const bubble = {
-		type: "bubble",
-		hero: {
-			type: "image",
-			url: imageUrl,
-			size: "full",
-			aspectRatio: options?.aspectRatio ?? "20:13",
-			aspectMode: options?.aspectMode ?? "cover",
-			action: options?.action
-		},
-		body: {
-			type: "box",
-			layout: "vertical",
-			contents: [{
-				type: "text",
-				text: title,
-				weight: "bold",
-				size: "xl",
-				wrap: true
-			}],
-			paddingAll: "lg"
-		}
-	};
-	if (body && bubble.body) bubble.body.contents.push({
-		type: "text",
-		text: body,
-		size: "md",
-		wrap: true,
-		margin: "md",
-		color: "#666666"
-	});
-	return bubble;
-}
-/**
-* Create an action card with title, body, and action buttons
-*/
-function createActionCard(title, body, actions, options) {
-	const bubble = {
-		type: "bubble",
-		body: {
-			type: "box",
-			layout: "vertical",
-			contents: [{
-				type: "text",
-				text: title,
-				weight: "bold",
-				size: "xl",
-				wrap: true
-			}, {
-				type: "text",
-				text: body,
-				size: "md",
-				wrap: true,
-				margin: "md",
-				color: "#666666"
-			}],
-			paddingAll: "lg"
-		},
-		footer: {
-			type: "box",
-			layout: "vertical",
-			contents: actions.slice(0, 4).map((action, index) => ({
-				type: "button",
-				action: action.action,
-				style: index === 0 ? "primary" : "secondary",
-				margin: index > 0 ? "sm" : void 0
-			})),
-			paddingAll: "md"
-		}
-	};
-	if (options?.imageUrl) bubble.hero = {
-		type: "image",
-		url: options.imageUrl,
-		size: "full",
-		aspectRatio: options.aspectRatio ?? "20:13",
-		aspectMode: "cover"
-	};
-	return bubble;
-}
-
 //#endregion
 //#region src/config/merge-config.ts
 function mergeConfigSection(base, patch, options = {}) {
@@ -4548,7 +4696,6 @@ function mergeWhatsAppConfig(cfg, patch, options) {
 		}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/whatsapp.ts
 const channel = "whatsapp";
@@ -4740,7 +4887,7 @@ const whatsappOnboardingAdapter = {
 		return {
 			channel,
 			configured: linked,
-			statusLines: [`WhatsApp (${accountId === DEFAULT_ACCOUNT_ID ? "default" : accountId}): ${linked ? "linked" : "not linked"}`],
+			statusLines: [`WhatsApp (${accountId === "default" ? "default" : accountId}): ${linked ? "linked" : "not linked"}`],
 			selectionHint: linked ? "linked" : "not linked",
 			quickstartScore: linked ? 5 : 4
 		};
@@ -4756,7 +4903,7 @@ const whatsappOnboardingAdapter = {
 			defaultAccountId: resolveDefaultWhatsAppAccountId(cfg)
 		});
 		let next = cfg;
-		if (accountId !== DEFAULT_ACCOUNT_ID) next = {
+		if (accountId !== "default") next = {
 			...next,
 			channels: {
 				...next.channels,
@@ -4802,7 +4949,6 @@ const whatsappOnboardingAdapter = {
 		options?.onWhatsAppAccountId?.(accountId);
 	}
 };
-
 //#endregion
 //#region src/channels/plugins/status-issues/whatsapp.ts
 function readWhatsAppAccountStatus(value) {
@@ -4847,7 +4993,6 @@ function collectWhatsAppStatusIssues(accounts) {
 		}
 	});
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/bluebubbles.ts
 function readBlueBubblesAccountStatus(value) {
@@ -4909,7 +5054,6 @@ function collectBlueBubblesStatusIssues(accounts) {
 		}
 	});
 }
-
 //#endregion
 //#region src/line/config-schema.ts
 const DmPolicySchema$1 = z.enum([
@@ -4951,6 +5095,5 @@ const LineConfigSchema = LineCommonConfigSchema.extend({
 	defaultAccount: z.string().optional(),
 	groups: z.record(z.string(), LineGroupConfigSchema.optional()).optional()
 }).strict();
-
 //#endregion
-export { ACP_ERROR_CODES, AcpRuntimeError, BLUEBUBBLES_ACTIONS, BLUEBUBBLES_ACTION_NAMES, BLUEBUBBLES_GROUP_ACTIONS, BlockStreamingCoalesceSchema, CHANNEL_MESSAGE_ACTION_NAMES, DEFAULT_ACCOUNT_ID, DEFAULT_GROUP_HISTORY_LIMIT, DEFAULT_WEBHOOK_BODY_TIMEOUT_MS, DEFAULT_WEBHOOK_MAX_BODY_BYTES, DM_GROUP_ACCESS_REASON, DiscordConfigSchema, DmConfigSchema, DmPolicySchema, GROUP_POLICY_BLOCKED_LABEL, GoogleChatConfigSchema, GroupPolicySchema, IMessageConfigSchema, KeyedAsyncQueue, LineConfigSchema, MSTeamsConfigSchema, MarkdownConfigSchema, MarkdownTableModeSchema, PAIRING_APPROVED_MESSAGE, ReplyRuntimeConfigSchemaShape, RequestBodyLimitError, SILENT_REPLY_TOKEN, SecretInputSchema, SignalConfigSchema, SlackConfigSchema, SsrFBlockedError, TelegramConfigSchema, ToolPolicySchema, TtsAutoSchema, TtsConfigSchema, TtsModeSchema, TtsProviderSchema, WEBHOOK_ANOMALY_COUNTER_DEFAULTS, WEBHOOK_ANOMALY_STATUS_CODES, WEBHOOK_BODY_READ_DEFAULTS, WEBHOOK_IN_FLIGHT_DEFAULTS, WEBHOOK_RATE_LIMIT_DEFAULTS, WhatsAppConfigSchema, acquireFileLock, addWildcardAllowFrom, applyAccountNameToChannelSection, applyBasicWebhookRequestGuards, applyWindowsSpawnProgramPolicy, approveDevicePairing, assertSecretInputResolved, autoBindSpawnedDiscordSubagent, beginWebhookRequestPipelineOrReject, buildAgentMediaPayload, buildBaseAccountStatusSnapshot, buildBaseChannelStatusSummary, buildChannelConfigSchema, buildChannelKeyCandidates, buildHostnameAllowlistPolicyFromSuffixAllowlist, buildMediaPayload, buildOauthProviderAuthResult, buildPendingHistoryContextFromMap, buildProbeChannelStatusSummary, buildRandomTempFilePath, buildSlackThreadingToolContext, buildTokenChannelStatusSummary, chunkTextForOutbound, clamp, clearHistoryEntries, clearHistoryEntriesIfEnabled, collectBlueBubblesStatusIssues, collectDiscordAuditChannelIds, collectDiscordStatusIssues, collectStatusIssuesFromLastError, collectTelegramStatusIssues, collectWhatsAppStatusIssues, createAccountListHelpers, createActionCard, createActionGate, createBoundedCounter, createDedupeCache, createDefaultChannelRuntimeState, createFixedWindowRateLimiter, createImageCard, createInboundEnvelopeBuilder, createInfoCard, createListCard, createLoggerBackedRuntime, createNormalizedOutboundDeliverer, createPersistentDedupe, createReceiptCard, createReplyPrefixContext, createReplyPrefixOptions, createScopedPairingAccess, createTypingCallbacks, createWebhookAnomalyTracker, createWebhookInFlightLimiter, deleteAccountFromConfigSection, detectMime, discordOnboardingAdapter, emitDiagnosticEvent, emptyPluginConfigSchema, enqueueKeyedTask, escapeRegExp, evaluateSenderGroupAccess, evictOldHistoryKeys, extensionForMime, extractOriginalFilename, extractSlackToolSend, extractToolSend, fetchWithBearerAuthScopeFallback, fetchWithSsrFGuard, formatAllowFromLowercase, formatAllowlistMatchMeta, formatDocsLink, formatErrorMessage, formatInboundFromLabel, formatLocationText, formatPairingApproveHint, formatResolvedUnresolvedNote, formatTextWithAttachmentLinks, formatTrimmedAllowFromEntries, formatUtcTimestamp, formatWhatsAppConfigAllowFromEntries, formatZonedTimestamp, generatePkceVerifierChallenge, getAcpRuntimeBackend, getChatChannelMeta, getFileExtension, handleSlackMessageAction, hasConfiguredSecretInput, hasMarkdownToConvert, imessageOnboardingAdapter, inspectDiscordAccount, inspectSlackAccount, inspectTelegramAccount, installRequestBodyLimitGuard, isAllowedParsedChatSender, isBlockedHostname, isBlockedHostnameOrIp, isDangerousNameMatchingEnabled, isDiagnosticsEnabled, isHttpsUrlAllowedByHostnameSuffixAllowlist, isJsonContentType, isNormalizedSenderAllowed, isPrivateIpAddress, isRequestBodyLimitError, isSecretRef, isSilentReplyText, isTruthyEnvValue, isWSL2Sync, isWSLEnv, isWSLSync, isWhatsAppGroupJid, issuePairingChallenge, jsonResult, keepHttpServerTaskAlive, listConfiguredAccountIds, listDevicePairing, listDiscordAccountIds, listDiscordDirectoryGroupsFromConfig, listDiscordDirectoryPeersFromConfig, listEnabledSlackAccounts, listIMessageAccountIds, listLineAccountIds, listSignalAccountIds, listSkillCommandsForAgents, listSlackAccountIds, listSlackDirectoryGroupsFromConfig, listSlackDirectoryPeersFromConfig, listSlackMessageActions, listTelegramAccountIds, listTelegramDirectoryGroupsFromConfig, listTelegramDirectoryPeersFromConfig, listThreadBindingsBySessionKey, listWhatsAppAccountIds, listWhatsAppDirectoryGroupsFromConfig, listWhatsAppDirectoryPeersFromConfig, loadOutboundMediaFromUrl, loadWebMedia, logAckFailure, logInboundDrop, logTypingFailure, looksLikeDiscordTargetId, looksLikeIMessageTargetId, looksLikeSignalTargetId, looksLikeSlackTargetId, looksLikeTelegramTargetId, looksLikeWhatsAppTargetId, materializeWindowsSpawnProgram, mergeAllowFromEntries, mergeAllowlist, migrateBaseNameToDefaultAccount, missingTargetError, normalizeAccountId, normalizeAgentId, normalizeAllowFrom, normalizeChannelSlug, normalizeDiscordMessagingTarget, normalizeDiscordOutboundTarget, normalizeE164, normalizeHostnameSuffixAllowlist, normalizeIMessageMessagingTarget, normalizeAccountId$1 as normalizeLineAccountId, normalizeOutboundReplyPayload, normalizePluginHttpPath, normalizeResolvedSecretInputString, normalizeSecretInputString, normalizeSignalMessagingTarget, normalizeSlackMessagingTarget, normalizeTelegramMessagingTarget, normalizeWebhookPath, normalizeWhatsAppAllowFromEntries, normalizeWhatsAppMessagingTarget, normalizeWhatsAppTarget, onDiagnosticEvent, optionalStringEnum, parseChatAllowTargetPrefixes, parseChatTargetPrefixesOrThrow, parseTelegramReplyToMessageId, parseTelegramThreadId, processLineMessage, promptAccountId, promptChannelAccessConfig, promptSingleChannelSecretInput, rawDataToString, readBooleanParam, readJsonBodyWithLimit, readJsonFileWithFallback, readJsonWebhookBodyOrReject, readNumberParam, readReactionParams, readRequestBodyWithLimit, readStoreAllowFromForDmPolicy, readStringParam, readWebhookBodyOrReject, recordInboundSession, recordPendingHistoryEntry, recordPendingHistoryEntryIfEnabled, redactSensitiveText, registerAcpRuntimeBackend, registerLogTransport, registerPluginHttpRoute, registerWebhookTarget, registerWebhookTargetWithPluginRoute, rejectDevicePairing, rejectNonPostWebhookRequest, removeAckReactionAfterReply, requestBodyErrorToText, requireAcpRuntimeBackend, requireOpenAllowFrom, resetMissingProviderGroupPolicyFallbackWarningsForTesting, resolveAccountWithDefaultFallback, resolveAckReaction, resolveAllowlistMatchByCandidates, resolveAllowlistMatchSimple, resolveAllowlistProviderRuntimeGroupPolicy, resolveBlueBubblesGroupRequireMention, resolveBlueBubblesGroupToolPolicy, resolveChannelAccountConfigBasePath, resolveChannelEntryMatch, resolveChannelEntryMatchWithFallback, resolveChannelGroupRequireMention, resolveChannelMediaMaxBytes, resolveControlCommandGate, resolveDefaultDiscordAccountId, resolveDefaultGroupPolicy, resolveDefaultIMessageAccountId, resolveDefaultLineAccountId, resolveDefaultSignalAccountId, resolveDefaultSlackAccountId, resolveDefaultTelegramAccountId, resolveDefaultWhatsAppAccountId, resolveDirectDmAuthorizationOutcome, resolveDiscordAccount, resolveDiscordGroupRequireMention, resolveDiscordGroupToolPolicy, resolveDmAllowState, resolveDmGroupAccessDecision, resolveDmGroupAccessWithCommandGate, resolveDmGroupAccessWithLists, resolveEffectiveAllowFromLists, resolveGatewayBindUrl, resolveGoogleChatGroupRequireMention, resolveGoogleChatGroupToolPolicy, resolveIMessageAccount, resolveIMessageConfigAllowFrom, resolveIMessageConfigDefaultTo, resolveIMessageGroupRequireMention, resolveIMessageGroupToolPolicy, resolveInboundRouteEnvelopeBuilder, resolveInboundRouteEnvelopeBuilderWithRuntime, resolveLineAccount, resolveMentionGating, resolveMentionGatingWithBypass, resolveNestedAllowlistDecision, resolveOpenProviderRuntimeGroupPolicy, resolveOutboundMediaUrls, resolvePreferredOpenClawTmpDir, resolveRuntimeGroupPolicy, resolveSenderCommandAuthorization, resolveSenderCommandAuthorizationWithRuntime, resolveServicePrefixedAllowTarget, resolveServicePrefixedTarget, resolveSignalAccount, resolveSingleWebhookTarget, resolveSingleWebhookTargetAsync, resolveSlackAccount, resolveSlackGroupRequireMention, resolveSlackGroupToolPolicy, resolveSlackReplyToMode, resolveTailnetHostWithRunner, resolveTelegramAccount, resolveTelegramGroupRequireMention, resolveTelegramGroupToolPolicy, resolveThreadSessionKeys, resolveTimezone, resolveToolsBySender, resolveWebhookPath, resolveWebhookTargetWithAuthOrReject, resolveWebhookTargetWithAuthOrRejectSync, resolveWebhookTargets, resolveWhatsAppAccount, resolveWhatsAppConfigAllowFrom, resolveWhatsAppConfigDefaultTo, resolveWhatsAppGroupIntroHint, resolveWhatsAppGroupRequireMention, resolveWhatsAppGroupToolPolicy, resolveWhatsAppHeartbeatRecipients, resolveWhatsAppMentionStripPatterns, resolveWhatsAppOutboundTarget, resolveWindowsExecutablePath, resolveWindowsSpawnProgram, resolveWindowsSpawnProgramCandidate, runPluginCommandWithTimeout, safeParseJson, sendMediaWithLeadingCaption, setAccountEnabledInConfigSection, shouldAckReaction, shouldAckReactionForWhatsApp, signalOnboardingAdapter, slackOnboardingAdapter, sleep, stringEnum, stripAnsi, stripMarkdown, summarizeMapping, telegramOnboardingAdapter, toFormUrlEncoded, toLocationContext, unbindThreadBindingsBySessionKey, unregisterAcpRuntimeBackend, waitUntilAbort, warnMissingProviderGroupPolicyFallbackOnce, whatsappOnboardingAdapter, withFileLock, withTempDownloadPath, writeJsonFileAtomically };
+export { ACP_ERROR_CODES, AcpRuntimeError, BLUEBUBBLES_ACTIONS, BLUEBUBBLES_ACTION_NAMES, BLUEBUBBLES_GROUP_ACTIONS, BlockStreamingCoalesceSchema, CHANNEL_MESSAGE_ACTION_NAMES, DEFAULT_ACCOUNT_ID, DEFAULT_GROUP_HISTORY_LIMIT, DEFAULT_WEBHOOK_BODY_TIMEOUT_MS, DEFAULT_WEBHOOK_MAX_BODY_BYTES, DM_GROUP_ACCESS_REASON, DiscordConfigSchema, DmConfigSchema, DmPolicySchema, GROUP_POLICY_BLOCKED_LABEL, GoogleChatConfigSchema, GroupPolicySchema, IMessageConfigSchema, KeyedAsyncQueue, LineConfigSchema, MSTeamsConfigSchema, MarkdownConfigSchema, MarkdownTableModeSchema, PAIRING_APPROVED_MESSAGE, ReplyRuntimeConfigSchemaShape, RequestBodyLimitError, SILENT_REPLY_TOKEN, SecretInputSchema, SignalConfigSchema, SlackConfigSchema, SsrFBlockedError, TelegramConfigSchema, ToolPolicySchema, TtsAutoSchema, TtsConfigSchema, TtsModeSchema, TtsProviderSchema, WEBHOOK_ANOMALY_COUNTER_DEFAULTS, WEBHOOK_ANOMALY_STATUS_CODES, WEBHOOK_BODY_READ_DEFAULTS, WEBHOOK_IN_FLIGHT_DEFAULTS, WEBHOOK_RATE_LIMIT_DEFAULTS, WhatsAppConfigSchema, acquireFileLock, addWildcardAllowFrom, applyAccountNameToChannelSection, applyBasicWebhookRequestGuards, applyWindowsSpawnProgramPolicy, approveDevicePairing, assertSecretInputResolved, autoBindSpawnedDiscordSubagent, beginWebhookRequestPipelineOrReject, buildAgentMediaPayload, buildBaseAccountStatusSnapshot, buildBaseChannelStatusSummary, buildChannelConfigSchema, buildChannelKeyCandidates, buildChannelSendResult, buildComputedAccountStatusSnapshot, buildDiscordSendMediaOptions, buildDiscordSendOptions, buildHostnameAllowlistPolicyFromSuffixAllowlist, buildInboundReplyDispatchBase, buildMediaPayload, buildOauthProviderAuthResult, buildPendingHistoryContextFromMap, buildProbeChannelStatusSummary, buildRandomTempFilePath, buildRuntimeAccountStatusSnapshot, buildSlackThreadingToolContext, buildTokenChannelStatusSummary, chunkTextForOutbound, clamp, clearAccountEntryFields, clearHistoryEntries, clearHistoryEntriesIfEnabled, collectBlueBubblesStatusIssues, collectDiscordAuditChannelIds, collectDiscordStatusIssues, collectStatusIssuesFromLastError, collectTelegramStatusIssues, collectWhatsAppStatusIssues, createAccountListHelpers, createActionCard, createActionGate, createAllowedChatSenderMatcher, createBoundedCounter, createDedupeCache, createDefaultChannelRuntimeState, createFixedWindowRateLimiter, createImageCard, createInboundEnvelopeBuilder, createInfoCard, createListCard, createLoggerBackedRuntime, createNormalizedOutboundDeliverer, createPersistentDedupe, createReceiptCard, createReplyPrefixContext, createReplyPrefixOptions, createScopedPairingAccess, createTypingCallbacks, createWebhookAnomalyTracker, createWebhookInFlightLimiter, deleteAccountFromConfigSection, detectMime, discordOnboardingAdapter, dispatchInboundReplyWithBase, dispatchReplyFromConfigWithSettledDispatcher, emitDiagnosticEvent, emptyPluginConfigSchema, enqueueKeyedTask, escapeRegExp, evaluateSenderGroupAccess, evictOldHistoryKeys, extensionForMime, extractOriginalFilename, extractSlackToolSend, extractToolSend, fetchWithBearerAuthScopeFallback, fetchWithSsrFGuard, formatAllowFromLowercase, formatAllowlistMatchMeta, formatDocsLink, formatErrorMessage, formatInboundFromLabel, formatLocationText, formatPairingApproveHint, formatResolvedUnresolvedNote, formatTextWithAttachmentLinks, formatTrimmedAllowFromEntries, formatUtcTimestamp, formatWhatsAppConfigAllowFromEntries, formatZonedTimestamp, generatePkceVerifierChallenge, getAcpRuntimeBackend, getChatChannelMeta, getFileExtension, handleSlackMessageAction, hasConfiguredSecretInput, hasMarkdownToConvert, imessageOnboardingAdapter, inspectDiscordAccount, inspectSlackAccount, inspectTelegramAccount, installRequestBodyLimitGuard, isAllowedParsedChatSender, isBlockedHostname, isBlockedHostnameOrIp, isDangerousNameMatchingEnabled, isDiagnosticsEnabled, isHttpsUrlAllowedByHostnameSuffixAllowlist, isJsonContentType, isNormalizedSenderAllowed, isNumericTargetId, isPrivateIpAddress, isRequestBodyLimitError, isSecretRef, isSilentReplyText, isTruthyEnvValue, isWSL2Sync, isWSLEnv, isWSLSync, isWhatsAppGroupJid, issuePairingChallenge, jsonResult, keepHttpServerTaskAlive, listConfiguredAccountIds, listDevicePairing, listDiscordAccountIds, listDiscordDirectoryGroupsFromConfig, listDiscordDirectoryPeersFromConfig, listEnabledSlackAccounts, listIMessageAccountIds, listLineAccountIds, listSignalAccountIds, listSkillCommandsForAgents, listSlackAccountIds, listSlackDirectoryGroupsFromConfig, listSlackDirectoryPeersFromConfig, listSlackMessageActions, listTelegramAccountIds, listTelegramDirectoryGroupsFromConfig, listTelegramDirectoryPeersFromConfig, listThreadBindingsBySessionKey, listWhatsAppAccountIds, listWhatsAppDirectoryGroupsFromConfig, listWhatsAppDirectoryPeersFromConfig, loadOutboundMediaFromUrl, loadWebMedia, logAckFailure, logInboundDrop, logTypingFailure, looksLikeDiscordTargetId, looksLikeIMessageTargetId, looksLikeSignalTargetId, looksLikeSlackTargetId, looksLikeTelegramTargetId, looksLikeWhatsAppTargetId, mapBasicAllowlistResolutionEntries, materializeWindowsSpawnProgram, mergeAllowFromEntries, mergeAllowlist, migrateBaseNameToDefaultAccount, missingTargetError, normalizeAccountId, normalizeAgentId, normalizeAllowFrom, normalizeChannelSlug, normalizeDiscordMessagingTarget, normalizeDiscordOutboundTarget, normalizeE164, normalizeHostnameSuffixAllowlist, normalizeIMessageMessagingTarget, normalizeAccountId$1 as normalizeLineAccountId, normalizeOutboundReplyPayload, normalizePluginHttpPath, normalizeResolvedSecretInputString, normalizeSecretInputString, normalizeSignalMessagingTarget, normalizeSlackMessagingTarget, normalizeTelegramMessagingTarget, normalizeWebhookPath, normalizeWhatsAppAllowFromEntries, normalizeWhatsAppMessagingTarget, normalizeWhatsAppTarget, onDiagnosticEvent, optionalStringEnum, parseChatAllowTargetPrefixes, parseChatTargetPrefixesOrThrow, parseTelegramReplyToMessageId, parseTelegramThreadId, processLineMessage, promptAccountId, promptChannelAccessConfig, promptSingleChannelSecretInput, rawDataToString, readBooleanParam, readJsonBodyWithLimit, readJsonFileWithFallback, readJsonWebhookBodyOrReject, readNumberParam, readReactionParams, readRequestBodyWithLimit, readStoreAllowFromForDmPolicy, readStringParam, readWebhookBodyOrReject, recordInboundSession, recordInboundSessionAndDispatchReply, recordPendingHistoryEntry, recordPendingHistoryEntryIfEnabled, redactSensitiveText, registerAcpRuntimeBackend, registerContextEngine, registerLogTransport, registerPluginHttpRoute, registerWebhookTarget, registerWebhookTargetWithPluginRoute, rejectDevicePairing, rejectNonPostWebhookRequest, removeAckReactionAfterReply, requestBodyErrorToText, requireAcpRuntimeBackend, requireOpenAllowFrom, resetMissingProviderGroupPolicyFallbackWarningsForTesting, resolveAccountWithDefaultFallback, resolveAckReaction, resolveAllowlistMatchByCandidates, resolveAllowlistMatchSimple, resolveAllowlistProviderRuntimeGroupPolicy, resolveBlueBubblesGroupRequireMention, resolveBlueBubblesGroupToolPolicy, resolveChannelAccountConfigBasePath, resolveChannelEntryMatch, resolveChannelEntryMatchWithFallback, resolveChannelGroupRequireMention, resolveChannelMediaMaxBytes, resolveControlCommandGate, resolveDefaultDiscordAccountId, resolveDefaultGroupPolicy, resolveDefaultIMessageAccountId, resolveDefaultLineAccountId, resolveDefaultSignalAccountId, resolveDefaultSlackAccountId, resolveDefaultTelegramAccountId, resolveDefaultWhatsAppAccountId, resolveDirectDmAuthorizationOutcome, resolveDiscordAccount, resolveDiscordGroupRequireMention, resolveDiscordGroupToolPolicy, resolveDmAllowState, resolveDmGroupAccessDecision, resolveDmGroupAccessWithCommandGate, resolveDmGroupAccessWithLists, resolveEffectiveAllowFromLists, resolveGatewayBindUrl, resolveGoogleChatGroupRequireMention, resolveGoogleChatGroupToolPolicy, resolveIMessageAccount, resolveIMessageConfigAllowFrom, resolveIMessageConfigDefaultTo, resolveIMessageGroupRequireMention, resolveIMessageGroupToolPolicy, resolveInboundRouteEnvelopeBuilder, resolveInboundRouteEnvelopeBuilderWithRuntime, resolveInboundSessionEnvelopeContext, resolveLineAccount, resolveMentionGating, resolveMentionGatingWithBypass, resolveNestedAllowlistDecision, resolveOpenProviderRuntimeGroupPolicy, resolveOutboundMediaUrls, resolvePreferredOpenClawTmpDir, resolveRequestUrl, resolveRuntimeEnv, resolveRuntimeEnvWithUnavailableExit, resolveRuntimeGroupPolicy, resolveSenderCommandAuthorization, resolveSenderCommandAuthorizationWithRuntime, resolveServicePrefixedAllowTarget, resolveServicePrefixedChatTarget, resolveServicePrefixedOrChatAllowTarget, resolveServicePrefixedTarget, resolveSignalAccount, resolveSingleWebhookTarget, resolveSingleWebhookTargetAsync, resolveSlackAccount, resolveSlackGroupRequireMention, resolveSlackGroupToolPolicy, resolveSlackReplyToMode, resolveTailnetHostWithRunner, resolveTelegramAccount, resolveTelegramGroupRequireMention, resolveTelegramGroupToolPolicy, resolveThreadSessionKeys, resolveTimezone, resolveToolsBySender, resolveWebhookPath, resolveWebhookTargetWithAuthOrReject, resolveWebhookTargetWithAuthOrRejectSync, resolveWebhookTargets, resolveWhatsAppAccount, resolveWhatsAppConfigAllowFrom, resolveWhatsAppConfigDefaultTo, resolveWhatsAppGroupIntroHint, resolveWhatsAppGroupRequireMention, resolveWhatsAppGroupToolPolicy, resolveWhatsAppHeartbeatRecipients, resolveWhatsAppMentionStripPatterns, resolveWhatsAppOutboundTarget, resolveWindowsExecutablePath, resolveWindowsSpawnProgram, resolveWindowsSpawnProgramCandidate, runPluginCommandWithTimeout, safeParseJson, sendMediaWithLeadingCaption, sendPayloadWithChunkedTextAndMedia, setAccountEnabledInConfigSection, shouldAckReaction, shouldAckReactionForWhatsApp, signalOnboardingAdapter, slackOnboardingAdapter, sleep, stringEnum, stripAnsi, stripMarkdown, summarizeMapping, tagDiscordChannelResult, telegramOnboardingAdapter, toFormUrlEncoded, toLocationContext, unbindThreadBindingsBySessionKey, unregisterAcpRuntimeBackend, waitUntilAbort, warnMissingProviderGroupPolicyFallbackOnce, whatsappOnboardingAdapter, withFileLock, withTempDownloadPath, writeJsonFileAtomically };

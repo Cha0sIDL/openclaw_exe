@@ -1,60 +1,59 @@
-import { at as DEFAULT_ACCOUNT_ID, ot as normalizeAccountId } from "./run-with-concurrency-CuSLxX3g.js";
-import { Dr as formatCliCommand, c as WhatsAppConfigSchema, cr as getChatChannelMeta } from "./config-8kCW1cEV.js";
-import { f as isRecord, g as pathExists, h as normalizeE164 } from "./logger-Bl138Nx7.js";
-import "./paths-0d8fBoC4.js";
-import { a as resolveWhatsAppAuthDir, i as resolveWhatsAppAccount, n as listWhatsAppAccountIds, r as resolveDefaultWhatsAppAccountId } from "./accounts-mY-NSdu1.js";
-import { a as listWhatsAppDirectoryPeersFromConfig, i as listWhatsAppDirectoryGroupsFromConfig } from "./plugins-B626cdGA.js";
-import { D as resolveWhatsAppConfigDefaultTo, E as resolveWhatsAppConfigAllowFrom, O as looksLikeWhatsAppTargetId, T as formatWhatsAppConfigAllowFromEntries, _ as resolveWhatsAppGroupToolPolicy, g as resolveWhatsAppGroupRequireMention, h as resolveWhatsAppMentionStripPatterns, k as normalizeWhatsAppMessagingTarget, m as resolveWhatsAppGroupIntroHint } from "./thinking-hwikc-vp.js";
-import "./accounts-BjlrojAy.js";
-import "./send-BOmr3tr7.js";
-import { f as readStringParam, r as createActionGate } from "./common-DM04d1Kv.js";
-import { t as resolveWhatsAppOutboundTarget } from "./resolve-outbound-target-DyUXzd8m.js";
-import { K as resolveAllowlistProviderRuntimeGroupPolicy, q as resolveDefaultGroupPolicy, u as formatDocsLink } from "./reply-3CeGVZ6V.js";
-import "./image-ops-CxEiCBP4.js";
-import "./pi-embedded-helpers-CipYZzOq.js";
-import "./accounts-BJ1gLJ-a.js";
-import "./send-Bwdzwr6n.js";
-import "./github-copilot-token-CKKBybuX.js";
-import "./paths-D764z9IH.js";
-import "./send-VpE3aHs8.js";
-import { r as resolveWhatsAppHeartbeatRecipients } from "./channel-web-DscQOuE7.js";
-import "./tokens-DMbd3-Ct.js";
-import "./audio-transcription-runner-CjIzGRnb.js";
-import "./image-NopZ-l09.js";
-import "./chrome-BnI8r9QE.js";
-import "./skills-DYgCYtaD.js";
-import "./path-alias-guards-CoYTMiOE.js";
-import "./redact-C3rEm8A0.js";
-import "./errors-B2jpHiod.js";
-import "./fs-safe-D51tGdcB.js";
-import "./proxy-env-qW9r6VxK.js";
-import "./store-BO55tnzp.js";
-import "./tool-images-B0pneKQI.js";
-import "./fetch-guard-A1vDYaOO.js";
-import "./api-key-rotation-Dzs2m1VP.js";
-import "./local-roots-y2rntxFI.js";
-import "./proxy-fetch-C-fXKPD2.js";
-import "./deliver-DFMZkVEh.js";
-import "./commands-registry-RHAu0ksq.js";
-import "./skill-commands-CtWhWW1S.js";
-import "./diagnostic-DCrcuWFc.js";
-import "./pi-model-discovery-LD_TJZM5.js";
-import "./ir-BPQUoCtq.js";
-import "./render-CF8xRF8z.js";
-import "./send-DZ8s9lfG.js";
-import "./outbound-attachment-Dw_oZoTP.js";
-import "./fetch-CdwFGsMf.js";
-import "./send-CSfJaGyC.js";
-import "./channel-activity-CJpup78-.js";
-import "./tables-CtlFN_xB.js";
-import "./proxy-BKdNrmWL.js";
-import "./manager-Bft6Q7L7.js";
-import "./query-expansion-B6LfLejY.js";
-import "./outbound-BqjwMQJs.js";
-import "./session-D54j-T4s.js";
-import { t as loginWeb } from "./login-CouNBmUg.js";
+import { at as DEFAULT_ACCOUNT_ID, ot as normalizeAccountId } from "./run-with-concurrency-BpXrqdJV.js";
+import { c as WhatsAppConfigSchema, cr as getChatChannelMeta, kr as formatCliCommand } from "./config-Dc4hNJ5p.js";
+import { f as isRecord, g as pathExists, h as normalizeE164 } from "./logger-CBsv5zKE.js";
+import "./paths-D6tDENa_.js";
+import { a as resolveWhatsAppAuthDir, i as resolveWhatsAppAccount, n as listWhatsAppAccountIds, r as resolveDefaultWhatsAppAccountId } from "./accounts-BhkxclG3.js";
+import { a as listWhatsAppDirectoryPeersFromConfig, i as listWhatsAppDirectoryGroupsFromConfig } from "./plugins-S2KRPNet.js";
+import { D as resolveWhatsAppConfigDefaultTo, E as resolveWhatsAppConfigAllowFrom, O as looksLikeWhatsAppTargetId, T as formatWhatsAppConfigAllowFromEntries, _ as resolveWhatsAppGroupToolPolicy, g as resolveWhatsAppGroupRequireMention, h as resolveWhatsAppMentionStripPatterns, k as normalizeWhatsAppMessagingTarget, m as resolveWhatsAppGroupIntroHint } from "./thinking-CaMPrJR8.js";
+import "./accounts-OVMzmsds.js";
+import "./send-B2tFziGq.js";
+import { f as readStringParam, r as createActionGate } from "./common-DBQCrL-D.js";
+import { t as resolveWhatsAppOutboundTarget } from "./resolve-outbound-target-BLo2dk5o.js";
+import { J as resolveDefaultGroupPolicy, d as formatDocsLink, q as resolveAllowlistProviderRuntimeGroupPolicy } from "./reply-zAxnIayr.js";
+import "./image-ops-Bj5PUw2M.js";
+import "./pi-embedded-helpers-v6W_2uW3.js";
+import "./accounts-D_26mZG2.js";
+import "./send-a3n3S7VQ.js";
+import "./github-copilot-token-xlpfBCoP.js";
+import "./paths-fpq6UuZD.js";
+import "./send-EkTIrwFq.js";
+import { r as resolveWhatsAppHeartbeatRecipients } from "./channel-web-BS0PbZmE.js";
+import "./tokens-CgL_SFxO.js";
+import "./audio-transcription-runner-B8cSMb2A.js";
+import "./image-Kc9_s-JZ.js";
+import "./chrome--zYH3Zmd.js";
+import "./skills-Ca1XcwHh.js";
+import "./path-alias-guards--xHMjbYa.js";
+import "./redact-Dn9qg8-i.js";
+import "./errors-DszbzIZr.js";
+import "./fs-safe-B60CMaMF.js";
+import "./proxy-env-BEGcORH2.js";
+import "./store-HQMCPUEK.js";
+import "./tool-images-B2EJtwbr.js";
+import "./fetch-guard-BZ8YnXzS.js";
+import "./api-key-rotation-C-qkso7T.js";
+import "./local-roots-hpA5sUnd.js";
+import "./proxy-fetch-CeZ9XkCS.js";
+import "./deliver-nOXNV0Us.js";
+import "./commands-registry-B74iAdaO.js";
+import "./skill-commands-pk9HeumN.js";
+import "./diagnostic-DvPe0WZa.js";
+import "./pi-model-discovery-BpOo36nN.js";
+import "./ir-BDKQqY2O.js";
+import "./render-B80HZuem.js";
+import "./send-BxszJfYX.js";
+import "./outbound-attachment-BrkrDfiZ.js";
+import "./fetch-DzQnPMng.js";
+import "./send-nQEBOFi1.js";
+import "./channel-activity-CnLpHkzg.js";
+import "./tables-B4WQMS2d.js";
+import "./proxy-DIJcVZli.js";
+import "./manager-B2zBTp8W.js";
+import "./query-expansion-7PtjehSl.js";
+import "./outbound-DHhUxc1x.js";
+import "./session-DZqfNC1r.js";
+import { t as loginWeb } from "./login-DobeNOb4.js";
 import path from "node:path";
-
 //#region src/plugins/config-schema.ts
 function error(message) {
 	return {
@@ -86,7 +85,6 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/setup-helpers.ts
 function channelHasAccounts(cfg, channelKey) {
@@ -95,7 +93,7 @@ function channelHasAccounts(cfg, channelKey) {
 }
 function shouldStoreNameInAccounts(params) {
 	if (params.alwaysUseAccounts) return true;
-	if (params.accountId !== DEFAULT_ACCOUNT_ID) return true;
+	if (params.accountId !== "default") return true;
 	return channelHasAccounts(params.cfg, params.channelKey);
 }
 function applyAccountNameToChannelSection(params) {
@@ -109,7 +107,7 @@ function applyAccountNameToChannelSection(params) {
 		channelKey: params.channelKey,
 		accountId,
 		alwaysUseAccounts: params.alwaysUseAccounts
-	}) && accountId === DEFAULT_ACCOUNT_ID) {
+	}) && accountId === "default") {
 		const safeBase = base ?? {};
 		return {
 			...params.cfg,
@@ -124,7 +122,7 @@ function applyAccountNameToChannelSection(params) {
 	}
 	const baseAccounts = base?.accounts ?? {};
 	const existingAccount = baseAccounts[accountId] ?? {};
-	const baseWithoutName = accountId === DEFAULT_ACCOUNT_ID ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
+	const baseWithoutName = accountId === "default" ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
 	return {
 		...params.cfg,
 		channels: {
@@ -148,7 +146,7 @@ function migrateBaseNameToDefaultAccount(params) {
 	const baseName = base?.name?.trim();
 	if (!baseName) return params.cfg;
 	const accounts = { ...base?.accounts };
-	const defaultAccount = accounts[DEFAULT_ACCOUNT_ID] ?? {};
+	const defaultAccount = accounts["default"] ?? {};
 	if (!defaultAccount.name) accounts[DEFAULT_ACCOUNT_ID] = {
 		...defaultAccount,
 		name: baseName
@@ -165,7 +163,6 @@ function migrateBaseNameToDefaultAccount(params) {
 		}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/config-schema.ts
 function buildChannelConfigSchema(schema) {
@@ -179,13 +176,11 @@ function buildChannelConfigSchema(schema) {
 		additionalProperties: true
 	} };
 }
-
 //#endregion
 //#region src/channels/plugins/helpers.ts
 function formatPairingApproveHint(channelId) {
 	return `Approve via: ${formatCliCommand(`openclaw pairing list ${channelId}`)} / ${formatCliCommand(`openclaw pairing approve ${channelId} <code>`)}`;
 }
-
 //#endregion
 //#region src/config/merge-config.ts
 function mergeConfigSection(base, patch, options = {}) {
@@ -208,17 +203,16 @@ function mergeWhatsAppConfig(cfg, patch, options) {
 		}
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/onboarding.ts
 async function promptAccountId$1(params) {
 	const existingIds = params.listAccountIds(params.cfg);
-	const initial = params.currentId?.trim() || params.defaultAccountId || DEFAULT_ACCOUNT_ID;
+	const initial = params.currentId?.trim() || params.defaultAccountId || "default";
 	const choice = await params.prompter.select({
 		message: `${params.label} account`,
 		options: [...existingIds.map((id) => ({
 			value: id,
-			label: id === DEFAULT_ACCOUNT_ID ? "default (primary)" : id
+			label: id === "default" ? "default (primary)" : id
 		})), {
 			value: "__new__",
 			label: "Add a new account"
@@ -234,7 +228,6 @@ async function promptAccountId$1(params) {
 	if (String(entered).trim() !== normalized) await params.prompter.note(`Normalized account id to "${normalized}".`, `${params.label} account`);
 	return normalized;
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/helpers.ts
 const promptAccountId = async (params) => {
@@ -268,7 +261,6 @@ async function resolveAccountIdForConfigure(params) {
 	});
 	return accountId;
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/whatsapp.ts
 const channel = "whatsapp";
@@ -460,7 +452,7 @@ const whatsappOnboardingAdapter = {
 		return {
 			channel,
 			configured: linked,
-			statusLines: [`WhatsApp (${accountId === DEFAULT_ACCOUNT_ID ? "default" : accountId}): ${linked ? "linked" : "not linked"}`],
+			statusLines: [`WhatsApp (${accountId === "default" ? "default" : accountId}): ${linked ? "linked" : "not linked"}`],
 			selectionHint: linked ? "linked" : "not linked",
 			quickstartScore: linked ? 5 : 4
 		};
@@ -476,7 +468,7 @@ const whatsappOnboardingAdapter = {
 			defaultAccountId: resolveDefaultWhatsAppAccountId(cfg)
 		});
 		let next = cfg;
-		if (accountId !== DEFAULT_ACCOUNT_ID) next = {
+		if (accountId !== "default") next = {
 			...next,
 			channels: {
 				...next.channels,
@@ -522,7 +514,6 @@ const whatsappOnboardingAdapter = {
 		options?.onWhatsAppAccountId?.(accountId);
 	}
 };
-
 //#endregion
 //#region src/channels/plugins/status-issues/shared.ts
 function asString(value) {
@@ -542,7 +533,6 @@ function collectIssuesForEnabledAccounts(params) {
 	}
 	return issues;
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/whatsapp.ts
 function readWhatsAppAccountStatus(value) {
@@ -587,6 +577,5 @@ function collectWhatsAppStatusIssues(accounts) {
 		}
 	});
 }
-
 //#endregion
 export { DEFAULT_ACCOUNT_ID, WhatsAppConfigSchema, applyAccountNameToChannelSection, buildChannelConfigSchema, collectWhatsAppStatusIssues, createActionGate, emptyPluginConfigSchema, formatPairingApproveHint, formatWhatsAppConfigAllowFromEntries, getChatChannelMeta, listWhatsAppAccountIds, listWhatsAppDirectoryGroupsFromConfig, listWhatsAppDirectoryPeersFromConfig, looksLikeWhatsAppTargetId, migrateBaseNameToDefaultAccount, normalizeAccountId, normalizeE164, normalizeWhatsAppMessagingTarget, readStringParam, resolveAllowlistProviderRuntimeGroupPolicy, resolveDefaultGroupPolicy, resolveDefaultWhatsAppAccountId, resolveWhatsAppAccount, resolveWhatsAppConfigAllowFrom, resolveWhatsAppConfigDefaultTo, resolveWhatsAppGroupIntroHint, resolveWhatsAppGroupRequireMention, resolveWhatsAppGroupToolPolicy, resolveWhatsAppHeartbeatRecipients, resolveWhatsAppMentionStripPatterns, resolveWhatsAppOutboundTarget, whatsappOnboardingAdapter };

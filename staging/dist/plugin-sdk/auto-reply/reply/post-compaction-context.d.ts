@@ -12,4 +12,4 @@ export declare function readPostCompactionContext(workspaceDir: string, cfg?: Op
  * Skips content inside fenced code blocks.
  * Captures until the next heading of same or higher level, or end of string.
  */
-export declare function extractSections(content: string, sectionNames: string[]): string[];
+export declare function extractSections(content: string, sectionNames: string[], foundNames?: string[]): string[];

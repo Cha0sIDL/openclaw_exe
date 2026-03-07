@@ -1,6 +1,10 @@
 import { request as httpRequest } from "node:http";
 import { resolvePinnedHostname } from "../infra/net/ssrf.js";
 export declare const MEDIA_MAX_BYTES: number;
+type CleanOldMediaOptions = {
+    recursive?: boolean;
+    pruneEmptyDirs?: boolean;
+};
 type RequestImpl = typeof httpRequest;
 type ResolvePinnedHostnameImpl = typeof resolvePinnedHostname;
 export declare function setMediaStoreNetworkDepsForTest(deps?: {
@@ -16,7 +20,7 @@ export declare function setMediaStoreNetworkDepsForTest(deps?: {
 export declare function extractOriginalFilename(filePath: string): string;
 export declare function getMediaDir(): string;
 export declare function ensureMediaDir(): Promise<string>;
-export declare function cleanOldMedia(ttlMs?: number): Promise<void>;
+export declare function cleanOldMedia(ttlMs?: number, options?: CleanOldMediaOptions): Promise<void>;
 export type SavedMedia = {
     id: string;
     path: string;

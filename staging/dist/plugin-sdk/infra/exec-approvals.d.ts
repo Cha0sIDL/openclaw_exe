@@ -3,6 +3,9 @@ export * from "./exec-approvals-allowlist.js";
 export type ExecHost = "sandbox" | "gateway" | "node";
 export type ExecSecurity = "deny" | "allowlist" | "full";
 export type ExecAsk = "off" | "on-miss" | "always";
+export declare function normalizeExecHost(value?: string | null): ExecHost | null;
+export declare function normalizeExecSecurity(value?: string | null): ExecSecurity | null;
+export declare function normalizeExecAsk(value?: string | null): ExecAsk | null;
 export type SystemRunApprovalBinding = {
     argv: string[];
     cwd: string | null;

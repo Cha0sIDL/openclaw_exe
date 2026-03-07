@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 //#region src/plugins/config-schema.ts
 function error(message) {
 	return {
@@ -31,11 +30,9 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/routing/account-id.ts
 const DEFAULT_ACCOUNT_ID = "default";
-
 //#endregion
 //#region src/channels/plugins/config-schema.ts
 function buildChannelConfigSchema(schema) {
@@ -49,7 +46,47 @@ function buildChannelConfigSchema(schema) {
 		additionalProperties: true
 	} };
 }
-
+//#endregion
+//#region src/channels/plugins/config-helpers.ts
+function isConfiguredSecretValue(value) {
+	if (typeof value === "string") return value.trim().length > 0;
+	return Boolean(value);
+}
+function clearAccountEntryFields(params) {
+	const accountKey = params.accountId || "default";
+	const baseAccounts = params.accounts && typeof params.accounts === "object" ? { ...params.accounts } : void 0;
+	if (!baseAccounts || !(accountKey in baseAccounts)) return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const entry = baseAccounts[accountKey];
+	if (!entry || typeof entry !== "object") return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const nextEntry = { ...entry };
+	if (!params.fields.some((field) => field in nextEntry)) return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const isValueSet = params.isValueSet ?? isConfiguredSecretValue;
+	let cleared = Boolean(params.markClearedOnFieldPresence);
+	for (const field of params.fields) {
+		if (!(field in nextEntry)) continue;
+		if (isValueSet(nextEntry[field])) cleared = true;
+		delete nextEntry[field];
+	}
+	if (Object.keys(nextEntry).length === 0) delete baseAccounts[accountKey];
+	else baseAccounts[accountKey] = nextEntry;
+	return {
+		nextAccounts: Object.keys(baseAccounts).length > 0 ? baseAccounts : void 0,
+		changed: true,
+		cleared
+	};
+}
 //#endregion
 //#region src/config/runtime-group-policy.ts
 function resolveRuntimeGroupPolicy(params) {
@@ -77,7 +114,6 @@ function resolveAllowlistProviderRuntimeGroupPolicy(params) {
 		missingProviderFallbackPolicy: "allowlist"
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/status-helpers.ts
 function buildBaseChannelStatusSummary(snapshot) {
@@ -87,6 +123,44 @@ function buildBaseChannelStatusSummary(snapshot) {
 		lastStartAt: snapshot.lastStartAt ?? null,
 		lastStopAt: snapshot.lastStopAt ?? null,
 		lastError: snapshot.lastError ?? null
+	};
+}
+function buildBaseAccountStatusSnapshot(params) {
+	const { account, runtime, probe } = params;
+	return {
+		accountId: account.accountId,
+		name: account.name,
+		enabled: account.enabled,
+		configured: account.configured,
+		...buildRuntimeAccountStatusSnapshot({
+			runtime,
+			probe
+		}),
+		lastInboundAt: runtime?.lastInboundAt ?? null,
+		lastOutboundAt: runtime?.lastOutboundAt ?? null
+	};
+}
+function buildComputedAccountStatusSnapshot(params) {
+	const { accountId, name, enabled, configured, runtime, probe } = params;
+	return buildBaseAccountStatusSnapshot({
+		account: {
+			accountId,
+			name,
+			enabled,
+			configured
+		},
+		runtime,
+		probe
+	});
+}
+function buildRuntimeAccountStatusSnapshot(params) {
+	const { runtime, probe } = params;
+	return {
+		running: runtime?.running ?? false,
+		lastStartAt: runtime?.lastStartAt ?? null,
+		lastStopAt: runtime?.lastStopAt ?? null,
+		lastError: runtime?.lastError ?? null,
+		probe
 	};
 }
 function buildTokenChannelStatusSummary(snapshot, opts) {
@@ -102,7 +176,6 @@ function buildTokenChannelStatusSummary(snapshot, opts) {
 		mode: snapshot.mode ?? null
 	};
 }
-
 //#endregion
 //#region src/line/config-schema.ts
 const DmPolicySchema = z.enum([
@@ -144,7 +217,6 @@ const LineConfigSchema = LineCommonConfigSchema.extend({
 	defaultAccount: z.string().optional(),
 	groups: z.record(z.string(), LineGroupConfigSchema.optional()).optional()
 }).strict();
-
 //#endregion
 //#region src/line/flex-templates/common.ts
 function attachFooterText(bubble, footer) {
@@ -163,7 +235,6 @@ function attachFooterText(bubble, footer) {
 		backgroundColor: "#FAFAFA"
 	};
 }
-
 //#endregion
 //#region src/line/flex-templates/basic-cards.ts
 /**
@@ -390,7 +461,6 @@ function createActionCard(title, body, actions, options) {
 	};
 	return bubble;
 }
-
 //#endregion
 //#region src/line/flex-templates/schedule-cards.ts
 function buildTitleSubtitleHeader(params) {
@@ -512,7 +582,6 @@ function createReceiptCard(params) {
 		footer
 	});
 }
-
 //#endregion
 //#region src/line/flex-templates/message.ts
 /**
@@ -525,7 +594,6 @@ function toFlexMessage(altText, contents) {
 		contents
 	};
 }
-
 //#endregion
 //#region src/line/markdown-to-line.ts
 /**
@@ -795,6 +863,5 @@ function processLineMessage(text) {
 		flexMessages
 	};
 }
-
 //#endregion
-export { DEFAULT_ACCOUNT_ID, LineConfigSchema, buildChannelConfigSchema, buildTokenChannelStatusSummary, createActionCard, createImageCard, createInfoCard, createListCard, createReceiptCard, emptyPluginConfigSchema, processLineMessage, resolveAllowlistProviderRuntimeGroupPolicy, resolveDefaultGroupPolicy };
+export { DEFAULT_ACCOUNT_ID, LineConfigSchema, buildChannelConfigSchema, buildComputedAccountStatusSnapshot, buildTokenChannelStatusSummary, clearAccountEntryFields, createActionCard, createImageCard, createInfoCard, createListCard, createReceiptCard, emptyPluginConfigSchema, processLineMessage, resolveAllowlistProviderRuntimeGroupPolicy, resolveDefaultGroupPolicy };

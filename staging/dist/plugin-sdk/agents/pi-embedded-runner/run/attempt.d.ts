@@ -1,6 +1,7 @@
 import type { StreamFn } from "@mariozechner/pi-agent-core";
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { PluginHookAgentContext, PluginHookBeforeAgentStartResult, PluginHookBeforePromptBuildResult } from "../../../plugins/types.js";
+import type { CompactEmbeddedPiSessionParams } from "../compact.js";
 import type { EmbeddedRunAttemptParams, EmbeddedRunAttemptResult } from "./types.js";
 type PromptBuildHookRunner = {
     hasHooks: (hookName: "before_prompt_build" | "before_agent_start") => boolean;
@@ -55,5 +56,15 @@ export declare function resolveAttemptFsWorkspaceOnly(params: {
     config?: OpenClawConfig;
     sessionAgentId: string;
 }): boolean;
+export declare function prependSystemPromptAddition(params: {
+    systemPrompt: string;
+    systemPromptAddition?: string;
+}): string;
+/** Build legacy compaction params passed into context-engine afterTurn hooks. */
+export declare function buildAfterTurnLegacyCompactionParams(params: {
+    attempt: Pick<EmbeddedRunAttemptParams, "sessionKey" | "messageChannel" | "messageProvider" | "agentAccountId" | "config" | "skillsSnapshot" | "senderIsOwner" | "provider" | "modelId" | "thinkLevel" | "reasoningLevel" | "bashElevated" | "extraSystemPrompt" | "ownerNumbers" | "authProfileId">;
+    workspaceDir: string;
+    agentDir: string;
+}): Partial<CompactEmbeddedPiSessionParams>;
 export declare function runEmbeddedAttempt(params: EmbeddedRunAttemptParams): Promise<EmbeddedRunAttemptResult>;
 export {};

@@ -1,11 +1,10 @@
-import "../../paths-C6TxBCvO.js";
-import { t as createSubsystemLogger } from "../../subsystem-D7UWJNhH.js";
-import { d as loadExtraBootstrapFilesWithDiagnostics, u as filterBootstrapFilesForSession } from "../../workspace-B1VBj0cY.js";
-import "../../logger-B-R_-5mh.js";
-import { i as isAgentBootstrapEvent } from "../../legacy-names-BCm4ov65.js";
-import "../../frontmatter-DH91cf0z.js";
-import { t as resolveHookConfig } from "../../config-DWRgGn0l.js";
-
+import "../../paths-hfkBoC7i.js";
+import { t as createSubsystemLogger } from "../../subsystem-C4EPfZvP.js";
+import { d as loadExtraBootstrapFilesWithDiagnostics, u as filterBootstrapFilesForSession } from "../../workspace-C-WsJ6YD.js";
+import "../../logger-CrRR9XqM.js";
+import { i as isAgentBootstrapEvent } from "../../legacy-names-PdEWCM6o.js";
+import "../../frontmatter-DDNsrGxl.js";
+import { t as resolveHookConfig } from "../../config-Bs6iYHRw.js";
 //#region src/hooks/bundled/bootstrap-extra-files/handler.ts
 const HOOK_KEY = "bootstrap-extra-files";
 const log = createSubsystemLogger("bootstrap-extra-files");
@@ -42,6 +41,5 @@ const bootstrapExtraFilesHook = async (event) => {
 		log.warn(`failed: ${String(err)}`);
 	}
 };
-
 //#endregion
 export { bootstrapExtraFilesHook as default };

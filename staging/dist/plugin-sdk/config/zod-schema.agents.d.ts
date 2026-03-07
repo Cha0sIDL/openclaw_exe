@@ -188,6 +188,7 @@ export declare const AgentsSchema: z.ZodOptional<z.ZodObject<{
                 enabled: z.ZodOptional<z.ZodBoolean>;
                 maxRetries: z.ZodOptional<z.ZodNumber>;
             }, z.core.$strict>>;
+            postCompactionSections: z.ZodOptional<z.ZodArray<z.ZodString>>;
             memoryFlush: z.ZodOptional<z.ZodObject<{
                 enabled: z.ZodOptional<z.ZodBoolean>;
                 softThresholdTokens: z.ZodOptional<z.ZodNumber>;

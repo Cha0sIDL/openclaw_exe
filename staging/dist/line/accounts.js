@@ -1,7 +1,6 @@
-import { n as normalizeAccountId$1, r as normalizeOptionalAccountId, t as DEFAULT_ACCOUNT_ID } from "../account-id-JwW97xNZ.js";
-import { t as resolveAccountEntry } from "../account-lookup-Dr1S5Vra.js";
+import { n as normalizeAccountId$1, r as normalizeOptionalAccountId, t as DEFAULT_ACCOUNT_ID } from "../account-id-DQE6gyMr.js";
+import { t as resolveAccountEntry } from "../account-lookup-CO8IjXYc.js";
 import fs from "node:fs";
-
 //#region src/line/accounts.ts
 function readFileIfExists(filePath) {
 	if (!filePath) return;
@@ -22,7 +21,7 @@ function resolveToken(params) {
 		token: accountFileToken,
 		tokenSource: "file"
 	};
-	if (accountId === DEFAULT_ACCOUNT_ID) {
+	if (accountId === "default") {
 		if (baseConfig?.channelAccessToken?.trim()) return {
 			token: baseConfig.channelAccessToken.trim(),
 			tokenSource: "config"
@@ -48,7 +47,7 @@ function resolveSecret(params) {
 	if (accountConfig?.channelSecret?.trim()) return accountConfig.channelSecret.trim();
 	const accountFileSecret = readFileIfExists(accountConfig?.secretFile);
 	if (accountFileSecret) return accountFileSecret;
-	if (accountId === DEFAULT_ACCOUNT_ID) {
+	if (accountId === "default") {
 		if (baseConfig?.channelSecret?.trim()) return baseConfig.channelSecret.trim();
 		const baseFileSecret = readFileIfExists(baseConfig?.secretFile);
 		if (baseFileSecret) return baseFileSecret;
@@ -62,7 +61,7 @@ function resolveLineAccount(params) {
 	const accountId = normalizeAccountId$1(params.accountId);
 	const lineConfig = cfg.channels?.line;
 	const accounts = lineConfig?.accounts;
-	const accountConfig = accountId !== DEFAULT_ACCOUNT_ID ? resolveAccountEntry(accounts, accountId) : void 0;
+	const accountConfig = accountId !== "default" ? resolveAccountEntry(accounts, accountId) : void 0;
 	const { token, tokenSource } = resolveToken({
 		accountId,
 		baseConfig: lineConfig,
@@ -78,10 +77,10 @@ function resolveLineAccount(params) {
 		...lineBase,
 		...accountConfig
 	};
-	const enabled = accountConfig?.enabled ?? (accountId === DEFAULT_ACCOUNT_ID ? lineConfig?.enabled ?? true : false);
+	const enabled = accountConfig?.enabled ?? (accountId === "default" ? lineConfig?.enabled ?? true : false);
 	return {
 		accountId,
-		name: accountConfig?.name ?? (accountId === DEFAULT_ACCOUNT_ID ? lineConfig?.name : void 0),
+		name: accountConfig?.name ?? (accountId === "default" ? lineConfig?.name : void 0),
 		enabled,
 		channelAccessToken: token,
 		channelSecret: secret,
@@ -101,12 +100,11 @@ function resolveDefaultLineAccountId(cfg) {
 	const preferred = normalizeOptionalAccountId((cfg.channels?.line)?.defaultAccount);
 	if (preferred && listLineAccountIds(cfg).some((accountId) => normalizeAccountId$1(accountId) === preferred)) return preferred;
 	const ids = listLineAccountIds(cfg);
-	if (ids.includes(DEFAULT_ACCOUNT_ID)) return DEFAULT_ACCOUNT_ID;
-	return ids[0] ?? DEFAULT_ACCOUNT_ID;
+	if (ids.includes("default")) return DEFAULT_ACCOUNT_ID;
+	return ids[0] ?? "default";
 }
 function normalizeAccountId(accountId) {
 	return normalizeAccountId$1(accountId);
 }
-
 //#endregion
 export { DEFAULT_ACCOUNT_ID, listLineAccountIds, normalizeAccountId, resolveDefaultLineAccountId, resolveLineAccount };

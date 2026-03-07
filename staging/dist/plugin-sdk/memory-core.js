@@ -29,6 +29,5 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 export { emptyPluginConfigSchema };

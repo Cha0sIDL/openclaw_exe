@@ -4,17 +4,15 @@ import fs from "node:fs";
 import { Logger } from "tslog";
 import os from "node:os";
 import json5 from "json5";
-
 //#region src/routing/account-id.ts
 const DEFAULT_ACCOUNT_ID = "default";
-
 //#endregion
 //#region src/channels/plugins/config-helpers.ts
 function setAccountEnabledInConfigSection(params) {
-	const accountKey = params.accountId || DEFAULT_ACCOUNT_ID;
+	const accountKey = params.accountId || "default";
 	const base = params.cfg.channels?.[params.sectionKey];
 	const hasAccounts = Boolean(base?.accounts);
-	if (params.allowTopLevel && accountKey === DEFAULT_ACCOUNT_ID && !hasAccounts) return {
+	if (params.allowTopLevel && accountKey === "default" && !hasAccounts) return {
 		...params.cfg,
 		channels: {
 			...params.cfg.channels,
@@ -43,7 +41,6 @@ function setAccountEnabledInConfigSection(params) {
 		}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/config-schema.ts
 function buildChannelConfigSchema(schema) {
@@ -57,10 +54,6 @@ function buildChannelConfigSchema(schema) {
 		additionalProperties: true
 	} };
 }
-
-//#endregion
-//#region src/infra/http-body.ts
-const DEFAULT_WEBHOOK_MAX_BODY_BYTES = 1024 * 1024;
 const DEFAULT_WEBHOOK_BODY_TIMEOUT_MS = 3e4;
 const DEFAULT_ERROR_MESSAGE = {
 	PAYLOAD_TOO_LARGE: "PayloadTooLarge",
@@ -172,7 +165,6 @@ async function readRequestBodyWithLimit(req, options) {
 		req.on("close", onClose);
 	});
 }
-
 //#endregion
 //#region src/plugins/config-schema.ts
 function error(message) {
@@ -205,7 +197,6 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/plugins/http-path.ts
 function normalizePluginHttpPath(path, fallback) {
@@ -217,14 +208,10 @@ function normalizePluginHttpPath(path, fallback) {
 	}
 	return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
 }
-
-//#endregion
-//#region src/infra/cli-root-options.ts
-const FLAG_TERMINATOR = "--";
 const ROOT_BOOLEAN_FLAGS = new Set(["--dev", "--no-color"]);
 const ROOT_VALUE_FLAGS = new Set(["--profile", "--log-level"]);
 function isValueToken(arg) {
-	if (!arg || arg === FLAG_TERMINATOR) return false;
+	if (!arg || arg === "--") return false;
 	if (!arg.startsWith("-")) return true;
 	return /^-\d+(?:\.\d+)?$/.test(arg);
 }
@@ -236,7 +223,6 @@ function consumeRootOptionToken(args, index) {
 	if (ROOT_VALUE_FLAGS.has(arg)) return isValueToken(args[index + 1]) ? 2 : 1;
 	return 0;
 }
-
 //#endregion
 //#region src/cli/argv.ts
 function getCommandPathWithRootOptions(argv, depth = 2) {
@@ -262,7 +248,6 @@ function getCommandPathInternal(argv, depth, opts) {
 	}
 	return path;
 }
-
 //#endregion
 //#region src/infra/tmp-openclaw-dir.ts
 const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
@@ -345,7 +330,7 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
 	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
 	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return POSIX_OPENCLAW_TMP_DIR;
+		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
 		return ensureTrustedFallbackDir();
 	}
 	try {
@@ -355,13 +340,12 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 			mode: 448
 		});
 		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState(POSIX_OPENCLAW_TMP_DIR) !== "available" && !tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return ensureTrustedFallbackDir();
+		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
 		return POSIX_OPENCLAW_TMP_DIR;
 	} catch {
 		return ensureTrustedFallbackDir();
 	}
 }
-
 //#endregion
 //#region src/infra/home-dir.ts
 function normalize(value) {
@@ -404,7 +388,6 @@ function expandHomePrefix(input, opts) {
 	if (!home) return input;
 	return input.replace(/^~(?=$|[\\/])/, home);
 }
-
 //#endregion
 //#region src/config/paths.ts
 /**
@@ -417,7 +400,7 @@ function expandHomePrefix(input, opts) {
 function resolveIsNixMode(env = process.env) {
 	return env.OPENCLAW_NIX_MODE === "1";
 }
-const isNixMode = resolveIsNixMode();
+resolveIsNixMode();
 const LEGACY_STATE_DIRNAMES = [
 	".clawdbot",
 	".moldbot",
@@ -479,7 +462,7 @@ function resolveUserPath$1(input, env = process.env, homedir = envHomedir(env)) 
 	}
 	return path.resolve(trimmed);
 }
-const STATE_DIR = resolveStateDir();
+resolveStateDir();
 /**
 * Config file path (JSON5).
 * Can be overridden via OPENCLAW_CONFIG_PATH.
@@ -527,7 +510,7 @@ function resolveConfigPath(env = process.env, stateDir = resolveStateDir(env, en
 	if (path.resolve(stateDir) === path.resolve(defaultStateDir)) return resolveConfigPathCandidate(env, homedir);
 	return path.join(stateDir, CONFIG_FILENAME);
 }
-const CONFIG_PATH = resolveConfigPathCandidate();
+resolveConfigPathCandidate();
 /**
 * Resolve default config path candidates across default locations.
 * Order: explicit config path → state-dir-derived paths → new default.
@@ -550,7 +533,6 @@ function resolveDefaultConfigCandidates(env = process.env, homedir = envHomedir(
 	}
 	return candidates;
 }
-
 //#endregion
 //#region src/logging/config.ts
 function readLoggingConfig() {
@@ -565,7 +547,6 @@ function readLoggingConfig() {
 		return;
 	}
 }
-
 //#endregion
 //#region src/logging/levels.ts
 const ALLOWED_LOG_LEVELS = [
@@ -596,7 +577,6 @@ function levelToMinLevel(level) {
 		silent: Number.POSITIVE_INFINITY
 	}[level];
 }
-
 //#endregion
 //#region src/logging/state.ts
 const loggingState = {
@@ -613,7 +593,6 @@ const loggingState = {
 	streamErrorHandlersInstalled: false,
 	rawConsole: null
 };
-
 //#endregion
 //#region src/logging/env-log-level.ts
 function resolveEnvLogLevelOverride() {
@@ -633,7 +612,6 @@ function resolveEnvLogLevelOverride() {
 		process.stderr.write(`[openclaw] Ignoring invalid OPENCLAW_LOG_LEVEL="${trimmed}" (allowed: ${ALLOWED_LOG_LEVELS.join("|")}).\n`);
 	}
 }
-
 //#endregion
 //#region src/logging/node-require.ts
 function resolveNodeRequireFromMeta(metaUrl) {
@@ -647,7 +625,6 @@ function resolveNodeRequireFromMeta(metaUrl) {
 		return null;
 	}
 }
-
 //#endregion
 //#region src/logging/timestamps.ts
 function isValidTimeZone(tz) {
@@ -678,11 +655,10 @@ function formatLocalIsoWithOffset(now, timeZone) {
 	const offset = offsetRaw === "GMT" ? "+00:00" : offsetRaw.slice(3);
 	return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}.${parts.fractionalSecond}${offset}`;
 }
-
 //#endregion
 //#region src/logging/logger.ts
 const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
-const DEFAULT_LOG_FILE = path.join(DEFAULT_LOG_DIR, "openclaw.log");
+path.join(DEFAULT_LOG_DIR, "openclaw.log");
 const LOG_PREFIX = "openclaw";
 const LOG_SUFFIX = ".log";
 const MAX_LOG_AGE_MS = 1440 * 60 * 1e3;
@@ -842,7 +818,6 @@ function pruneOldRollingLogs(dir) {
 		}
 	} catch {}
 }
-
 //#endregion
 //#region src/terminal/palette.ts
 const LOBSTER_PALETTE = {
@@ -855,7 +830,6 @@ const LOBSTER_PALETTE = {
 	error: "#E23D2D",
 	muted: "#8B7F77"
 };
-
 //#endregion
 //#region src/terminal/theme.ts
 const hasForceColor = typeof process.env.FORCE_COLOR === "string" && process.env.FORCE_COLOR.trim().length > 0 && process.env.FORCE_COLOR.trim() !== "0";
@@ -874,18 +848,16 @@ const theme = {
 	command: hex(LOBSTER_PALETTE.accentBright),
 	option: hex(LOBSTER_PALETTE.warn)
 };
-
 //#endregion
 //#region src/globals.ts
 let globalVerbose = false;
 function isVerbose() {
 	return globalVerbose;
 }
-const success = theme.success;
-const warn = theme.warn;
-const info = theme.info;
-const danger = theme.error;
-
+theme.success;
+theme.warn;
+theme.info;
+theme.error;
 //#endregion
 //#region src/terminal/progress-line.ts
 let activeStream = null;
@@ -893,46 +865,6 @@ function clearActiveProgressLine() {
 	if (!activeStream?.isTTY) return;
 	activeStream.write("\r\x1B[2K");
 }
-
-//#endregion
-//#region src/terminal/restore.ts
-const RESET_SEQUENCE = "\x1B[0m\x1B[?25h\x1B[?1000l\x1B[?1002l\x1B[?1003l\x1B[?1006l\x1B[?2004l";
-function reportRestoreFailure(scope, err, reason) {
-	const suffix = reason ? ` (${reason})` : "";
-	const message = `[terminal] restore ${scope} failed${suffix}: ${String(err)}`;
-	try {
-		process.stderr.write(`${message}\n`);
-	} catch (writeErr) {
-		console.error(`[terminal] restore reporting failed${suffix}: ${String(writeErr)}`);
-	}
-}
-function restoreTerminalState(reason, options = {}) {
-	const resumeStdin = options.resumeStdinIfPaused ?? options.resumeStdin ?? false;
-	try {
-		clearActiveProgressLine();
-	} catch (err) {
-		reportRestoreFailure("progress line", err, reason);
-	}
-	const stdin = process.stdin;
-	if (stdin.isTTY && typeof stdin.setRawMode === "function") {
-		try {
-			stdin.setRawMode(false);
-		} catch (err) {
-			reportRestoreFailure("raw mode", err, reason);
-		}
-		if (resumeStdin && typeof stdin.isPaused === "function" && stdin.isPaused()) try {
-			stdin.resume();
-		} catch (err) {
-			reportRestoreFailure("stdin resume", err, reason);
-		}
-	}
-	if (process.stdout.isTTY) try {
-		process.stdout.write(RESET_SEQUENCE);
-	} catch (err) {
-		reportRestoreFailure("stdout reset", err, reason);
-	}
-}
-
 //#endregion
 //#region src/runtime.ts
 function shouldEmitRuntimeLog(env = process.env) {
@@ -953,22 +885,13 @@ function createRuntimeIo() {
 		}
 	};
 }
-const defaultRuntime = {
-	...createRuntimeIo(),
-	exit: (code) => {
-		restoreTerminalState("runtime exit", { resumeStdinIfPaused: false });
-		process.exit(code);
-		throw new Error("unreachable");
-	}
-};
-
+({ ...createRuntimeIo() });
 //#endregion
 //#region src/terminal/ansi.ts
 const ANSI_SGR_PATTERN = "\\x1b\\[[0-9;]*m";
 const OSC8_PATTERN = "\\x1b\\]8;;.*?\\x1b\\\\|\\x1b\\]8;;\\x1b\\\\";
-const ANSI_REGEX = new RegExp(ANSI_SGR_PATTERN, "g");
-const OSC8_REGEX = new RegExp(OSC8_PATTERN, "g");
-
+new RegExp(ANSI_SGR_PATTERN, "g");
+new RegExp(OSC8_PATTERN, "g");
 //#endregion
 //#region src/logging/console.ts
 const requireConfig = resolveNodeRequireFromMeta(import.meta.url);
@@ -1031,14 +954,13 @@ function formatConsoleTimestamp(style) {
 	if (style === "pretty") return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 	return formatLocalIsoWithOffset(now);
 }
-
 //#endregion
 //#region src/logging/subsystem.ts
 function shouldLogToConsole(level, settings) {
 	if (settings.level === "silent") return false;
 	return levelToMinLevel(level) <= levelToMinLevel(settings.level);
 }
-const inspectValue = (() => {
+(() => {
 	const getBuiltinModule = process.getBuiltinModule;
 	if (typeof getBuiltinModule !== "function") return null;
 	try {
@@ -1212,7 +1134,6 @@ function createSubsystemLogger(subsystem) {
 		child: (name) => createSubsystemLogger(`${subsystem}/${name}`)
 	};
 }
-
 //#endregion
 //#region src/hooks/internal-hooks.ts
 /**
@@ -1226,9 +1147,8 @@ function createSubsystemLogger(subsystem) {
 * to silently fire with zero handlers.
 */
 const _g = globalThis;
-const handlers = _g.__openclaw_internal_hook_handlers__ ??= /* @__PURE__ */ new Map();
-const log = createSubsystemLogger("internal-hooks");
-
+_g.__openclaw_internal_hook_handlers__ ??= /* @__PURE__ */ new Map();
+createSubsystemLogger("internal-hooks");
 //#endregion
 //#region src/utils.ts
 function resolveUserPath(input) {
@@ -1254,40 +1174,7 @@ function resolveConfigDir(env = process.env, homedir = os.homedir) {
 	} catch {}
 	return newDir;
 }
-const CONFIG_DIR = resolveConfigDir();
-
-//#endregion
-//#region src/plugins/types.ts
-const PLUGIN_HOOK_NAMES = [
-	"before_model_resolve",
-	"before_prompt_build",
-	"before_agent_start",
-	"llm_input",
-	"llm_output",
-	"agent_end",
-	"before_compaction",
-	"after_compaction",
-	"before_reset",
-	"message_received",
-	"message_sending",
-	"message_sent",
-	"before_tool_call",
-	"after_tool_call",
-	"tool_result_persist",
-	"before_message_write",
-	"session_start",
-	"session_end",
-	"subagent_spawning",
-	"subagent_delivery_target",
-	"subagent_spawned",
-	"subagent_ended",
-	"gateway_start",
-	"gateway_stop"
-];
-const pluginHookNameSet = new Set(PLUGIN_HOOK_NAMES);
-const PROMPT_INJECTION_HOOK_NAMES = ["before_prompt_build", "before_agent_start"];
-const promptInjectionHookNameSet = new Set(PROMPT_INJECTION_HOOK_NAMES);
-
+resolveConfigDir();
 //#endregion
 //#region src/plugins/registry.ts
 function createEmptyPluginRegistry() {
@@ -1306,7 +1193,6 @@ function createEmptyPluginRegistry() {
 		diagnostics: []
 	};
 }
-
 //#endregion
 //#region src/plugins/runtime.ts
 const REGISTRY_STATE = Symbol.for("openclaw.pluginRegistryState");
@@ -1326,7 +1212,6 @@ function requireActivePluginRegistry() {
 	}
 	return state.registry;
 }
-
 //#endregion
 //#region src/plugins/http-registry.ts
 function registerPluginHttpRoute(params) {
@@ -1370,7 +1255,6 @@ function registerPluginHttpRoute(params) {
 		if (index >= 0) routes.splice(index, 1);
 	};
 }
-
 //#endregion
 //#region src/infra/map-size.ts
 function pruneMapToMaxSize(map, maxSize) {
@@ -1385,20 +1269,17 @@ function pruneMapToMaxSize(map, maxSize) {
 		map.delete(oldest.value);
 	}
 }
-
-//#endregion
-//#region src/plugin-sdk/webhook-memory-guards.ts
-const WEBHOOK_RATE_LIMIT_DEFAULTS = Object.freeze({
+Object.freeze({
 	windowMs: 6e4,
 	maxRequests: 120,
 	maxTrackedKeys: 4096
 });
-const WEBHOOK_ANOMALY_COUNTER_DEFAULTS = Object.freeze({
+Object.freeze({
 	maxTrackedKeys: 4096,
 	ttlMs: 360 * 6e4,
 	logEvery: 25
 });
-const WEBHOOK_ANOMALY_STATUS_CODES = Object.freeze([
+Object.freeze([
 	400,
 	401,
 	408,
@@ -1451,6 +1332,5 @@ function createFixedWindowRateLimiter(options) {
 		}
 	};
 }
-
 //#endregion
 export { DEFAULT_ACCOUNT_ID, buildChannelConfigSchema, createFixedWindowRateLimiter, emptyPluginConfigSchema, isRequestBodyLimitError, readRequestBodyWithLimit, registerPluginHttpRoute, requestBodyErrorToText, setAccountEnabledInConfigSection };

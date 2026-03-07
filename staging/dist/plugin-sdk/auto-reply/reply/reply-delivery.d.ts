@@ -20,6 +20,7 @@ export declare function createBlockReplyDeliveryHandler(params: {
         skip: boolean;
     };
     applyReplyToMode: (payload: ReplyPayload) => ReplyPayload;
+    normalizeMediaPaths?: (payload: ReplyPayload) => Promise<ReplyPayload>;
     typingSignals: TypingSignaler;
     blockStreamingEnabled: boolean;
     blockReplyPipeline: BlockReplyPipeline | null;

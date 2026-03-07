@@ -2,7 +2,7 @@
 ; Generated for Inno Setup 6
 
 #define MyAppName "OpenClaw"
-#define MyAppVersion "2026.2.27"
+#define MyAppVersion "2026.3.7"
 #define MyAppPublisher "lys46001"
 #define MyAppURL "https://github.com/openclaw/openclaw"
 #define MyAppExeName "start-gateway.bat"
@@ -147,6 +147,7 @@ function InitializeSetup(): Boolean;
 begin
   Result := True;
 end;
+
 
 
 

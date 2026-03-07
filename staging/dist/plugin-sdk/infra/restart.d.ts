@@ -1,7 +1,7 @@
 import { findGatewayPidsOnPortSync } from "./restart-stale-pids.js";
 export type RestartAttempt = {
     ok: boolean;
-    method: "launchctl" | "systemd" | "supervisor";
+    method: "launchctl" | "systemd" | "schtasks" | "supervisor";
     detail?: string;
     tried?: string[];
 };

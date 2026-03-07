@@ -98,6 +98,7 @@ export declare const ModelCompatSchema: z.ZodOptional<z.ZodObject<{
     supportsDeveloperRole: z.ZodOptional<z.ZodBoolean>;
     supportsReasoningEffort: z.ZodOptional<z.ZodBoolean>;
     supportsUsageInStreaming: z.ZodOptional<z.ZodBoolean>;
+    supportsTools: z.ZodOptional<z.ZodBoolean>;
     supportsStrictMode: z.ZodOptional<z.ZodBoolean>;
     maxTokensField: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"max_completion_tokens">, z.ZodLiteral<"max_tokens">]>>;
     thinkingFormat: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"zai">, z.ZodLiteral<"qwen">]>>;
@@ -135,6 +136,7 @@ export declare const ModelDefinitionSchema: z.ZodObject<{
         supportsDeveloperRole: z.ZodOptional<z.ZodBoolean>;
         supportsReasoningEffort: z.ZodOptional<z.ZodBoolean>;
         supportsUsageInStreaming: z.ZodOptional<z.ZodBoolean>;
+        supportsTools: z.ZodOptional<z.ZodBoolean>;
         supportsStrictMode: z.ZodOptional<z.ZodBoolean>;
         maxTokensField: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"max_completion_tokens">, z.ZodLiteral<"max_tokens">]>>;
         thinkingFormat: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"zai">, z.ZodLiteral<"qwen">]>>;
@@ -202,6 +204,7 @@ export declare const ModelProviderSchema: z.ZodObject<{
             supportsDeveloperRole: z.ZodOptional<z.ZodBoolean>;
             supportsReasoningEffort: z.ZodOptional<z.ZodBoolean>;
             supportsUsageInStreaming: z.ZodOptional<z.ZodBoolean>;
+            supportsTools: z.ZodOptional<z.ZodBoolean>;
             supportsStrictMode: z.ZodOptional<z.ZodBoolean>;
             maxTokensField: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"max_completion_tokens">, z.ZodLiteral<"max_tokens">]>>;
             thinkingFormat: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"zai">, z.ZodLiteral<"qwen">]>>;
@@ -280,6 +283,7 @@ export declare const ModelsConfigSchema: z.ZodOptional<z.ZodObject<{
                 supportsDeveloperRole: z.ZodOptional<z.ZodBoolean>;
                 supportsReasoningEffort: z.ZodOptional<z.ZodBoolean>;
                 supportsUsageInStreaming: z.ZodOptional<z.ZodBoolean>;
+                supportsTools: z.ZodOptional<z.ZodBoolean>;
                 supportsStrictMode: z.ZodOptional<z.ZodBoolean>;
                 maxTokensField: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"max_completion_tokens">, z.ZodLiteral<"max_tokens">]>>;
                 thinkingFormat: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"zai">, z.ZodLiteral<"qwen">]>>;

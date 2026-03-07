@@ -9,7 +9,6 @@ import { promisify } from "node:util";
 import "tslog";
 import "json5";
 import chalk, { Chalk } from "chalk";
-
 //#region src/plugins/config-schema.ts
 function error(message) {
 	return {
@@ -41,7 +40,6 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/provider-auth-result.ts
 function buildOauthProviderAuthResult(params) {
@@ -64,7 +62,6 @@ function buildOauthProviderAuthResult(params) {
 		notes: params.notes
 	};
 }
-
 //#endregion
 //#region src/shared/device-auth.ts
 function normalizeDeviceAuthScopes(scopes) {
@@ -76,7 +73,6 @@ function normalizeDeviceAuthScopes(scopes) {
 	}
 	return [...out].toSorted();
 }
-
 //#endregion
 //#region src/infra/home-dir.ts
 function normalize(value) {
@@ -119,7 +115,6 @@ function expandHomePrefix(input, opts) {
 	if (!home) return input;
 	return input.replace(/^~(?=$|[\\/])/, home);
 }
-
 //#endregion
 //#region src/config/paths.ts
 /**
@@ -132,7 +127,7 @@ function expandHomePrefix(input, opts) {
 function resolveIsNixMode(env = process.env) {
 	return env.OPENCLAW_NIX_MODE === "1";
 }
-const isNixMode = resolveIsNixMode();
+resolveIsNixMode();
 const LEGACY_STATE_DIRNAMES = [
 	".clawdbot",
 	".moldbot",
@@ -194,7 +189,7 @@ function resolveUserPath(input, env = process.env, homedir = envHomedir(env)) {
 	}
 	return path.resolve(trimmed);
 }
-const STATE_DIR = resolveStateDir();
+resolveStateDir();
 /**
 * Config file path (JSON5).
 * Can be overridden via OPENCLAW_CONFIG_PATH.
@@ -221,7 +216,7 @@ function resolveConfigPathCandidate(env = process.env, homedir = envHomedir(env)
 	if (existing) return existing;
 	return resolveCanonicalConfigPath(env, resolveStateDir(env, homedir));
 }
-const CONFIG_PATH = resolveConfigPathCandidate();
+resolveConfigPathCandidate();
 /**
 * Resolve default config path candidates across default locations.
 * Order: explicit config path → state-dir-derived paths → new default.
@@ -244,7 +239,6 @@ function resolveDefaultConfigCandidates(env = process.env, homedir = envHomedir(
 	}
 	return candidates;
 }
-
 //#endregion
 //#region src/infra/json-files.ts
 async function readJsonFile(filePath) {
@@ -298,7 +292,6 @@ function createAsyncLock() {
 		}
 	};
 }
-
 //#endregion
 //#region src/infra/pairing-files.ts
 function resolvePairingPaths(baseDir, subdir) {
@@ -313,7 +306,6 @@ function resolvePairingPaths(baseDir, subdir) {
 function pruneExpiredPending(pendingById, nowMs, ttlMs) {
 	for (const [id, req] of Object.entries(pendingById)) if (nowMs - req.ts > ttlMs) delete pendingById[id];
 }
-
 //#endregion
 //#region src/infra/pairing-pending.ts
 async function rejectPendingPairingRequest(params) {
@@ -327,14 +319,9 @@ async function rejectPendingPairingRequest(params) {
 		[params.idKey]: params.getId(pending)
 	};
 }
-
-//#endregion
-//#region src/infra/pairing-token.ts
-const PAIRING_TOKEN_BYTES = 32;
 function generatePairingToken() {
-	return randomBytes(PAIRING_TOKEN_BYTES).toString("base64url");
+	return randomBytes(32).toString("base64url");
 }
-
 //#endregion
 //#region src/infra/device-pairing.ts
 const PENDING_TTL_MS = 300 * 1e3;
@@ -458,7 +445,6 @@ async function rejectDevicePairing(requestId, baseDir) {
 		});
 	});
 }
-
 //#endregion
 //#region src/infra/tmp-openclaw-dir.ts
 const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
@@ -541,7 +527,7 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
 	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
 	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return POSIX_OPENCLAW_TMP_DIR;
+		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
 		return ensureTrustedFallbackDir();
 	}
 	try {
@@ -551,13 +537,12 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 			mode: 448
 		});
 		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState(POSIX_OPENCLAW_TMP_DIR) !== "available" && !tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return ensureTrustedFallbackDir();
+		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
 		return POSIX_OPENCLAW_TMP_DIR;
 	} catch {
 		return ensureTrustedFallbackDir();
 	}
 }
-
 //#endregion
 //#region src/logging/node-require.ts
 function resolveNodeRequireFromMeta(metaUrl) {
@@ -571,15 +556,11 @@ function resolveNodeRequireFromMeta(metaUrl) {
 		return null;
 	}
 }
-
 //#endregion
 //#region src/logging/logger.ts
 const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
-const DEFAULT_LOG_FILE = path.join(DEFAULT_LOG_DIR, "openclaw.log");
-const MAX_LOG_AGE_MS = 1440 * 60 * 1e3;
-const DEFAULT_MAX_LOG_FILE_BYTES = 500 * 1024 * 1024;
-const requireConfig$1 = resolveNodeRequireFromMeta(import.meta.url);
-
+path.join(DEFAULT_LOG_DIR, "openclaw.log");
+resolveNodeRequireFromMeta(import.meta.url);
 //#endregion
 //#region src/terminal/palette.ts
 const LOBSTER_PALETTE = {
@@ -592,7 +573,6 @@ const LOBSTER_PALETTE = {
 	error: "#E23D2D",
 	muted: "#8B7F77"
 };
-
 //#endregion
 //#region src/terminal/theme.ts
 const hasForceColor = typeof process.env.FORCE_COLOR === "string" && process.env.FORCE_COLOR.trim().length > 0 && process.env.FORCE_COLOR.trim() !== "0";
@@ -611,14 +591,10 @@ const theme = {
 	command: hex(LOBSTER_PALETTE.accentBright),
 	option: hex(LOBSTER_PALETTE.warn)
 };
-
-//#endregion
-//#region src/globals.ts
-const success = theme.success;
-const warn = theme.warn;
-const info = theme.info;
-const danger = theme.error;
-
+theme.success;
+theme.warn;
+theme.info;
+theme.error;
 //#endregion
 //#region src/terminal/progress-line.ts
 let activeStream = null;
@@ -626,46 +602,6 @@ function clearActiveProgressLine() {
 	if (!activeStream?.isTTY) return;
 	activeStream.write("\r\x1B[2K");
 }
-
-//#endregion
-//#region src/terminal/restore.ts
-const RESET_SEQUENCE = "\x1B[0m\x1B[?25h\x1B[?1000l\x1B[?1002l\x1B[?1003l\x1B[?1006l\x1B[?2004l";
-function reportRestoreFailure(scope, err, reason) {
-	const suffix = reason ? ` (${reason})` : "";
-	const message = `[terminal] restore ${scope} failed${suffix}: ${String(err)}`;
-	try {
-		process.stderr.write(`${message}\n`);
-	} catch (writeErr) {
-		console.error(`[terminal] restore reporting failed${suffix}: ${String(writeErr)}`);
-	}
-}
-function restoreTerminalState(reason, options = {}) {
-	const resumeStdin = options.resumeStdinIfPaused ?? options.resumeStdin ?? false;
-	try {
-		clearActiveProgressLine();
-	} catch (err) {
-		reportRestoreFailure("progress line", err, reason);
-	}
-	const stdin = process.stdin;
-	if (stdin.isTTY && typeof stdin.setRawMode === "function") {
-		try {
-			stdin.setRawMode(false);
-		} catch (err) {
-			reportRestoreFailure("raw mode", err, reason);
-		}
-		if (resumeStdin && typeof stdin.isPaused === "function" && stdin.isPaused()) try {
-			stdin.resume();
-		} catch (err) {
-			reportRestoreFailure("stdin resume", err, reason);
-		}
-	}
-	if (process.stdout.isTTY) try {
-		process.stdout.write(RESET_SEQUENCE);
-	} catch (err) {
-		reportRestoreFailure("stdout reset", err, reason);
-	}
-}
-
 //#endregion
 //#region src/runtime.ts
 function shouldEmitRuntimeLog(env = process.env) {
@@ -686,29 +622,15 @@ function createRuntimeIo() {
 		}
 	};
 }
-const defaultRuntime = {
-	...createRuntimeIo(),
-	exit: (code) => {
-		restoreTerminalState("runtime exit", { resumeStdinIfPaused: false });
-		process.exit(code);
-		throw new Error("unreachable");
-	}
-};
-
+({ ...createRuntimeIo() });
 //#endregion
 //#region src/terminal/ansi.ts
 const ANSI_SGR_PATTERN = "\\x1b\\[[0-9;]*m";
 const OSC8_PATTERN = "\\x1b\\]8;;.*?\\x1b\\\\|\\x1b\\]8;;\\x1b\\\\";
-const ANSI_REGEX = new RegExp(ANSI_SGR_PATTERN, "g");
-const OSC8_REGEX = new RegExp(OSC8_PATTERN, "g");
-
-//#endregion
-//#region src/logging/console.ts
-const requireConfig = resolveNodeRequireFromMeta(import.meta.url);
-
-//#endregion
-//#region src/logging/subsystem.ts
-const inspectValue = (() => {
+new RegExp(ANSI_SGR_PATTERN, "g");
+new RegExp(OSC8_PATTERN, "g");
+resolveNodeRequireFromMeta(import.meta.url);
+(() => {
 	const getBuiltinModule = process.getBuiltinModule;
 	if (typeof getBuiltinModule !== "function") return null;
 	try {
@@ -718,7 +640,6 @@ const inspectValue = (() => {
 		return null;
 	}
 })();
-
 //#endregion
 //#region src/process/spawn-utils.ts
 function resolveCommandStdio(params) {
@@ -728,10 +649,7 @@ function resolveCommandStdio(params) {
 		"pipe"
 	];
 }
-
-//#endregion
-//#region src/process/exec.ts
-const execFileAsync = promisify(execFile);
+promisify(execFile);
 const WINDOWS_UNSAFE_CMD_CHARS_RE = /[&|<>^%\r\n]/;
 function isWindowsBatchCommand(resolvedCommand) {
 	if (process$1.platform !== "win32") return false;
@@ -758,7 +676,10 @@ function resolveNpmArgvForWindows(argv) {
 	if (!cliName) return null;
 	const nodeDir = path.dirname(process$1.execPath);
 	const cliPath = path.join(nodeDir, "node_modules", "npm", "bin", cliName);
-	if (!fs.existsSync(cliPath)) return null;
+	if (!fs.existsSync(cliPath)) {
+		const command = argv[0] ?? "";
+		return [path.extname(command).toLowerCase() ? command : `${command}.cmd`, ...argv.slice(1)];
+	}
 	return [
 		process$1.execPath,
 		cliPath,
@@ -896,7 +817,6 @@ async function runCommandWithTimeout(argv, optionsOrTimeout) {
 		});
 	});
 }
-
 //#endregion
 //#region src/plugin-sdk/run-command.ts
 async function runPluginCommandWithTimeout(options) {
@@ -926,7 +846,6 @@ async function runPluginCommandWithTimeout(options) {
 		};
 	}
 }
-
 //#endregion
 //#region src/shared/gateway-bind-url.ts
 function resolveGatewayBindUrl(params) {
@@ -957,7 +876,6 @@ function resolveGatewayBindUrl(params) {
 	}
 	return null;
 }
-
 //#endregion
 //#region src/shared/tailscale-status.ts
 const TAILSCALE_STATUS_COMMAND_CANDIDATES = ["tailscale", "/Applications/Tailscale.app/Contents/MacOS/Tailscale"];
@@ -997,6 +915,5 @@ async function resolveTailnetHostWithRunner(runCommandWithTimeout) {
 	}
 	return null;
 }
-
 //#endregion
 export { approveDevicePairing, buildOauthProviderAuthResult, emptyPluginConfigSchema, listDevicePairing, rejectDevicePairing, resolveGatewayBindUrl, resolvePreferredOpenClawTmpDir, resolveTailnetHostWithRunner, runPluginCommandWithTimeout };

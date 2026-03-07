@@ -22,3 +22,8 @@ export type ParsedOpenClawManifestInstallBase = {
     bins?: string[];
 };
 export declare function parseOpenClawManifestInstallBase(input: unknown, allowedKinds: readonly string[]): ParsedOpenClawManifestInstallBase | undefined;
+export declare function applyOpenClawManifestInstallCommonFields<T extends {
+    id?: string;
+    label?: string;
+    bins?: string[];
+}>(spec: T, parsed: Pick<ParsedOpenClawManifestInstallBase, "id" | "label" | "bins">): T;

@@ -2,7 +2,6 @@ import path from "node:path";
 import { z } from "zod";
 import "undici";
 import ipaddr from "ipaddr.js";
-
 //#region src/channels/plugins/config-schema.ts
 function buildChannelConfigSchema(schema) {
 	const schemaWithJson = schema;
@@ -15,7 +14,6 @@ function buildChannelConfigSchema(schema) {
 		additionalProperties: true
 	} };
 }
-
 //#endregion
 //#region src/cli/cli-name.ts
 const DEFAULT_CLI_NAME = "openclaw";
@@ -35,7 +33,6 @@ function replaceCliName(command, cliName = resolveCliName()) {
 		return `${runner ?? ""}${cliName}`;
 	});
 }
-
 //#endregion
 //#region src/cli/profile-utils.ts
 const PROFILE_NAME_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
@@ -50,7 +47,6 @@ function normalizeProfileName(raw) {
 	if (!isValidProfileName(profile)) return null;
 	return profile;
 }
-
 //#endregion
 //#region src/cli/command-format.ts
 const CLI_PREFIX_RE = /^(?:pnpm|npm|bunx|npx)\s+openclaw\b|^openclaw\b/;
@@ -64,17 +60,14 @@ function formatCliCommand(command, env = process.env) {
 	if (PROFILE_FLAG_RE.test(normalizedCommand) || DEV_FLAG_RE.test(normalizedCommand)) return normalizedCommand;
 	return normalizedCommand.replace(CLI_PREFIX_RE, (match) => `${match} --profile ${profile}`);
 }
-
 //#endregion
 //#region src/routing/account-id.ts
 const DEFAULT_ACCOUNT_ID = "default";
-
 //#endregion
 //#region src/channels/plugins/helpers.ts
 function formatPairingApproveHint(channelId) {
 	return `Approve via: ${formatCliCommand(`openclaw pairing list ${channelId}`)} / ${formatCliCommand(`openclaw pairing approve ${channelId} <code>`)}`;
 }
-
 //#endregion
 //#region src/infra/exec-safety.ts
 const SHELL_METACHARS = /[;&|`$<>]/;
@@ -98,17 +91,14 @@ function isSafeExecutableValue(value) {
 	if (trimmed.startsWith("-")) return false;
 	return BARE_NAME_PATTERN.test(trimmed);
 }
-
 //#endregion
 //#region src/secrets/ref-contract.ts
 const FILE_SECRET_REF_SEGMENT_PATTERN = /^(?:[^~]|~0|~1)*$/;
-const SINGLE_VALUE_FILE_REF_ID = "value";
 function isValidFileSecretRefId(value) {
-	if (value === SINGLE_VALUE_FILE_REF_ID) return true;
+	if (value === "value") return true;
 	if (!value.startsWith("/")) return false;
 	return value.slice(1).split("/").every((segment) => FILE_SECRET_REF_SEGMENT_PATTERN.test(segment));
 }
-
 //#endregion
 //#region src/config/types.models.ts
 const MODEL_APIS = [
@@ -121,7 +111,6 @@ const MODEL_APIS = [
 	"bedrock-converse-stream",
 	"ollama"
 ];
-
 //#endregion
 //#region src/config/zod-schema.allowdeny.ts
 const AllowDenyActionSchema = z.union([z.literal("allow"), z.literal("deny")]);
@@ -145,11 +134,9 @@ function createAllowDenyChannelRulesSchema() {
 		}).strict()).optional()
 	}).strict().optional();
 }
-
 //#endregion
 //#region src/config/zod-schema.sensitive.ts
 const sensitive = z.registry();
-
 //#endregion
 //#region src/config/zod-schema.core.ts
 const ENV_SECRET_REF_ID_PATTERN = /^[A-Z][A-Z0-9_]{0,127}$/;
@@ -211,7 +198,7 @@ const SecretProviderSchema = z.discriminatedUnion("source", [
 	SecretsFileProviderSchema,
 	SecretsExecProviderSchema
 ]);
-const SecretsConfigSchema = z.object({
+z.object({
 	providers: z.object({}).catchall(SecretProviderSchema).optional(),
 	defaults: z.object({
 		env: z.string().regex(SECRET_PROVIDER_ALIAS_PATTERN).optional(),
@@ -230,6 +217,7 @@ const ModelCompatSchema = z.object({
 	supportsDeveloperRole: z.boolean().optional(),
 	supportsReasoningEffort: z.boolean().optional(),
 	supportsUsageInStreaming: z.boolean().optional(),
+	supportsTools: z.boolean().optional(),
 	supportsStrictMode: z.boolean().optional(),
 	maxTokensField: z.union([z.literal("max_completion_tokens"), z.literal("max_tokens")]).optional(),
 	thinkingFormat: z.union([
@@ -282,17 +270,17 @@ const BedrockDiscoverySchema = z.object({
 	defaultContextWindow: z.number().int().positive().optional(),
 	defaultMaxTokens: z.number().int().positive().optional()
 }).strict().optional();
-const ModelsConfigSchema = z.object({
+z.object({
 	mode: z.union([z.literal("merge"), z.literal("replace")]).optional(),
 	providers: z.record(z.string(), ModelProviderSchema).optional(),
 	bedrockDiscovery: BedrockDiscoverySchema
 }).strict().optional();
-const GroupChatSchema = z.object({
+z.object({
 	mentionPatterns: z.array(z.string()).optional(),
 	historyLimit: z.number().int().positive().optional()
 }).strict().optional();
 const DmConfigSchema = z.object({ historyLimit: z.number().int().min(0).optional() }).strict();
-const IdentitySchema = z.object({
+z.object({
 	name: z.string().optional(),
 	theme: z.string().optional(),
 	emoji: z.string().optional(),
@@ -312,23 +300,23 @@ const QueueDropSchema = z.union([
 	z.literal("new"),
 	z.literal("summarize")
 ]);
-const ReplyToModeSchema = z.union([
+z.union([
 	z.literal("off"),
 	z.literal("first"),
 	z.literal("all")
 ]);
-const TypingModeSchema = z.union([
+z.union([
 	z.literal("never"),
 	z.literal("instant"),
 	z.literal("thinking"),
 	z.literal("message")
 ]);
-const GroupPolicySchema = z.enum([
+z.enum([
 	"open",
 	"disabled",
 	"allowlist"
 ]);
-const DmPolicySchema = z.enum([
+z.enum([
 	"pairing",
 	"allowlist",
 	"open",
@@ -339,18 +327,8 @@ const BlockStreamingCoalesceSchema = z.object({
 	maxChars: z.number().int().positive().optional(),
 	idleMs: z.number().int().nonnegative().optional()
 }).strict();
-const ReplyRuntimeConfigSchemaShape = {
-	historyLimit: z.number().int().min(0).optional(),
-	dmHistoryLimit: z.number().int().min(0).optional(),
-	dms: z.record(z.string(), DmConfigSchema.optional()).optional(),
-	textChunkLimit: z.number().int().positive().optional(),
-	chunkMode: z.enum(["length", "newline"]).optional(),
-	blockStreaming: z.boolean().optional(),
-	blockStreamingCoalesce: BlockStreamingCoalesceSchema.optional(),
-	responsePrefix: z.string().optional(),
-	mediaMaxMb: z.number().positive().optional()
-};
-const BlockStreamingChunkSchema = z.object({
+z.number().int().min(0).optional(), z.number().int().min(0).optional(), z.record(z.string(), DmConfigSchema.optional()).optional(), z.number().int().positive().optional(), z.enum(["length", "newline"]).optional(), z.boolean().optional(), BlockStreamingCoalesceSchema.optional(), z.string().optional(), z.number().positive().optional();
+z.object({
 	minChars: z.number().int().positive().optional(),
 	maxChars: z.number().int().positive().optional(),
 	breakPreference: z.union([
@@ -377,7 +355,7 @@ const TtsAutoSchema = z.enum([
 	"inbound",
 	"tagged"
 ]);
-const TtsConfigSchema = z.object({
+z.object({
 	auto: TtsAutoSchema.optional(),
 	enabled: z.boolean().optional(),
 	mode: TtsModeSchema.optional(),
@@ -435,7 +413,7 @@ const TtsConfigSchema = z.object({
 	maxTextLength: z.number().int().min(1).optional(),
 	timeoutMs: z.number().int().min(1e3).max(12e4).optional()
 }).strict().optional();
-const HumanDelaySchema = z.object({
+z.object({
 	mode: z.union([
 		z.literal("off"),
 		z.literal("natural"),
@@ -450,7 +428,7 @@ const CliBackendWatchdogModeSchema = z.object({
 	minMs: z.number().int().min(1e3).optional(),
 	maxMs: z.number().int().min(1e3).optional()
 }).strict().optional();
-const CliBackendSchema = z.object({
+z.object({
 	command: z.string(),
 	args: z.array(z.string()).optional(),
 	output: z.union([
@@ -493,8 +471,8 @@ const CliBackendSchema = z.object({
 		resume: CliBackendWatchdogModeSchema
 	}).strict().optional() }).strict().optional()
 }).strict();
-const MSTeamsReplyStyleSchema = z.enum(["thread", "top-level"]);
-const RetryConfigSchema = z.object({
+z.enum(["thread", "top-level"]);
+z.object({
 	attempts: z.number().int().min(1).optional(),
 	minDelayMs: z.number().int().min(0).optional(),
 	maxDelayMs: z.number().int().min(0).optional(),
@@ -513,7 +491,7 @@ const QueueModeBySurfaceSchema = z.object({
 	webchat: QueueModeSchema.optional()
 }).strict().optional();
 const DebounceMsBySurfaceSchema = z.record(z.string(), z.number().int().nonnegative()).optional();
-const QueueSchema = z.object({
+z.object({
 	mode: QueueModeSchema.optional(),
 	byChannel: QueueModeBySurfaceSchema,
 	debounceMs: z.number().int().nonnegative().optional(),
@@ -521,11 +499,11 @@ const QueueSchema = z.object({
 	cap: z.number().int().positive().optional(),
 	drop: QueueDropSchema.optional()
 }).strict().optional();
-const InboundDebounceSchema = z.object({
+z.object({
 	debounceMs: z.number().int().nonnegative().optional(),
 	byChannel: DebounceMsBySurfaceSchema
 }).strict().optional();
-const TranscribeAudioSchema = z.object({
+z.object({
 	command: z.array(z.string()).superRefine((value, ctx) => {
 		const executable = value[0];
 		if (!isSafeExecutableValue(executable)) ctx.addIssue({
@@ -536,8 +514,8 @@ const TranscribeAudioSchema = z.object({
 	}),
 	timeoutSeconds: z.number().int().positive().optional()
 }).strict().optional();
-const HexColorSchema = z.string().regex(/^#?[0-9a-fA-F]{6}$/, "expected hex color (RRGGBB)");
-const ExecutableTokenSchema = z.string().refine(isSafeExecutableValue, "expected safe executable name or path");
+z.string().regex(/^#?[0-9a-fA-F]{6}$/, "expected hex color (RRGGBB)");
+z.string().refine(isSafeExecutableValue, "expected safe executable name or path");
 const MediaUnderstandingScopeSchema = createAllowDenyChannelRulesSchema();
 const MediaUnderstandingCapabilitiesSchema = z.array(z.union([
 	z.literal("image"),
@@ -598,7 +576,7 @@ const ToolsMediaUnderstandingSchema = z.object({
 	echoTranscript: z.boolean().optional(),
 	echoFormat: z.string().optional()
 }).strict().optional();
-const ToolsMediaSchema = z.object({
+z.object({
 	models: z.array(MediaUnderstandingModelSchema).optional(),
 	concurrency: z.number().int().positive().optional(),
 	image: ToolsMediaUnderstandingSchema.optional(),
@@ -611,7 +589,7 @@ const LinkModelSchema = z.object({
 	args: z.array(z.string()).optional(),
 	timeoutSeconds: z.number().int().positive().optional()
 }).strict();
-const ToolsLinksSchema = z.object({
+z.object({
 	enabled: z.boolean().optional(),
 	scope: MediaUnderstandingScopeSchema,
 	maxLinks: z.number().int().positive().optional(),
@@ -619,14 +597,10 @@ const ToolsLinksSchema = z.object({
 	models: z.array(LinkModelSchema).optional()
 }).strict().optional();
 const NativeCommandsSettingSchema = z.union([z.boolean(), z.literal("auto")]);
-const ProviderCommandsSchema = z.object({
+z.object({
 	native: NativeCommandsSettingSchema.optional(),
 	nativeSkills: NativeCommandsSettingSchema.optional()
 }).strict().optional();
-
-//#endregion
-//#region src/infra/http-body.ts
-const DEFAULT_WEBHOOK_MAX_BODY_BYTES = 1024 * 1024;
 const DEFAULT_WEBHOOK_BODY_TIMEOUT_MS = 3e4;
 const DEFAULT_ERROR_MESSAGE = {
 	PAYLOAD_TOO_LARGE: "PayloadTooLarge",
@@ -777,7 +751,6 @@ async function readJsonBodyWithLimit(req, options) {
 		};
 	}
 }
-
 //#endregion
 //#region src/shared/net/ip.ts
 const BLOCKED_IPV4_SPECIAL_USE_RANGES = new Set([
@@ -908,7 +881,6 @@ function extractEmbeddedIpv4FromIpv6(address) {
 		return decodeIpv4FromHextets(high, low);
 	}
 }
-
 //#endregion
 //#region src/infra/net/hostname.ts
 function normalizeHostname(hostname) {
@@ -916,7 +888,6 @@ function normalizeHostname(hostname) {
 	if (normalized.startsWith("[") && normalized.endsWith("]")) return normalized.slice(1, -1);
 	return normalized;
 }
-
 //#endregion
 //#region src/infra/net/ssrf.ts
 const BLOCKED_HOSTNAMES = new Set([
@@ -960,7 +931,6 @@ function isBlockedHostnameOrIp(hostname, policy) {
 	if (!normalized) return false;
 	return isBlockedHostnameNormalized(normalized) || isPrivateIpAddress(normalized, policy);
 }
-
 //#endregion
 //#region src/plugins/config-schema.ts
 function error(message) {
@@ -993,7 +963,6 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/status-helpers.ts
 function createDefaultChannelRuntimeState(accountId, extra) {
@@ -1018,7 +987,6 @@ function collectStatusIssuesFromLastError(channel, accounts) {
 		}];
 	});
 }
-
 //#endregion
 //#region src/infra/map-size.ts
 function pruneMapToMaxSize(map, maxSize) {
@@ -1033,20 +1001,17 @@ function pruneMapToMaxSize(map, maxSize) {
 		map.delete(oldest.value);
 	}
 }
-
-//#endregion
-//#region src/plugin-sdk/webhook-memory-guards.ts
-const WEBHOOK_RATE_LIMIT_DEFAULTS = Object.freeze({
+Object.freeze({
 	windowMs: 6e4,
 	maxRequests: 120,
 	maxTrackedKeys: 4096
 });
-const WEBHOOK_ANOMALY_COUNTER_DEFAULTS = Object.freeze({
+Object.freeze({
 	maxTrackedKeys: 4096,
 	ttlMs: 360 * 6e4,
 	logEvery: 25
 });
-const WEBHOOK_ANOMALY_STATUS_CODES = Object.freeze([
+Object.freeze([
 	400,
 	401,
 	408,
@@ -1099,6 +1064,5 @@ function createFixedWindowRateLimiter(options) {
 		}
 	};
 }
-
 //#endregion
 export { DEFAULT_ACCOUNT_ID, MarkdownConfigSchema, buildChannelConfigSchema, collectStatusIssuesFromLastError, createDefaultChannelRuntimeState, createFixedWindowRateLimiter, emptyPluginConfigSchema, formatPairingApproveHint, isBlockedHostnameOrIp, readJsonBodyWithLimit, requestBodyErrorToText };

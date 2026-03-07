@@ -1,7 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { FailoverReason } from "./pi-embedded-helpers.js";
 export type ModelFallbackRunOptions = {
-    allowRateLimitCooldownProbe?: boolean;
+    allowTransientCooldownProbe?: boolean;
 };
 type ModelFallbackRunFn<T> = (provider: string, model: string, options?: ModelFallbackRunOptions) => Promise<T>;
 type FallbackAttempt = {

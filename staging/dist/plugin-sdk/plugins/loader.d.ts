@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { GatewayRequestHandler } from "../gateway/server-methods/types.js";
 import { type PluginRegistry } from "./registry.js";
+import { type CreatePluginRuntimeOptions } from "./runtime/index.js";
 import type { PluginLogger } from "./types.js";
 export type PluginLoadResult = PluginRegistry;
 export type PluginLoadOptions = {
@@ -8,6 +9,7 @@ export type PluginLoadOptions = {
     workspaceDir?: string;
     logger?: PluginLogger;
     coreGatewayHandlers?: Record<string, GatewayRequestHandler>;
+    runtimeOptions?: CreatePluginRuntimeOptions;
     cache?: boolean;
     mode?: "full" | "validate";
 };

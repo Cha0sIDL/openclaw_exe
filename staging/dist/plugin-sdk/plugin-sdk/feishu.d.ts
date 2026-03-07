@@ -29,7 +29,7 @@ export { buildAgentMediaPayload } from "./agent-media-payload.js";
 export { readJsonFileWithFallback } from "./json-store.js";
 export { createScopedPairingAccess } from "./pairing-access.js";
 export { createPersistentDedupe } from "./persistent-dedupe.js";
-export { buildBaseChannelStatusSummary, createDefaultChannelRuntimeState, } from "./status-helpers.js";
+export { buildBaseChannelStatusSummary, buildProbeChannelStatusSummary, buildRuntimeAccountStatusSnapshot, createDefaultChannelRuntimeState, } from "./status-helpers.js";
 export { withTempDownloadPath } from "./temp-path.js";
 export { createFixedWindowRateLimiter, createWebhookAnomalyTracker, WEBHOOK_ANOMALY_COUNTER_DEFAULTS, WEBHOOK_RATE_LIMIT_DEFAULTS, } from "./webhook-memory-guards.js";
 export { applyBasicWebhookRequestGuards } from "./webhook-request-guards.js";

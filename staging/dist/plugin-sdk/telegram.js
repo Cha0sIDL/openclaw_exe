@@ -15,7 +15,6 @@ import "@aws-sdk/client-bedrock";
 import "dotenv";
 import ipaddr from "ipaddr.js";
 import { z } from "zod";
-
 //#region src/plugins/config-schema.ts
 function error(message) {
 	return {
@@ -47,7 +46,6 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/infra/prototype-keys.ts
 const BLOCKED_OBJECT_KEYS = new Set([
@@ -58,7 +56,6 @@ const BLOCKED_OBJECT_KEYS = new Set([
 function isBlockedObjectKey(key) {
 	return BLOCKED_OBJECT_KEYS.has(key);
 }
-
 //#endregion
 //#region src/routing/account-id.ts
 const DEFAULT_ACCOUNT_ID = "default";
@@ -83,7 +80,7 @@ function normalizeAccountId(value) {
 	if (!trimmed) return DEFAULT_ACCOUNT_ID;
 	const cached = normalizeAccountIdCache.get(trimmed);
 	if (cached) return cached;
-	const normalized = normalizeCanonicalAccountId(trimmed) || DEFAULT_ACCOUNT_ID;
+	const normalized = normalizeCanonicalAccountId(trimmed) || "default";
 	setNormalizeCache(normalizeAccountIdCache, trimmed, normalized);
 	return normalized;
 }
@@ -101,7 +98,6 @@ function setNormalizeCache(cache, key, value) {
 	const oldest = cache.keys().next();
 	if (!oldest.done) cache.delete(oldest.value);
 }
-
 //#endregion
 //#region src/routing/session-key.ts
 const DEFAULT_AGENT_ID = "main";
@@ -113,9 +109,8 @@ function normalizeAgentId(value) {
 	const trimmed = (value ?? "").trim();
 	if (!trimmed) return DEFAULT_AGENT_ID;
 	if (VALID_ID_RE.test(trimmed)) return trimmed.toLowerCase();
-	return trimmed.toLowerCase().replace(INVALID_CHARS_RE, "-").replace(LEADING_DASH_RE, "").replace(TRAILING_DASH_RE, "").slice(0, 64) || DEFAULT_AGENT_ID;
+	return trimmed.toLowerCase().replace(INVALID_CHARS_RE, "-").replace(LEADING_DASH_RE, "").replace(TRAILING_DASH_RE, "").slice(0, 64) || "main";
 }
-
 //#endregion
 //#region src/channels/plugins/setup-helpers.ts
 function channelHasAccounts(cfg, channelKey) {
@@ -124,7 +119,7 @@ function channelHasAccounts(cfg, channelKey) {
 }
 function shouldStoreNameInAccounts(params) {
 	if (params.alwaysUseAccounts) return true;
-	if (params.accountId !== DEFAULT_ACCOUNT_ID) return true;
+	if (params.accountId !== "default") return true;
 	return channelHasAccounts(params.cfg, params.channelKey);
 }
 function applyAccountNameToChannelSection(params) {
@@ -138,7 +133,7 @@ function applyAccountNameToChannelSection(params) {
 		channelKey: params.channelKey,
 		accountId,
 		alwaysUseAccounts: params.alwaysUseAccounts
-	}) && accountId === DEFAULT_ACCOUNT_ID) {
+	}) && accountId === "default") {
 		const safeBase = base ?? {};
 		return {
 			...params.cfg,
@@ -153,7 +148,7 @@ function applyAccountNameToChannelSection(params) {
 	}
 	const baseAccounts = base?.accounts ?? {};
 	const existingAccount = baseAccounts[accountId] ?? {};
-	const baseWithoutName = accountId === DEFAULT_ACCOUNT_ID ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
+	const baseWithoutName = accountId === "default" ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
 	return {
 		...params.cfg,
 		channels: {
@@ -177,7 +172,7 @@ function migrateBaseNameToDefaultAccount(params) {
 	const baseName = base?.name?.trim();
 	if (!baseName) return params.cfg;
 	const accounts = { ...base?.accounts };
-	const defaultAccount = accounts[DEFAULT_ACCOUNT_ID] ?? {};
+	const defaultAccount = accounts["default"] ?? {};
 	if (!defaultAccount.name) accounts[DEFAULT_ACCOUNT_ID] = {
 		...defaultAccount,
 		name: baseName
@@ -266,7 +261,6 @@ function moveSingleAccountChannelSectionToDefaultAccount(params) {
 		}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/config-schema.ts
 function buildChannelConfigSchema(schema) {
@@ -280,14 +274,17 @@ function buildChannelConfigSchema(schema) {
 		additionalProperties: true
 	} };
 }
-
 //#endregion
 //#region src/channels/plugins/config-helpers.ts
+function isConfiguredSecretValue(value) {
+	if (typeof value === "string") return value.trim().length > 0;
+	return Boolean(value);
+}
 function setAccountEnabledInConfigSection(params) {
-	const accountKey = params.accountId || DEFAULT_ACCOUNT_ID;
+	const accountKey = params.accountId || "default";
 	const base = params.cfg.channels?.[params.sectionKey];
 	const hasAccounts = Boolean(base?.accounts);
-	if (params.allowTopLevel && accountKey === DEFAULT_ACCOUNT_ID && !hasAccounts) return {
+	if (params.allowTopLevel && accountKey === "default" && !hasAccounts) return {
 		...params.cfg,
 		channels: {
 			...params.cfg.channels,
@@ -317,11 +314,11 @@ function setAccountEnabledInConfigSection(params) {
 	};
 }
 function deleteAccountFromConfigSection(params) {
-	const accountKey = params.accountId || DEFAULT_ACCOUNT_ID;
+	const accountKey = params.accountId || "default";
 	const base = params.cfg.channels?.[params.sectionKey];
 	if (!base) return params.cfg;
 	const baseAccounts = base.accounts && typeof base.accounts === "object" ? { ...base.accounts } : void 0;
-	if (accountKey !== DEFAULT_ACCOUNT_ID) {
+	if (accountKey !== "default") {
 		const accounts = baseAccounts ? { ...baseAccounts } : {};
 		delete accounts[accountKey];
 		return {
@@ -357,7 +354,41 @@ function deleteAccountFromConfigSection(params) {
 	else delete nextCfg.channels;
 	return nextCfg;
 }
-
+function clearAccountEntryFields(params) {
+	const accountKey = params.accountId || "default";
+	const baseAccounts = params.accounts && typeof params.accounts === "object" ? { ...params.accounts } : void 0;
+	if (!baseAccounts || !(accountKey in baseAccounts)) return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const entry = baseAccounts[accountKey];
+	if (!entry || typeof entry !== "object") return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const nextEntry = { ...entry };
+	if (!params.fields.some((field) => field in nextEntry)) return {
+		nextAccounts: baseAccounts,
+		changed: false,
+		cleared: false
+	};
+	const isValueSet = params.isValueSet ?? isConfiguredSecretValue;
+	let cleared = Boolean(params.markClearedOnFieldPresence);
+	for (const field of params.fields) {
+		if (!(field in nextEntry)) continue;
+		if (isValueSet(nextEntry[field])) cleared = true;
+		delete nextEntry[field];
+	}
+	if (Object.keys(nextEntry).length === 0) delete baseAccounts[accountKey];
+	else baseAccounts[accountKey] = nextEntry;
+	return {
+		nextAccounts: Object.keys(baseAccounts).length > 0 ? baseAccounts : void 0,
+		changed: true,
+		cleared
+	};
+}
 //#endregion
 //#region src/cli/cli-name.ts
 const DEFAULT_CLI_NAME = "openclaw";
@@ -377,7 +408,6 @@ function replaceCliName(command, cliName = resolveCliName()) {
 		return `${runner ?? ""}${cliName}`;
 	});
 }
-
 //#endregion
 //#region src/cli/profile-utils.ts
 const PROFILE_NAME_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
@@ -392,7 +422,6 @@ function normalizeProfileName(raw) {
 	if (!isValidProfileName(profile)) return null;
 	return profile;
 }
-
 //#endregion
 //#region src/cli/command-format.ts
 const CLI_PREFIX_RE = /^(?:pnpm|npm|bunx|npx)\s+openclaw\b|^openclaw\b/;
@@ -406,24 +435,18 @@ function formatCliCommand(command, env = process.env) {
 	if (PROFILE_FLAG_RE.test(normalizedCommand) || DEV_FLAG_RE.test(normalizedCommand)) return normalizedCommand;
 	return normalizedCommand.replace(CLI_PREFIX_RE, (match) => `${match} --profile ${profile}`);
 }
-
 //#endregion
 //#region src/channels/plugins/helpers.ts
 function formatPairingApproveHint(channelId) {
 	return `Approve via: ${formatCliCommand(`openclaw pairing list ${channelId}`)} / ${formatCliCommand(`openclaw pairing approve ${channelId} <code>`)}`;
 }
-
 //#endregion
 //#region src/channels/plugins/pairing-message.ts
 const PAIRING_APPROVED_MESSAGE = "✅ OpenClaw access approved. Send a message to start chatting.";
-
-//#endregion
-//#region src/infra/cli-root-options.ts
-const FLAG_TERMINATOR = "--";
 const ROOT_BOOLEAN_FLAGS = new Set(["--dev", "--no-color"]);
 const ROOT_VALUE_FLAGS = new Set(["--profile", "--log-level"]);
 function isValueToken(arg) {
-	if (!arg || arg === FLAG_TERMINATOR) return false;
+	if (!arg || arg === "--") return false;
 	if (!arg.startsWith("-")) return true;
 	return /^-\d+(?:\.\d+)?$/.test(arg);
 }
@@ -435,7 +458,6 @@ function consumeRootOptionToken(args, index) {
 	if (ROOT_VALUE_FLAGS.has(arg)) return isValueToken(args[index + 1]) ? 2 : 1;
 	return 0;
 }
-
 //#endregion
 //#region src/cli/argv.ts
 function getCommandPathWithRootOptions(argv, depth = 2) {
@@ -461,7 +483,6 @@ function getCommandPathInternal(argv, depth, opts) {
 	}
 	return path;
 }
-
 //#endregion
 //#region src/infra/tmp-openclaw-dir.ts
 const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
@@ -544,7 +565,7 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
 	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
 	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return POSIX_OPENCLAW_TMP_DIR;
+		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
 		return ensureTrustedFallbackDir();
 	}
 	try {
@@ -554,13 +575,12 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 			mode: 448
 		});
 		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState(POSIX_OPENCLAW_TMP_DIR) !== "available" && !tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return ensureTrustedFallbackDir();
+		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
 		return POSIX_OPENCLAW_TMP_DIR;
 	} catch {
 		return ensureTrustedFallbackDir();
 	}
 }
-
 //#endregion
 //#region src/infra/home-dir.ts
 function normalize$1(value) {
@@ -603,7 +623,6 @@ function expandHomePrefix(input, opts) {
 	if (!home) return input;
 	return input.replace(/^~(?=$|[\\/])/, home);
 }
-
 //#endregion
 //#region src/config/paths.ts
 /**
@@ -616,7 +635,7 @@ function expandHomePrefix(input, opts) {
 function resolveIsNixMode(env = process.env) {
 	return env.OPENCLAW_NIX_MODE === "1";
 }
-const isNixMode = resolveIsNixMode();
+resolveIsNixMode();
 const LEGACY_STATE_DIRNAMES = [
 	".clawdbot",
 	".moldbot",
@@ -678,7 +697,7 @@ function resolveUserPath$1(input, env = process.env, homedir = envHomedir(env)) 
 	}
 	return path.resolve(trimmed);
 }
-const STATE_DIR = resolveStateDir();
+resolveStateDir();
 /**
 * Config file path (JSON5).
 * Can be overridden via OPENCLAW_CONFIG_PATH.
@@ -726,7 +745,7 @@ function resolveConfigPath(env = process.env, stateDir = resolveStateDir(env, en
 	if (path.resolve(stateDir) === path.resolve(defaultStateDir)) return resolveConfigPathCandidate(env, homedir);
 	return path.join(stateDir, CONFIG_FILENAME);
 }
-const CONFIG_PATH = resolveConfigPathCandidate();
+resolveConfigPathCandidate();
 /**
 * Resolve default config path candidates across default locations.
 * Order: explicit config path → state-dir-derived paths → new default.
@@ -762,7 +781,6 @@ function resolveOAuthDir(env = process.env, stateDir = resolveStateDir(env, envH
 	if (override) return resolveUserPath$1(override, env, envHomedir(env));
 	return path.join(stateDir, "credentials");
 }
-
 //#endregion
 //#region src/logging/config.ts
 function readLoggingConfig() {
@@ -777,7 +795,6 @@ function readLoggingConfig() {
 		return;
 	}
 }
-
 //#endregion
 //#region src/logging/levels.ts
 const ALLOWED_LOG_LEVELS = [
@@ -808,7 +825,6 @@ function levelToMinLevel(level) {
 		silent: Number.POSITIVE_INFINITY
 	}[level];
 }
-
 //#endregion
 //#region src/logging/state.ts
 const loggingState = {
@@ -825,7 +841,6 @@ const loggingState = {
 	streamErrorHandlersInstalled: false,
 	rawConsole: null
 };
-
 //#endregion
 //#region src/logging/env-log-level.ts
 function resolveEnvLogLevelOverride() {
@@ -845,7 +860,6 @@ function resolveEnvLogLevelOverride() {
 		process.stderr.write(`[openclaw] Ignoring invalid OPENCLAW_LOG_LEVEL="${trimmed}" (allowed: ${ALLOWED_LOG_LEVELS.join("|")}).\n`);
 	}
 }
-
 //#endregion
 //#region src/logging/node-require.ts
 function resolveNodeRequireFromMeta(metaUrl) {
@@ -859,7 +873,6 @@ function resolveNodeRequireFromMeta(metaUrl) {
 		return null;
 	}
 }
-
 //#endregion
 //#region src/logging/timestamps.ts
 function isValidTimeZone(tz) {
@@ -890,11 +903,10 @@ function formatLocalIsoWithOffset(now, timeZone) {
 	const offset = offsetRaw === "GMT" ? "+00:00" : offsetRaw.slice(3);
 	return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}.${parts.fractionalSecond}${offset}`;
 }
-
 //#endregion
 //#region src/logging/logger.ts
 const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
-const DEFAULT_LOG_FILE = path.join(DEFAULT_LOG_DIR, "openclaw.log");
+path.join(DEFAULT_LOG_DIR, "openclaw.log");
 const LOG_PREFIX = "openclaw";
 const LOG_SUFFIX = ".log";
 const MAX_LOG_AGE_MS = 1440 * 60 * 1e3;
@@ -1054,7 +1066,6 @@ function pruneOldRollingLogs(dir) {
 		}
 	} catch {}
 }
-
 //#endregion
 //#region src/terminal/palette.ts
 const LOBSTER_PALETTE = {
@@ -1067,7 +1078,6 @@ const LOBSTER_PALETTE = {
 	error: "#E23D2D",
 	muted: "#8B7F77"
 };
-
 //#endregion
 //#region src/terminal/theme.ts
 const hasForceColor = typeof process.env.FORCE_COLOR === "string" && process.env.FORCE_COLOR.trim().length > 0 && process.env.FORCE_COLOR.trim() !== "0";
@@ -1086,7 +1096,6 @@ const theme = {
 	command: hex(LOBSTER_PALETTE.accentBright),
 	option: hex(LOBSTER_PALETTE.warn)
 };
-
 //#endregion
 //#region src/globals.ts
 let globalVerbose = false;
@@ -1094,17 +1103,13 @@ function isVerbose() {
 	return globalVerbose;
 }
 function shouldLogVerbose() {
-	return globalVerbose || isFileLogLevelEnabled("debug");
+	return isFileLogLevelEnabled("debug");
 }
-function logVerboseConsole(message) {
-	if (!globalVerbose) return;
-	console.log(theme.muted(message));
-}
-const success = theme.success;
-const warn = theme.warn;
-const info = theme.info;
+function logVerboseConsole(message) {}
+theme.success;
+theme.warn;
+theme.info;
 const danger = theme.error;
-
 //#endregion
 //#region src/terminal/progress-line.ts
 let activeStream = null;
@@ -1112,7 +1117,6 @@ function clearActiveProgressLine() {
 	if (!activeStream?.isTTY) return;
 	activeStream.write("\r\x1B[2K");
 }
-
 //#endregion
 //#region src/terminal/restore.ts
 const RESET_SEQUENCE = "\x1B[0m\x1B[?25h\x1B[?1000l\x1B[?1002l\x1B[?1003l\x1B[?1006l\x1B[?2004l";
@@ -1151,7 +1155,6 @@ function restoreTerminalState(reason, options = {}) {
 		reportRestoreFailure("stdout reset", err, reason);
 	}
 }
-
 //#endregion
 //#region src/runtime.ts
 function shouldEmitRuntimeLog(env = process.env) {
@@ -1180,14 +1183,12 @@ const defaultRuntime = {
 		throw new Error("unreachable");
 	}
 };
-
 //#endregion
 //#region src/terminal/ansi.ts
 const ANSI_SGR_PATTERN = "\\x1b\\[[0-9;]*m";
 const OSC8_PATTERN = "\\x1b\\]8;;.*?\\x1b\\\\|\\x1b\\]8;;\\x1b\\\\";
-const ANSI_REGEX = new RegExp(ANSI_SGR_PATTERN, "g");
-const OSC8_REGEX = new RegExp(OSC8_PATTERN, "g");
-
+new RegExp(ANSI_SGR_PATTERN, "g");
+new RegExp(OSC8_PATTERN, "g");
 //#endregion
 //#region src/logging/console.ts
 const requireConfig = resolveNodeRequireFromMeta(import.meta.url);
@@ -1250,14 +1251,13 @@ function formatConsoleTimestamp(style) {
 	if (style === "pretty") return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 	return formatLocalIsoWithOffset(now);
 }
-
 //#endregion
 //#region src/logging/subsystem.ts
 function shouldLogToConsole(level, settings) {
 	if (settings.level === "silent") return false;
 	return levelToMinLevel(level) <= levelToMinLevel(settings.level);
 }
-const inspectValue = (() => {
+(() => {
 	const getBuiltinModule = process.getBuiltinModule;
 	if (typeof getBuiltinModule !== "function") return null;
 	try {
@@ -1431,7 +1431,6 @@ function createSubsystemLogger(subsystem) {
 		child: (name) => createSubsystemLogger(`${subsystem}/${name}`)
 	};
 }
-
 //#endregion
 //#region src/hooks/internal-hooks.ts
 /**
@@ -1445,9 +1444,8 @@ function createSubsystemLogger(subsystem) {
 * to silently fire with zero handlers.
 */
 const _g = globalThis;
-const handlers = _g.__openclaw_internal_hook_handlers__ ??= /* @__PURE__ */ new Map();
-const log$11 = createSubsystemLogger("internal-hooks");
-
+_g.__openclaw_internal_hook_handlers__ ??= /* @__PURE__ */ new Map();
+createSubsystemLogger("internal-hooks");
 //#endregion
 //#region src/utils.ts
 /**
@@ -1487,40 +1485,7 @@ function formatTerminalLink(label, url, opts) {
 	if (!(opts?.force === true ? true : opts?.force === false ? false : Boolean(process.stdout.isTTY))) return opts?.fallback ?? `${safeLabel} (${safeUrl})`;
 	return `\u001b]8;;${safeUrl}\u0007${safeLabel}\u001b]8;;\u0007`;
 }
-const CONFIG_DIR = resolveConfigDir();
-
-//#endregion
-//#region src/plugins/types.ts
-const PLUGIN_HOOK_NAMES = [
-	"before_model_resolve",
-	"before_prompt_build",
-	"before_agent_start",
-	"llm_input",
-	"llm_output",
-	"agent_end",
-	"before_compaction",
-	"after_compaction",
-	"before_reset",
-	"message_received",
-	"message_sending",
-	"message_sent",
-	"before_tool_call",
-	"after_tool_call",
-	"tool_result_persist",
-	"before_message_write",
-	"session_start",
-	"session_end",
-	"subagent_spawning",
-	"subagent_delivery_target",
-	"subagent_spawned",
-	"subagent_ended",
-	"gateway_start",
-	"gateway_stop"
-];
-const pluginHookNameSet = new Set(PLUGIN_HOOK_NAMES);
-const PROMPT_INJECTION_HOOK_NAMES = ["before_prompt_build", "before_agent_start"];
-const promptInjectionHookNameSet = new Set(PROMPT_INJECTION_HOOK_NAMES);
-
+resolveConfigDir();
 //#endregion
 //#region src/plugins/registry.ts
 function createEmptyPluginRegistry() {
@@ -1539,11 +1504,10 @@ function createEmptyPluginRegistry() {
 		diagnostics: []
 	};
 }
-
 //#endregion
 //#region src/plugins/runtime.ts
 const REGISTRY_STATE = Symbol.for("openclaw.pluginRegistryState");
-const state = (() => {
+(() => {
 	const globalState = globalThis;
 	if (!globalState[REGISTRY_STATE]) globalState[REGISTRY_STATE] = {
 		registry: createEmptyPluginRegistry(),
@@ -1552,7 +1516,6 @@ const state = (() => {
 	};
 	return globalState[REGISTRY_STATE];
 })();
-
 //#endregion
 //#region src/channels/registry.ts
 const CHAT_CHANNEL_ORDER = [
@@ -1565,7 +1528,7 @@ const CHAT_CHANNEL_ORDER = [
 	"signal",
 	"imessage"
 ];
-const CHANNEL_IDS = [...CHAT_CHANNEL_ORDER];
+[...CHAT_CHANNEL_ORDER];
 const CHAT_CHANNEL_META = {
 	telegram: {
 		id: "telegram",
@@ -1669,7 +1632,6 @@ function normalizeChatChannelId(raw) {
 	const resolved = CHAT_CHANNEL_ALIASES[normalized] ?? normalized;
 	return CHAT_CHANNEL_ORDER.includes(resolved) ? resolved : null;
 }
-
 //#endregion
 //#region src/utils/boolean.ts
 const DEFAULT_TRUTHY = [
@@ -1698,14 +1660,10 @@ function parseBooleanValue(value, options = {}) {
 	if (truthySet.has(normalized)) return true;
 	if (falsySet.has(normalized)) return false;
 }
-
-//#endregion
-//#region src/infra/env.ts
-const log$10 = createSubsystemLogger("env");
+createSubsystemLogger("env");
 function isTruthyEnvValue(value) {
 	return parseBooleanValue(value) === true;
 }
-
 //#endregion
 //#region src/plugin-sdk/account-resolution.ts
 function resolveAccountWithDefaultFallback(params) {
@@ -1728,7 +1686,6 @@ function listConfiguredAccountIds$2(params) {
 	}
 	return [...ids];
 }
-
 //#endregion
 //#region src/routing/account-lookup.ts
 function resolveAccountEntry(accounts, accountId) {
@@ -1738,20 +1695,13 @@ function resolveAccountEntry(accounts, accountId) {
 	const matchKey = Object.keys(accounts).find((key) => key.toLowerCase() === normalized);
 	return matchKey ? accounts[matchKey] : void 0;
 }
-
-//#endregion
-//#region src/infra/boundary-path.ts
-const BOUNDARY_PATH_ALIAS_POLICIES = {
-	strict: Object.freeze({
-		allowFinalSymlinkForUnlink: false,
-		allowFinalHardlinkForUnlink: false
-	}),
-	unlinkTarget: Object.freeze({
-		allowFinalSymlinkForUnlink: true,
-		allowFinalHardlinkForUnlink: true
-	})
-};
-
+Object.freeze({
+	allowFinalSymlinkForUnlink: false,
+	allowFinalHardlinkForUnlink: false
+}), Object.freeze({
+	allowFinalSymlinkForUnlink: true,
+	allowFinalHardlinkForUnlink: true
+});
 //#endregion
 //#region src/logger.ts
 const subsystemPrefixRe = /^([a-z][a-z0-9-]{1,20}):\s+(.*)$/i;
@@ -1787,7 +1737,6 @@ function logDebug(message) {
 	getLogger().debug(message);
 	logVerboseConsole(message);
 }
-
 //#endregion
 //#region src/process/exec.ts
 const execFileAsync = promisify(execFile);
@@ -1817,7 +1766,10 @@ function resolveNpmArgvForWindows(argv) {
 	if (!cliName) return null;
 	const nodeDir = path.dirname(process$1.execPath);
 	const cliPath = path.join(nodeDir, "node_modules", "npm", "bin", cliName);
-	if (!fs.existsSync(cliPath)) return null;
+	if (!fs.existsSync(cliPath)) {
+		const command = argv[0] ?? "";
+		return [path.extname(command).toLowerCase() ? command : `${command}.cmd`, ...argv.slice(1)];
+	}
 	return [
 		process$1.execPath,
 		cliPath,
@@ -1885,11 +1837,7 @@ async function runExec(command, args, opts = 1e4) {
 		throw err;
 	}
 }
-
-//#endregion
-//#region src/agents/workspace-templates.ts
-const FALLBACK_TEMPLATE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../docs/reference/templates");
-
+path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../docs/reference/templates");
 //#endregion
 //#region src/agents/workspace.ts
 function resolveDefaultAgentWorkspaceDir(env = process.env, homedir = os.homedir) {
@@ -1898,9 +1846,7 @@ function resolveDefaultAgentWorkspaceDir(env = process.env, homedir = os.homedir
 	if (profile && profile.toLowerCase() !== "default") return path.join(home, ".openclaw", `workspace-${profile}`);
 	return path.join(home, ".openclaw", "workspace");
 }
-const DEFAULT_AGENT_WORKSPACE_DIR = resolveDefaultAgentWorkspaceDir();
-const MAX_WORKSPACE_BOOTSTRAP_FILE_BYTES = 2 * 1024 * 1024;
-
+resolveDefaultAgentWorkspaceDir();
 //#endregion
 //#region src/agents/agent-scope.ts
 const log$9 = createSubsystemLogger("agent-scope");
@@ -1919,9 +1865,8 @@ function resolveDefaultAgentId(cfg) {
 		log$9.warn("Multiple agents marked default=true; using the first entry as default.");
 	}
 	const chosen = (defaults[0] ?? agents[0])?.id?.trim();
-	return normalizeAgentId(chosen || DEFAULT_AGENT_ID);
+	return normalizeAgentId(chosen || "main");
 }
-
 //#endregion
 //#region src/config/bindings.ts
 function normalizeBindingType(binding) {
@@ -1936,7 +1881,6 @@ function listConfiguredBindings(cfg) {
 function listRouteBindings(cfg) {
 	return listConfiguredBindings(cfg).filter(isRouteBinding);
 }
-
 //#endregion
 //#region src/routing/bindings.ts
 function normalizeBindingChannelId(raw) {
@@ -1983,7 +1927,6 @@ function resolveDefaultAgentBoundAccountId(cfg, channelId) {
 	}
 	return null;
 }
-
 //#endregion
 //#region src/routing/default-account-warnings.ts
 function formatChannelDefaultAccountPath(channelKey) {
@@ -1995,7 +1938,6 @@ function formatChannelAccountsDefaultPath(channelKey) {
 function formatSetExplicitDefaultInstruction(channelKey) {
 	return `Set ${formatChannelDefaultAccountPath(channelKey)} or add ${formatChannelAccountsDefaultPath(channelKey)}`;
 }
-
 //#endregion
 //#region src/config/types.secrets.ts
 const DEFAULT_SECRET_PROVIDER_ALIAS = "default";
@@ -2022,14 +1964,14 @@ function parseEnvTemplateSecretRef(value, provider = DEFAULT_SECRET_PROVIDER_ALI
 	if (!match) return null;
 	return {
 		source: "env",
-		provider: provider.trim() || DEFAULT_SECRET_PROVIDER_ALIAS,
+		provider: provider.trim() || "default",
 		id: match[1]
 	};
 }
 function coerceSecretRef(value, defaults) {
 	if (isSecretRef(value)) return value;
 	if (isLegacySecretRefWithoutProvider(value)) {
-		const provider = value.source === "env" ? defaults?.env ?? DEFAULT_SECRET_PROVIDER_ALIAS : value.source === "file" ? defaults?.file ?? DEFAULT_SECRET_PROVIDER_ALIAS : defaults?.exec ?? DEFAULT_SECRET_PROVIDER_ALIAS;
+		const provider = value.source === "env" ? defaults?.env ?? "default" : value.source === "file" ? defaults?.file ?? "default" : defaults?.exec ?? "default";
 		return {
 			source: value.source,
 			provider,
@@ -2075,7 +2017,6 @@ function resolveSecretInputRef(params) {
 		ref: explicitRef ?? inlineRef
 	};
 }
-
 //#endregion
 //#region src/telegram/token.ts
 function resolveTelegramToken(cfg, opts = {}) {
@@ -2089,7 +2030,7 @@ function resolveTelegramToken(cfg, opts = {}) {
 		const matchKey = Object.keys(accounts).find((key) => normalizeAccountId(key) === id);
 		return matchKey ? accounts[matchKey] : void 0;
 	};
-	const accountCfg = resolveAccountCfg(accountId !== DEFAULT_ACCOUNT_ID ? accountId : DEFAULT_ACCOUNT_ID);
+	const accountCfg = resolveAccountCfg(accountId !== "default" ? accountId : DEFAULT_ACCOUNT_ID);
 	const accountTokenFile = accountCfg?.tokenFile?.trim();
 	if (accountTokenFile) {
 		if (!fs.existsSync(accountTokenFile)) {
@@ -2167,7 +2108,6 @@ function resolveTelegramToken(cfg, opts = {}) {
 		source: "none"
 	};
 }
-
 //#endregion
 //#region src/telegram/accounts.ts
 const log$8 = createSubsystemLogger("telegram/accounts");
@@ -2206,12 +2146,12 @@ function resolveDefaultTelegramAccountId(cfg) {
 	const preferred = normalizeOptionalAccountId(cfg.channels?.telegram?.defaultAccount);
 	if (preferred && listTelegramAccountIds(cfg).some((accountId) => normalizeAccountId(accountId) === preferred)) return preferred;
 	const ids = listTelegramAccountIds(cfg);
-	if (ids.includes(DEFAULT_ACCOUNT_ID)) return DEFAULT_ACCOUNT_ID;
+	if (ids.includes("default")) return DEFAULT_ACCOUNT_ID;
 	if (ids.length > 1 && !emittedMissingDefaultWarn) {
 		emittedMissingDefaultWarn = true;
 		log$8.warn(`channels.telegram: accounts.default is missing; falling back to "${ids[0]}". ${formatSetExplicitDefaultInstruction("telegram")} to avoid routing surprises in multi-account setups.`);
 	}
-	return ids[0] ?? DEFAULT_ACCOUNT_ID;
+	return ids[0] ?? "default";
 }
 function resolveAccountConfig(cfg, accountId) {
 	const normalized = normalizeAccountId(accountId);
@@ -2257,7 +2197,6 @@ function resolveTelegramAccount(params) {
 		resolveDefaultAccountId: () => resolveDefaultTelegramAccountId(params.cfg)
 	});
 }
-
 //#endregion
 //#region src/telegram/account-inspect.ts
 function resolveTelegramAccountConfig(cfg, accountId) {
@@ -2361,7 +2300,7 @@ function inspectTelegramAccountPrimary(params) {
 		configured: channelToken.tokenStatus !== "missing",
 		config: merged
 	};
-	const envToken = accountId === DEFAULT_ACCOUNT_ID ? (params.envToken ?? process.env.TELEGRAM_BOT_TOKEN)?.trim() : "";
+	const envToken = accountId === "default" ? (params.envToken ?? process.env.TELEGRAM_BOT_TOKEN)?.trim() : "";
 	if (envToken) return {
 		accountId,
 		enabled,
@@ -2396,7 +2335,6 @@ function inspectTelegramAccount(params) {
 		resolveDefaultAccountId: () => resolveDefaultTelegramAccountId(params.cfg)
 	});
 }
-
 //#endregion
 //#region src/channels/account-snapshot-fields.ts
 const CREDENTIAL_STATUS_KEYS = [
@@ -2447,10 +2385,9 @@ function projectCredentialSnapshotFields(account) {
 		...readCredentialStatus(record, "userTokenStatus") ? { userTokenStatus: readCredentialStatus(record, "userTokenStatus") } : {}
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/account-helpers.ts
-function createAccountListHelpers(channelKey) {
+function createAccountListHelpers(channelKey, options) {
 	function resolveConfiguredDefaultAccountId(cfg) {
 		const channel = cfg.channels?.[channelKey];
 		const preferred = normalizeOptionalAccountId(typeof channel?.defaultAccount === "string" ? channel.defaultAccount : void 0);
@@ -2460,7 +2397,10 @@ function createAccountListHelpers(channelKey) {
 	function listConfiguredAccountIds(cfg) {
 		const accounts = (cfg.channels?.[channelKey])?.accounts;
 		if (!accounts || typeof accounts !== "object") return [];
-		return Object.keys(accounts).filter(Boolean);
+		const ids = Object.keys(accounts).filter(Boolean);
+		const normalizeConfiguredAccountId = options?.normalizeAccountId;
+		if (!normalizeConfiguredAccountId) return ids;
+		return [...new Set(ids.map((id) => normalizeConfiguredAccountId(id)).filter(Boolean))];
 	}
 	function listAccountIds(cfg) {
 		const ids = listConfiguredAccountIds(cfg);
@@ -2471,8 +2411,8 @@ function createAccountListHelpers(channelKey) {
 		const preferred = resolveConfiguredDefaultAccountId(cfg);
 		if (preferred) return preferred;
 		const ids = listAccountIds(cfg);
-		if (ids.includes(DEFAULT_ACCOUNT_ID)) return DEFAULT_ACCOUNT_ID;
-		return ids[0] ?? DEFAULT_ACCOUNT_ID;
+		if (ids.includes("default")) return DEFAULT_ACCOUNT_ID;
+		return ids[0] ?? "default";
 	}
 	return {
 		listConfiguredAccountIds,
@@ -2480,26 +2420,21 @@ function createAccountListHelpers(channelKey) {
 		resolveDefaultAccountId
 	};
 }
-
 //#endregion
 //#region src/discord/accounts.ts
 const { listAccountIds: listAccountIds$2, resolveDefaultAccountId: resolveDefaultAccountId$2 } = createAccountListHelpers("discord");
-
 //#endregion
 //#region src/slack/accounts.ts
 const { listAccountIds: listAccountIds$1, resolveDefaultAccountId: resolveDefaultAccountId$1 } = createAccountListHelpers("slack");
-
 //#endregion
 //#region src/web/auth-store.ts
 function resolveDefaultWebAuthDir() {
 	return path.join(resolveOAuthDir(), "whatsapp", DEFAULT_ACCOUNT_ID);
 }
-const WA_WEB_AUTH_DIR = resolveDefaultWebAuthDir();
-
+resolveDefaultWebAuthDir();
 //#endregion
 //#region src/web/accounts.ts
 const { listConfiguredAccountIds, listAccountIds, resolveDefaultAccountId } = createAccountListHelpers("whatsapp");
-
 //#endregion
 //#region src/channels/plugins/directory-config.ts
 function resolveDirectoryQuery(query) {
@@ -2540,7 +2475,6 @@ async function listTelegramDirectoryGroupsFromConfig(params) {
 	});
 	return toDirectoryEntries("group", applyDirectoryQueryAndLimit(Object.keys(account.config.groups ?? {}).map((id) => id.trim()).filter((id) => Boolean(id) && id !== "*"), params));
 }
-
 //#endregion
 //#region src/telegram/targets.ts
 const TELEGRAM_NUMERIC_CHAT_ID_REGEX = /^-?\d+$/;
@@ -2610,7 +2544,6 @@ function parseTelegramTarget(to) {
 		chatType: resolveTelegramChatType(normalized)
 	};
 }
-
 //#endregion
 //#region src/channels/plugins/normalize/telegram.ts
 const TELEGRAM_PREFIX_RE = /^(telegram|tg):/i;
@@ -2636,7 +2569,6 @@ function normalizeTelegramMessagingTarget(raw) {
 function looksLikeTelegramTargetId(raw) {
 	return normalizeTelegramTargetBody(raw) !== void 0;
 }
-
 //#endregion
 //#region src/telegram/outbound-params.ts
 function parseTelegramReplyToMessageId(replyToId) {
@@ -2657,7 +2589,6 @@ function parseTelegramThreadId(threadId) {
 	const scopedMatch = /^-?\d+:(-?\d+)$/.exec(trimmed);
 	return parseIntegerId(scopedMatch ? scopedMatch[1] : trimmed);
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/shared.ts
 function asString(value) {
@@ -2679,7 +2610,6 @@ function resolveEnabledConfiguredAccountId(account) {
 	const configured = account.configured === true;
 	return enabled && configured ? accountId : null;
 }
-
 //#endregion
 //#region src/channels/plugins/status-issues/telegram.ts
 function readTelegramAccountStatus(value) {
@@ -2763,7 +2693,6 @@ function collectTelegramStatusIssues(accounts) {
 	}
 	return issues;
 }
-
 //#endregion
 //#region src/config/runtime-group-policy.ts
 function resolveRuntimeGroupPolicy(params) {
@@ -2791,7 +2720,6 @@ function resolveAllowlistProviderRuntimeGroupPolicy(params) {
 		missingProviderFallbackPolicy: "allowlist"
 	});
 }
-
 //#endregion
 //#region src/config/types.tools.ts
 const TOOLS_BY_SENDER_KEY_TYPES = [
@@ -2813,7 +2741,6 @@ function parseToolsBySenderTypedKey(rawKey) {
 		};
 	}
 }
-
 //#endregion
 //#region src/config/group-policy.ts
 function resolveChannelGroupConfig(groups, groupId, caseInsensitive = false) {
@@ -3011,7 +2938,6 @@ function resolveChannelGroupToolsPolicy(params) {
 	if (defaultSenderPolicy) return defaultSenderPolicy;
 	if (defaultConfig?.tools) return defaultConfig.tools;
 }
-
 //#endregion
 //#region src/channels/plugins/group-mentions.ts
 function parseTelegramGroupId(value) {
@@ -3077,7 +3003,6 @@ function resolveTelegramGroupToolPolicy(params) {
 	const { chatId } = parseTelegramGroupId(params.groupId);
 	return resolveChannelToolPolicyForSender(params, "telegram", chatId ?? params.groupId);
 }
-
 //#endregion
 //#region src/terminal/links.ts
 const DOCS_ROOT = "https://docs.openclaw.ai";
@@ -3089,7 +3014,6 @@ function formatDocsLink(path, label, opts) {
 		force: opts?.force
 	});
 }
-
 //#endregion
 //#region src/channels/telegram/api.ts
 async function fetchTelegramChatId(params) {
@@ -3105,10 +3029,9 @@ async function fetchTelegramChatId(params) {
 		return null;
 	}
 }
-
 //#endregion
-//#region src/infra/host-env-security-policy.json
-var host_env_security_policy_default = {
+//#region src/infra/host-env-security.ts
+const HOST_ENV_SECURITY_POLICY = {
 	blockedKeys: [
 		"NODE_OPTIONS",
 		"NODE_PATH",
@@ -3135,14 +3058,10 @@ var host_env_security_policy_default = {
 		"BASH_FUNC_"
 	]
 };
-
-//#endregion
-//#region src/infra/host-env-security.ts
-const HOST_ENV_SECURITY_POLICY = host_env_security_policy_default;
-const HOST_DANGEROUS_ENV_KEY_VALUES = Object.freeze(HOST_ENV_SECURITY_POLICY.blockedKeys.map((key) => key.toUpperCase()));
-const HOST_DANGEROUS_ENV_PREFIXES = Object.freeze(HOST_ENV_SECURITY_POLICY.blockedPrefixes.map((prefix) => prefix.toUpperCase()));
-const HOST_DANGEROUS_OVERRIDE_ENV_KEY_VALUES = Object.freeze((HOST_ENV_SECURITY_POLICY.blockedOverrideKeys ?? []).map((key) => key.toUpperCase()));
-const HOST_SHELL_WRAPPER_ALLOWED_OVERRIDE_ENV_KEY_VALUES = Object.freeze([
+Object.freeze(HOST_ENV_SECURITY_POLICY.blockedKeys.map((key) => key.toUpperCase()));
+Object.freeze(HOST_ENV_SECURITY_POLICY.blockedPrefixes.map((prefix) => prefix.toUpperCase()));
+Object.freeze((HOST_ENV_SECURITY_POLICY.blockedOverrideKeys ?? []).map((key) => key.toUpperCase()));
+Object.freeze([
 	"TERM",
 	"LANG",
 	"LC_ALL",
@@ -3152,126 +3071,14 @@ const HOST_SHELL_WRAPPER_ALLOWED_OVERRIDE_ENV_KEY_VALUES = Object.freeze([
 	"NO_COLOR",
 	"FORCE_COLOR"
 ]);
-const HOST_DANGEROUS_ENV_KEYS = new Set(HOST_DANGEROUS_ENV_KEY_VALUES);
-const HOST_DANGEROUS_OVERRIDE_ENV_KEYS = new Set(HOST_DANGEROUS_OVERRIDE_ENV_KEY_VALUES);
-const HOST_SHELL_WRAPPER_ALLOWED_OVERRIDE_ENV_KEYS = new Set(HOST_SHELL_WRAPPER_ALLOWED_OVERRIDE_ENV_KEY_VALUES);
-
-//#endregion
-//#region src/infra/shell-env.ts
-const DEFAULT_MAX_BUFFER_BYTES = 2 * 1024 * 1024;
-
-//#endregion
-//#region src/agents/auth-profiles/constants.ts
-const EXTERNAL_CLI_SYNC_TTL_MS = 900 * 1e3;
-const EXTERNAL_CLI_NEAR_EXPIRY_MS = 600 * 1e3;
-const log$7 = createSubsystemLogger("agents/auth-profiles");
-
-//#endregion
-//#region src/providers/kilocode-shared.ts
-const KILOCODE_DEFAULT_MODEL_ID = "anthropic/claude-opus-4.6";
-const KILOCODE_DEFAULT_MODEL_REF = `kilocode/${KILOCODE_DEFAULT_MODEL_ID}`;
-
-//#endregion
-//#region src/agents/bedrock-discovery.ts
-const log$6 = createSubsystemLogger("bedrock-discovery");
-
-//#endregion
-//#region src/agents/volc-models.shared.ts
-const VOLC_SHARED_CODING_MODEL_CATALOG = [
-	{
-		id: "ark-code-latest",
-		name: "Ark Coding Plan",
-		reasoning: false,
-		input: ["text"],
-		contextWindow: 256e3,
-		maxTokens: 4096
-	},
-	{
-		id: "doubao-seed-code",
-		name: "Doubao Seed Code",
-		reasoning: false,
-		input: ["text"],
-		contextWindow: 256e3,
-		maxTokens: 4096
-	},
-	{
-		id: "glm-4.7",
-		name: "GLM 4.7 Coding",
-		reasoning: false,
-		input: ["text"],
-		contextWindow: 2e5,
-		maxTokens: 4096
-	},
-	{
-		id: "kimi-k2-thinking",
-		name: "Kimi K2 Thinking",
-		reasoning: false,
-		input: ["text"],
-		contextWindow: 256e3,
-		maxTokens: 4096
-	},
-	{
-		id: "kimi-k2.5",
-		name: "Kimi K2.5 Coding",
-		reasoning: false,
-		input: ["text"],
-		contextWindow: 256e3,
-		maxTokens: 4096
-	}
-];
-
-//#endregion
-//#region src/agents/byteplus-models.ts
-const BYTEPLUS_DEFAULT_MODEL_ID = "seed-1-8-251228";
-const BYTEPLUS_DEFAULT_MODEL_REF = `byteplus/${BYTEPLUS_DEFAULT_MODEL_ID}`;
-
-//#endregion
-//#region src/agents/cloudflare-ai-gateway.ts
-const CLOUDFLARE_AI_GATEWAY_PROVIDER_ID = "cloudflare-ai-gateway";
-const CLOUDFLARE_AI_GATEWAY_DEFAULT_MODEL_ID = "claude-sonnet-4-5";
-const CLOUDFLARE_AI_GATEWAY_DEFAULT_MODEL_REF = `${CLOUDFLARE_AI_GATEWAY_PROVIDER_ID}/${CLOUDFLARE_AI_GATEWAY_DEFAULT_MODEL_ID}`;
-
-//#endregion
-//#region src/agents/doubao-models.ts
-const DOUBAO_DEFAULT_MODEL_ID = "doubao-seed-1-8-251228";
-const DOUBAO_DEFAULT_MODEL_REF = `volcengine/${DOUBAO_DEFAULT_MODEL_ID}`;
-const DOUBAO_CODING_MODEL_CATALOG = [...VOLC_SHARED_CODING_MODEL_CATALOG, {
-	id: "doubao-seed-code-preview-251028",
-	name: "Doubao Seed Code Preview",
-	reasoning: false,
-	input: ["text"],
-	contextWindow: 256e3,
-	maxTokens: 4096
-}];
-
-//#endregion
-//#region src/agents/huggingface-models.ts
-const log$5 = createSubsystemLogger("huggingface-models");
-
-//#endregion
-//#region src/agents/ollama-stream.ts
-const log$4 = createSubsystemLogger("ollama-stream");
-const MAX_SAFE_INTEGER_ABS_STR = String(Number.MAX_SAFE_INTEGER);
-
-//#endregion
-//#region src/agents/synthetic-models.ts
-const SYNTHETIC_DEFAULT_MODEL_ID = "hf:MiniMaxAI/MiniMax-M2.5";
-const SYNTHETIC_DEFAULT_MODEL_REF = `synthetic/${SYNTHETIC_DEFAULT_MODEL_ID}`;
-
-//#endregion
-//#region src/agents/venice-models.ts
-const log$3 = createSubsystemLogger("venice-models");
-const VENICE_DEFAULT_MODEL_ID = "llama-3.3-70b";
-const VENICE_DEFAULT_MODEL_REF = `venice/${VENICE_DEFAULT_MODEL_ID}`;
-
-//#endregion
-//#region src/agents/models-config.providers.ts
-const log$2 = createSubsystemLogger("agents/model-providers");
-
-//#endregion
-//#region src/agents/model-selection.ts
-const log$1 = createSubsystemLogger("model-selection");
-
+createSubsystemLogger("agents/auth-profiles");
+createSubsystemLogger("bedrock-discovery");
+createSubsystemLogger("huggingface-models");
+createSubsystemLogger("ollama-stream");
+String(Number.MAX_SAFE_INTEGER);
+createSubsystemLogger("venice-models");
+createSubsystemLogger("agents/model-providers");
+createSubsystemLogger("model-selection");
 //#endregion
 //#region src/shared/process-scoped-map.ts
 function resolveProcessScopedMap(key) {
@@ -3282,15 +3089,8 @@ function resolveProcessScopedMap(key) {
 	proc[key] = created;
 	return created;
 }
-
-//#endregion
-//#region src/plugin-sdk/file-lock.ts
-const HELD_LOCKS = resolveProcessScopedMap(Symbol.for("openclaw.fileLockHeldLocks"));
-
-//#endregion
-//#region src/agents/cli-credentials.ts
-const log = createSubsystemLogger("agents/auth-profiles");
-
+resolveProcessScopedMap(Symbol.for("openclaw.fileLockHeldLocks"));
+createSubsystemLogger("agents/auth-profiles");
 //#endregion
 //#region src/version.ts
 const CORE_PACKAGE_NAME = "openclaw";
@@ -3338,12 +3138,11 @@ function resolveVersionFromModuleUrl(moduleUrl) {
 function resolveBinaryVersion(params) {
 	return firstNonEmpty(params.injectedVersion) || resolveVersionFromModuleUrl(params.moduleUrl) || firstNonEmpty(params.bundledVersion) || params.fallback || "0.0.0";
 }
-const VERSION = resolveBinaryVersion({
+resolveBinaryVersion({
 	moduleUrl: import.meta.url,
 	injectedVersion: typeof __OPENCLAW_VERSION__ === "string" ? __OPENCLAW_VERSION__ : void 0,
 	bundledVersion: process.env.OPENCLAW_BUNDLED_VERSION
 });
-
 //#endregion
 //#region src/security/scan-paths.ts
 function isPathInside(basePath, candidatePath) {
@@ -3352,11 +3151,6 @@ function isPathInside(basePath, candidatePath) {
 	const rel = path.relative(base, candidate);
 	return rel === "" || !rel.startsWith(`..${path.sep}`) && rel !== ".." && !path.isAbsolute(rel);
 }
-
-//#endregion
-//#region src/config/includes.ts
-const MAX_INCLUDE_FILE_BYTES = 2 * 1024 * 1024;
-
 //#endregion
 //#region src/config/discord-preview-streaming.ts
 function normalizeStreamingMode(value) {
@@ -3421,7 +3215,6 @@ function formatSlackStreamModeMigrationMessage(pathPrefix, resolvedStreaming) {
 function formatSlackStreamingBooleanMigrationMessage(pathPrefix, resolvedNativeStreaming) {
 	return `Moved ${pathPrefix}.streaming (boolean) → ${pathPrefix}.nativeStreaming (${resolvedNativeStreaming}).`;
 }
-
 //#endregion
 //#region src/infra/exec-safety.ts
 const SHELL_METACHARS = /[;&|`$<>]/;
@@ -3445,7 +3238,6 @@ function isSafeExecutableValue(value) {
 	if (trimmed.startsWith("-")) return false;
 	return BARE_NAME_PATTERN.test(trimmed);
 }
-
 //#endregion
 //#region src/config/legacy.shared.ts
 const getRecord = (value) => isRecord$2(value) ? value : null;
@@ -3509,7 +3301,6 @@ const ensureAgentEntry = (list, id) => {
 	list.push(created);
 	return created;
 };
-
 //#endregion
 //#region src/config/legacy.migrations.part-1.ts
 function migrateBindings(raw, changes, changeNote, mutator) {
@@ -3887,7 +3678,6 @@ const LEGACY_CONFIG_MIGRATIONS_PART_1 = [
 		}
 	}
 ];
-
 //#endregion
 //#region src/config/legacy.migrations.part-2.ts
 function applyLegacyAudioTranscriptionModel(params) {
@@ -4123,7 +3913,6 @@ const LEGACY_CONFIG_MIGRATIONS_PART_2 = [
 		}
 	}
 ];
-
 //#endregion
 //#region src/config/gateway-control-ui-origins.ts
 function isGatewayNonLoopbackBindMode(bind) {
@@ -4142,7 +3931,6 @@ function buildDefaultControlUiAllowedOrigins(params) {
 	if (params.bind === "custom" && customBindHost) origins.add(`http://${customBindHost}:${params.port}`);
 	return [...origins];
 }
-
 //#endregion
 //#region src/config/legacy.migrations.part-3.ts
 const AGENT_HEARTBEAT_KEYS = new Set([
@@ -4402,15 +4190,11 @@ const LEGACY_CONFIG_MIGRATIONS_PART_3 = [
 		}
 	}
 ];
-
-//#endregion
-//#region src/config/legacy.migrations.ts
-const LEGACY_CONFIG_MIGRATIONS = [
+[
 	...LEGACY_CONFIG_MIGRATIONS_PART_1,
 	...LEGACY_CONFIG_MIGRATIONS_PART_2,
 	...LEGACY_CONFIG_MIGRATIONS_PART_3
 ];
-
 //#endregion
 //#region src/infra/exec-safe-bin-policy-profiles.ts
 const NO_FLAGS = /* @__PURE__ */ new Set();
@@ -4457,7 +4241,7 @@ function compileSafeBinProfile(fixture) {
 function compileSafeBinProfiles(fixtures) {
 	return Object.fromEntries(Object.entries(fixtures).map(([name, fixture]) => [name, compileSafeBinProfile(fixture)]));
 }
-const SAFE_BIN_PROFILE_FIXTURES = {
+compileSafeBinProfiles({
 	jq: {
 		maxPositional: 1,
 		allowedValueFlags: [
@@ -4584,9 +4368,7 @@ const SAFE_BIN_PROFILE_FIXTURES = {
 		maxPositional: 0,
 		deniedFlags: ["--files0-from"]
 	}
-};
-const SAFE_BIN_PROFILES = compileSafeBinProfiles(SAFE_BIN_PROFILE_FIXTURES);
-
+});
 //#endregion
 //#region src/infra/exec-wrapper-resolution.ts
 const WINDOWS_EXE_SUFFIX = ".exe";
@@ -4601,7 +4383,6 @@ const POSIX_SHELL_WRAPPER_NAMES = [
 ];
 const WINDOWS_CMD_WRAPPER_NAMES = ["cmd"];
 const POWERSHELL_WRAPPER_NAMES = ["powershell", "pwsh"];
-const SHELL_MULTIPLEXER_WRAPPER_NAMES = ["busybox", "toybox"];
 const DISPATCH_WRAPPER_NAMES = [
 	"chrt",
 	"doas",
@@ -4623,33 +4404,16 @@ function withWindowsExeAliases(names) {
 	}
 	return Array.from(expanded);
 }
-const POSIX_SHELL_WRAPPERS = new Set(POSIX_SHELL_WRAPPER_NAMES);
-const WINDOWS_CMD_WRAPPERS = new Set(withWindowsExeAliases(WINDOWS_CMD_WRAPPER_NAMES));
-const POWERSHELL_WRAPPERS = new Set(withWindowsExeAliases(POWERSHELL_WRAPPER_NAMES));
-const DISPATCH_WRAPPER_EXECUTABLES = new Set(withWindowsExeAliases(DISPATCH_WRAPPER_NAMES));
-const POSIX_SHELL_WRAPPER_CANONICAL = new Set(POSIX_SHELL_WRAPPER_NAMES);
-const WINDOWS_CMD_WRAPPER_CANONICAL = new Set(WINDOWS_CMD_WRAPPER_NAMES);
-const POWERSHELL_WRAPPER_CANONICAL = new Set(POWERSHELL_WRAPPER_NAMES);
-const SHELL_MULTIPLEXER_WRAPPER_CANONICAL = new Set(SHELL_MULTIPLEXER_WRAPPER_NAMES);
-const DISPATCH_WRAPPER_CANONICAL = new Set(DISPATCH_WRAPPER_NAMES);
-const SHELL_WRAPPER_CANONICAL = new Set([
+new Set(withWindowsExeAliases(WINDOWS_CMD_WRAPPER_NAMES));
+new Set(withWindowsExeAliases(POWERSHELL_WRAPPER_NAMES));
+new Set(withWindowsExeAliases(DISPATCH_WRAPPER_NAMES));
+new Set([
 	...POSIX_SHELL_WRAPPER_NAMES,
 	...WINDOWS_CMD_WRAPPER_NAMES,
 	...POWERSHELL_WRAPPER_NAMES
 ]);
-
-//#endregion
-//#region src/plugins/schema-validator.ts
-const require = createRequire(import.meta.url);
-
-//#endregion
-//#region src/shared/avatar-policy.ts
-const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
-
-//#endregion
-//#region src/shared/net/ip.ts
-const RFC2544_BENCHMARK_PREFIX = [ipaddr.IPv4.parse("198.18.0.0"), 15];
-
+createRequire(import.meta.url);
+ipaddr.IPv4.parse("198.18.0.0");
 //#endregion
 //#region src/cli/parse-bytes.ts
 const UNIT_MULTIPLIERS = {
@@ -4676,7 +4440,6 @@ function parseByteSize(raw, opts) {
 	if (!Number.isFinite(bytes)) throw new Error(`invalid byte size: ${raw}`);
 	return bytes;
 }
-
 //#endregion
 //#region src/cli/parse-duration.ts
 const DURATION_MULTIPLIERS = {
@@ -4717,7 +4480,6 @@ function parseDurationMs(raw, opts) {
 	if (!Number.isFinite(ms)) throw new Error(`invalid duration: ${raw}`);
 	return ms;
 }
-
 //#endregion
 //#region src/agents/sandbox/network-mode.ts
 function normalizeNetworkMode(network) {
@@ -4730,14 +4492,12 @@ function getBlockedNetworkModeReason(params) {
 	if (normalized.startsWith("container:") && params.allowContainerNamespaceJoin !== true) return "container_namespace_join";
 	return null;
 }
-
 //#endregion
 //#region src/config/zod-schema.agent-model.ts
 const AgentModelSchema = z.union([z.string(), z.object({
 	primary: z.string().optional(),
 	fallbacks: z.array(z.string()).optional()
 }).strict()]);
-
 //#endregion
 //#region src/secrets/ref-contract.ts
 const FILE_SECRET_REF_SEGMENT_PATTERN = /^(?:[^~]|~0|~1)*$/;
@@ -4757,11 +4517,10 @@ function resolveDefaultSecretProviderAlias(config, source, options) {
 	return DEFAULT_SECRET_PROVIDER_ALIAS;
 }
 function isValidFileSecretRefId(value) {
-	if (value === SINGLE_VALUE_FILE_REF_ID) return true;
+	if (value === "value") return true;
 	if (!value.startsWith("/")) return false;
 	return value.slice(1).split("/").every((segment) => FILE_SECRET_REF_SEGMENT_PATTERN.test(segment));
 }
-
 //#endregion
 //#region src/config/types.models.ts
 const MODEL_APIS = [
@@ -4774,7 +4533,6 @@ const MODEL_APIS = [
 	"bedrock-converse-stream",
 	"ollama"
 ];
-
 //#endregion
 //#region src/config/zod-schema.allowdeny.ts
 const AllowDenyActionSchema = z.union([z.literal("allow"), z.literal("deny")]);
@@ -4798,11 +4556,9 @@ function createAllowDenyChannelRulesSchema() {
 		}).strict()).optional()
 	}).strict().optional();
 }
-
 //#endregion
 //#region src/config/zod-schema.sensitive.ts
 const sensitive = z.registry();
-
 //#endregion
 //#region src/config/zod-schema.core.ts
 const ENV_SECRET_REF_ID_PATTERN = /^[A-Z][A-Z0-9_]{0,127}$/;
@@ -4883,6 +4639,7 @@ const ModelCompatSchema = z.object({
 	supportsDeveloperRole: z.boolean().optional(),
 	supportsReasoningEffort: z.boolean().optional(),
 	supportsUsageInStreaming: z.boolean().optional(),
+	supportsTools: z.boolean().optional(),
 	supportsStrictMode: z.boolean().optional(),
 	maxTokensField: z.union([z.literal("max_completion_tokens"), z.literal("max_tokens")]).optional(),
 	thinkingFormat: z.union([
@@ -4992,17 +4749,7 @@ const BlockStreamingCoalesceSchema = z.object({
 	maxChars: z.number().int().positive().optional(),
 	idleMs: z.number().int().nonnegative().optional()
 }).strict();
-const ReplyRuntimeConfigSchemaShape = {
-	historyLimit: z.number().int().min(0).optional(),
-	dmHistoryLimit: z.number().int().min(0).optional(),
-	dms: z.record(z.string(), DmConfigSchema.optional()).optional(),
-	textChunkLimit: z.number().int().positive().optional(),
-	chunkMode: z.enum(["length", "newline"]).optional(),
-	blockStreaming: z.boolean().optional(),
-	blockStreamingCoalesce: BlockStreamingCoalesceSchema.optional(),
-	responsePrefix: z.string().optional(),
-	mediaMaxMb: z.number().positive().optional()
-};
+z.number().int().min(0).optional(), z.number().int().min(0).optional(), z.record(z.string(), DmConfigSchema.optional()).optional(), z.number().int().positive().optional(), z.enum(["length", "newline"]).optional(), z.boolean().optional(), BlockStreamingCoalesceSchema.optional(), z.string().optional(), z.number().positive().optional();
 const BlockStreamingChunkSchema = z.object({
 	minChars: z.number().int().positive().optional(),
 	maxChars: z.number().int().positive().optional(),
@@ -5300,7 +5047,6 @@ const ProviderCommandsSchema = z.object({
 	native: NativeCommandsSettingSchema.optional(),
 	nativeSkills: NativeCommandsSettingSchema.optional()
 }).strict().optional();
-
 //#endregion
 //#region src/config/zod-schema.agent-runtime.ts
 const HeartbeatSchema = z.object({
@@ -5466,12 +5212,11 @@ const SandboxPruneSchema = z.object({
 	idleHours: z.number().int().nonnegative().optional(),
 	maxAgeDays: z.number().int().nonnegative().optional()
 }).strict().optional();
-const ToolPolicyBaseSchema = z.object({
+const ToolPolicySchema = z.object({
 	allow: z.array(z.string()).optional(),
 	alsoAllow: z.array(z.string()).optional(),
 	deny: z.array(z.string()).optional()
-}).strict();
-const ToolPolicySchema = ToolPolicyBaseSchema.superRefine((value, ctx) => {
+}).strict().superRefine((value, ctx) => {
 	if (value.allow && value.allow.length > 0 && value.alsoAllow && value.alsoAllow.length > 0) ctx.addIssue({
 		code: z.ZodIssueCode.custom,
 		message: "tools policy cannot set both allow and alsoAllow in the same scope (merge alsoAllow into allow, or remove allow and use profile + alsoAllow)"
@@ -5832,7 +5577,6 @@ const ToolsSchema = z.object({
 }).strict().superRefine((value, ctx) => {
 	addAllowAlsoAllowConflictIssue(value, ctx, "tools cannot set both allow and alsoAllow in the same scope (merge alsoAllow into allow, or remove allow and use profile + alsoAllow)");
 }).optional();
-
 //#endregion
 //#region src/config/byte-size.ts
 /**
@@ -5859,7 +5603,6 @@ function parseNonNegativeByteSize(value) {
 function isValidNonNegativeByteSizeString(value) {
 	return parseNonNegativeByteSize(value) !== null;
 }
-
 //#endregion
 //#region src/config/zod-schema.agent-defaults.ts
 const AgentDefaultsSchema = z.object({
@@ -5932,6 +5675,7 @@ const AgentDefaultsSchema = z.object({
 			enabled: z.boolean().optional(),
 			maxRetries: z.number().int().nonnegative().optional()
 		}).strict().optional(),
+		postCompactionSections: z.array(z.string()).optional(),
 		memoryFlush: z.object({
 			enabled: z.boolean().optional(),
 			softThresholdTokens: z.number().int().nonnegative().optional(),
@@ -5989,7 +5733,6 @@ const AgentDefaultsSchema = z.object({
 	}).strict().optional(),
 	sandbox: AgentSandboxSchema
 }).strict().optional();
-
 //#endregion
 //#region src/config/zod-schema.agents.ts
 const AgentsSchema = z.object({
@@ -6062,7 +5805,6 @@ const BindingsSchema = z.array(z.union([RouteBindingSchema, AcpBindingSchema])).
 const BroadcastStrategySchema = z.enum(["parallel", "sequential"]);
 const BroadcastSchema = z.object({ strategy: BroadcastStrategySchema.optional() }).catchall(z.array(z.string())).optional();
 const AudioSchema = z.object({ transcription: TranscribeAudioSchema }).strict().optional();
-
 //#endregion
 //#region src/config/zod-schema.approvals.ts
 const ExecApprovalForwardTargetSchema = z.object({
@@ -6083,16 +5825,12 @@ const ExecApprovalForwardingSchema = z.object({
 	targets: z.array(ExecApprovalForwardTargetSchema).optional()
 }).strict().optional();
 const ApprovalsSchema = z.object({ exec: ExecApprovalForwardingSchema }).strict().optional();
-
-//#endregion
-//#region src/config/zod-schema.installs.ts
-const InstallSourceSchema = z.union([
-	z.literal("npm"),
-	z.literal("archive"),
-	z.literal("path")
-]);
 const InstallRecordShape = {
-	source: InstallSourceSchema,
+	source: z.union([
+		z.literal("npm"),
+		z.literal("archive"),
+		z.literal("path")
+	]),
 	spec: z.string().optional(),
 	sourcePath: z.string().optional(),
 	installPath: z.string().optional(),
@@ -6105,7 +5843,6 @@ const InstallRecordShape = {
 	resolvedAt: z.string().optional(),
 	installedAt: z.string().optional()
 };
-
 //#endregion
 //#region src/config/zod-schema.hooks.ts
 function isSafeRelativeModulePath(raw) {
@@ -6207,7 +5944,6 @@ const HooksGmailSchema = z.object({
 		z.literal("high")
 	]).optional()
 }).strict().optional();
-
 //#endregion
 //#region src/config/zod-schema.channels.ts
 const ChannelHeartbeatVisibilitySchema = z.object({
@@ -6215,7 +5951,6 @@ const ChannelHeartbeatVisibilitySchema = z.object({
 	showAlerts: z.boolean().optional(),
 	useIndicator: z.boolean().optional()
 }).strict().optional();
-
 //#endregion
 //#region src/infra/scp-host.ts
 const SSH_TOKEN = /^[A-Za-z0-9._-]+$/;
@@ -6252,7 +5987,6 @@ function normalizeScpRemoteHost(value) {
 function isSafeScpRemoteHost(value) {
 	return normalizeScpRemoteHost(value) !== void 0;
 }
-
 //#endregion
 //#region src/media/inbound-path-policy.ts
 const WILDCARD_SEGMENT = "*";
@@ -6277,7 +6011,6 @@ function isValidInboundPathRootPattern(value) {
 	if (segments.length === 0) return false;
 	return segments.every((segment) => segment === WILDCARD_SEGMENT || !segment.includes("*"));
 }
-
 //#endregion
 //#region src/config/telegram-custom-commands.ts
 const TELEGRAM_COMMAND_NAME_PATTERN = /^[a-z0-9_]{1,32}$/;
@@ -6352,9 +6085,15 @@ function resolveTelegramCustomCommands(params) {
 		issues
 	};
 }
-
 //#endregion
 //#region src/config/zod-schema.secret-input-validation.ts
+function forEachEnabledAccount(accounts, run) {
+	if (!accounts) return;
+	for (const [accountId, account] of Object.entries(accounts)) {
+		if (!account || account.enabled === false) continue;
+		run(accountId, account);
+	}
+}
 function validateTelegramWebhookSecretRequirements(value, ctx) {
 	const baseWebhookUrl = typeof value.webhookUrl === "string" ? value.webhookUrl.trim() : "";
 	const hasBaseWebhookSecret = hasConfiguredSecretInput(value.webhookSecret);
@@ -6363,11 +6102,8 @@ function validateTelegramWebhookSecretRequirements(value, ctx) {
 		message: "channels.telegram.webhookUrl requires channels.telegram.webhookSecret",
 		path: ["webhookSecret"]
 	});
-	if (!value.accounts) return;
-	for (const [accountId, account] of Object.entries(value.accounts)) {
-		if (!account) continue;
-		if (account.enabled === false) continue;
-		if (!(typeof account.webhookUrl === "string" ? account.webhookUrl.trim() : "")) continue;
+	forEachEnabledAccount(value.accounts, (accountId, account) => {
+		if (!(typeof account.webhookUrl === "string" ? account.webhookUrl.trim() : "")) return;
 		if (!hasConfiguredSecretInput(account.webhookSecret) && !hasBaseWebhookSecret) ctx.addIssue({
 			code: z.ZodIssueCode.custom,
 			message: "channels.telegram.accounts.*.webhookUrl requires channels.telegram.webhookSecret or channels.telegram.accounts.*.webhookSecret",
@@ -6377,7 +6113,7 @@ function validateTelegramWebhookSecretRequirements(value, ctx) {
 				"webhookSecret"
 			]
 		});
-	}
+	});
 }
 function validateSlackSigningSecretRequirements(value, ctx) {
 	const baseMode = value.mode === "http" || value.mode === "socket" ? value.mode : "socket";
@@ -6386,11 +6122,8 @@ function validateSlackSigningSecretRequirements(value, ctx) {
 		message: "channels.slack.mode=\"http\" requires channels.slack.signingSecret",
 		path: ["signingSecret"]
 	});
-	if (!value.accounts) return;
-	for (const [accountId, account] of Object.entries(value.accounts)) {
-		if (!account) continue;
-		if (account.enabled === false) continue;
-		if ((account.mode === "http" || account.mode === "socket" ? account.mode : baseMode) !== "http") continue;
+	forEachEnabledAccount(value.accounts, (accountId, account) => {
+		if ((account.mode === "http" || account.mode === "socket" ? account.mode : baseMode) !== "http") return;
 		if (!hasConfiguredSecretInput(account.signingSecret ?? value.signingSecret)) ctx.addIssue({
 			code: z.ZodIssueCode.custom,
 			message: "channels.slack.accounts.*.mode=\"http\" requires channels.slack.signingSecret or channels.slack.accounts.*.signingSecret",
@@ -6400,9 +6133,8 @@ function validateSlackSigningSecretRequirements(value, ctx) {
 				"signingSecret"
 			]
 		});
-	}
+	});
 }
-
 //#endregion
 //#region src/config/zod-schema.providers-core.ts
 const ToolPolicyBySenderSchema$1 = z.record(z.string(), ToolPolicySchema).optional();
@@ -7606,7 +7338,6 @@ const MSTeamsConfigSchema = z.object({
 		message: "channels.msteams.dmPolicy=\"allowlist\" requires channels.msteams.allowFrom to contain at least one sender ID"
 	});
 });
-
 //#endregion
 //#region src/config/zod-schema.providers-whatsapp.ts
 const ToolPolicyBySenderSchema = z.record(z.string(), ToolPolicySchema).optional();
@@ -7726,7 +7457,6 @@ const WhatsAppConfigSchema = WhatsAppSharedSchema.extend({
 		});
 	}
 });
-
 //#endregion
 //#region src/config/zod-schema.providers.ts
 const ChannelModelByChannelSchema = z.record(z.string(), z.record(z.string(), z.string())).optional();
@@ -7747,7 +7477,6 @@ const ChannelsSchema = z.object({
 	bluebubbles: BlueBubblesConfigSchema.optional(),
 	msteams: MSTeamsConfigSchema.optional()
 }).passthrough().optional();
-
 //#endregion
 //#region src/config/zod-schema.session.ts
 const SessionResetConfigSchema = z.object({
@@ -7907,7 +7636,6 @@ const CommandsSchema = z.object({
 	restart: true,
 	ownerDisplay: "raw"
 }));
-
 //#endregion
 //#region src/config/zod-schema.ts
 const BrowserSnapshotDefaultsSchema = z.object({ mode: z.literal("efficient").optional() }).strict().optional();
@@ -8002,7 +7730,7 @@ const PluginEntrySchema = z.object({
 	hooks: z.object({ allowPromptInjection: z.boolean().optional() }).strict().optional(),
 	config: z.record(z.string(), z.unknown()).optional()
 }).strict();
-const OpenClawSchema = z.object({
+z.object({
 	$schema: z.string().optional(),
 	meta: z.object({
 		lastTouchedVersion: z.string().optional(),
@@ -8177,7 +7905,10 @@ const OpenClawSchema = z.object({
 	bindings: BindingsSchema,
 	broadcast: BroadcastSchema,
 	audio: AudioSchema,
-	media: z.object({ preserveFilenames: z.boolean().optional() }).strict().optional(),
+	media: z.object({
+		preserveFilenames: z.boolean().optional(),
+		ttlHours: z.number().int().min(1).max(168).optional()
+	}).strict().optional(),
 	messages: MessagesSchema,
 	commands: CommandsSchema,
 	approvals: ApprovalsSchema,
@@ -8191,6 +7922,7 @@ const OpenClawSchema = z.object({
 			backoffMs: z.array(z.number().int().nonnegative()).min(1).max(10).optional(),
 			retryOn: z.array(z.enum([
 				"rate_limit",
+				"overloaded",
 				"network",
 				"timeout",
 				"server_error"
@@ -8446,7 +8178,10 @@ const OpenClawSchema = z.object({
 		allow: z.array(z.string()).optional(),
 		deny: z.array(z.string()).optional(),
 		load: z.object({ paths: z.array(z.string()).optional() }).strict().optional(),
-		slots: z.object({ memory: z.string().optional() }).strict().optional(),
+		slots: z.object({
+			memory: z.string().optional(),
+			contextEngine: z.string().optional()
+		}).strict().optional(),
 		entries: z.record(z.string(), PluginEntrySchema).optional(),
 		installs: z.record(z.string(), z.object({ ...InstallRecordShape }).strict()).optional()
 	}).strict().optional()
@@ -8473,7 +8208,6 @@ const OpenClawSchema = z.object({
 		}
 	}
 });
-
 //#endregion
 //#region src/security/windows-acl.ts
 const INHERIT_FLAGS = new Set([
@@ -8656,7 +8390,6 @@ function formatWindowsAclSummary(summary) {
 	if (untrusted.length === 0) return "trusted-only";
 	return untrusted.map((entry) => `${entry.principal}:${entry.rawRights}`).join(", ");
 }
-
 //#endregion
 //#region src/security/audit-fs.ts
 async function safeStat(targetPath) {
@@ -8770,7 +8503,6 @@ function isGroupReadable(bits) {
 	if (bits == null) return false;
 	return (bits & 32) !== 0;
 }
-
 //#endregion
 //#region src/utils/run-with-concurrency.ts
 async function runTasksWithConcurrency(params) {
@@ -8811,7 +8543,6 @@ async function runTasksWithConcurrency(params) {
 		hasError
 	};
 }
-
 //#endregion
 //#region src/secrets/json-pointer.ts
 function failOrUndefined(params) {
@@ -8854,7 +8585,6 @@ function readJsonPointer(root, pointer, options = {}) {
 	}
 	return current;
 }
-
 //#endregion
 //#region src/secrets/shared.ts
 function isRecord(value) {
@@ -8878,7 +8608,6 @@ function describeUnknownError(err) {
 		return "unknown error";
 	}
 }
-
 //#endregion
 //#region src/secrets/resolve.ts
 const DEFAULT_PROVIDER_CONCURRENCY = 4;
@@ -8918,6 +8647,21 @@ function providerResolutionError(params) {
 function refResolutionError(params) {
 	return new SecretRefResolutionError(params);
 }
+function throwUnknownProviderResolutionError(params) {
+	if (isSecretResolutionError(params.err)) throw params.err;
+	throw providerResolutionError({
+		source: params.source,
+		provider: params.provider,
+		message: describeUnknownError(params.err),
+		cause: params.err
+	});
+}
+async function readFileStatOrThrow(pathname, label) {
+	const stat = await safeStat(pathname);
+	if (!stat.ok) throw new Error(`${label} is not readable: ${pathname}`);
+	if (stat.isDir) throw new Error(`${label} must be a file: ${pathname}`);
+	return stat;
+}
 function isAbsolutePathname(value) {
 	return path.isAbsolute(value) || WINDOWS_ABS_PATH_PATTERN.test(value) || WINDOWS_UNC_PATH_PATTERN.test(value);
 }
@@ -8952,9 +8696,7 @@ function resolveConfiguredProvider(ref, config) {
 async function assertSecurePath(params) {
 	if (!isAbsolutePathname(params.targetPath)) throw new Error(`${params.label} must be an absolute path.`);
 	let effectivePath = params.targetPath;
-	let stat = await safeStat(effectivePath);
-	if (!stat.ok) throw new Error(`${params.label} is not readable: ${effectivePath}`);
-	if (stat.isDir) throw new Error(`${params.label} must be a file: ${effectivePath}`);
+	let stat = await readFileStatOrThrow(effectivePath, params.label);
 	if (stat.isSymlink) {
 		if (!params.allowSymlinkPath) throw new Error(`${params.label} must not be a symlink: ${effectivePath}`);
 		try {
@@ -8963,9 +8705,7 @@ async function assertSecurePath(params) {
 			throw new Error(`${params.label} symlink target is not readable: ${params.targetPath}`);
 		}
 		if (!isAbsolutePathname(effectivePath)) throw new Error(`${params.label} resolved symlink target must be an absolute path.`);
-		stat = await safeStat(effectivePath);
-		if (!stat.ok) throw new Error(`${params.label} is not readable: ${effectivePath}`);
-		if (stat.isDir) throw new Error(`${params.label} must be a file: ${effectivePath}`);
+		stat = await readFileStatOrThrow(effectivePath, params.label);
 		if (stat.isSymlink) throw new Error(`${params.label} symlink target must not be a symlink: ${effectivePath}`);
 	}
 	if (params.trustedDirs && params.trustedDirs.length > 0) {
@@ -9056,19 +8796,17 @@ async function resolveFileRefs(params) {
 			cache: params.cache
 		});
 	} catch (err) {
-		if (isSecretResolutionError(err)) throw err;
-		throw providerResolutionError({
+		throwUnknownProviderResolutionError({
 			source: "file",
 			provider: params.providerName,
-			message: describeUnknownError(err),
-			cause: err
+			err
 		});
 	}
 	const mode = params.providerConfig.mode ?? "json";
 	const resolved = /* @__PURE__ */ new Map();
 	if (mode === "singleValue") {
 		for (const ref of params.refs) {
-			if (ref.id !== SINGLE_VALUE_FILE_REF_ID) throw refResolutionError({
+			if (ref.id !== "value") throw refResolutionError({
 				source: "file",
 				provider: params.providerName,
 				refId: ref.id,
@@ -9273,12 +9011,10 @@ async function resolveExecRefs(params) {
 			allowSymlinkPath: params.providerConfig.allowSymlinkCommand
 		});
 	} catch (err) {
-		if (isSecretResolutionError(err)) throw err;
-		throw providerResolutionError({
+		throwUnknownProviderResolutionError({
 			source: "exec",
 			provider: params.providerName,
-			message: describeUnknownError(err),
-			cause: err
+			err
 		});
 	}
 	const requestPayload = {
@@ -9315,12 +9051,10 @@ async function resolveExecRefs(params) {
 			maxOutputBytes
 		});
 	} catch (err) {
-		if (isSecretResolutionError(err)) throw err;
-		throw providerResolutionError({
+		throwUnknownProviderResolutionError({
 			source: "exec",
 			provider: params.providerName,
-			message: describeUnknownError(err),
-			cause: err
+			err
 		});
 	}
 	if (result.termination === "timeout") throw providerResolutionError({
@@ -9347,12 +9081,10 @@ async function resolveExecRefs(params) {
 			jsonOnly
 		});
 	} catch (err) {
-		if (isSecretResolutionError(err)) throw err;
-		throw providerResolutionError({
+		throwUnknownProviderResolutionError({
 			source: "exec",
 			provider: params.providerName,
-			message: describeUnknownError(err),
-			cause: err
+			err
 		});
 	}
 	const resolved = /* @__PURE__ */ new Map();
@@ -9386,12 +9118,10 @@ async function resolveProviderRefs(params) {
 			message: `Unsupported secret provider source "${String(params.providerConfig.source)}".`
 		});
 	} catch (err) {
-		if (isSecretResolutionError(err)) throw err;
-		throw providerResolutionError({
+		throwUnknownProviderResolutionError({
 			source: params.source,
 			provider: params.providerName,
-			message: describeUnknownError(err),
-			cause: err
+			err
 		});
 	}
 }
@@ -9482,34 +9212,24 @@ async function resolveSecretRefString(ref, options) {
 	if (!isNonEmptyString(resolved)) throw new Error(`Secret reference "${ref.source}:${ref.provider}:${ref.id}" resolved to a non-string or empty value.`);
 	return resolved;
 }
-
 //#endregion
 //#region src/agents/chutes-oauth.ts
 const CHUTES_OAUTH_ISSUER = "https://api.chutes.ai";
-const CHUTES_AUTHORIZE_ENDPOINT = `${CHUTES_OAUTH_ISSUER}/idp/authorize`;
-const CHUTES_TOKEN_ENDPOINT = `${CHUTES_OAUTH_ISSUER}/idp/token`;
-const CHUTES_USERINFO_ENDPOINT = `${CHUTES_OAUTH_ISSUER}/idp/userinfo`;
-const DEFAULT_EXPIRES_BUFFER_MS = 300 * 1e3;
-
-//#endregion
-//#region src/agents/auth-profiles/oauth.ts
-const OAUTH_PROVIDER_IDS = new Set(getOAuthProviders().map((provider) => provider.id));
-
-//#endregion
-//#region src/agents/auth-profiles/usage.ts
-const FAILURE_REASON_PRIORITY = [
+`${CHUTES_OAUTH_ISSUER}`;
+`${CHUTES_OAUTH_ISSUER}`;
+`${CHUTES_OAUTH_ISSUER}`;
+new Set(getOAuthProviders().map((provider) => provider.id));
+new Map([
 	"auth_permanent",
 	"auth",
 	"billing",
 	"format",
 	"model_not_found",
+	"overloaded",
 	"timeout",
 	"rate_limit",
 	"unknown"
-];
-const FAILURE_REASON_SET = new Set(FAILURE_REASON_PRIORITY);
-const FAILURE_REASON_ORDER = new Map(FAILURE_REASON_PRIORITY.map((reason, index) => [reason, index]));
-
+].map((reason, index) => [reason, index]));
 //#endregion
 //#region src/secrets/provider-env-vars.ts
 const PROVIDER_ENV_VARS = {
@@ -9538,7 +9258,6 @@ const PROVIDER_ENV_VARS = {
 	volcengine: ["VOLCANO_ENGINE_API_KEY"],
 	byteplus: ["BYTEPLUS_API_KEY"]
 };
-
 //#endregion
 //#region src/commands/auth-choice.apply-helpers.ts
 function formatErrorMessage(error) {
@@ -9674,17 +9393,16 @@ async function resolveSecretInputModeForEnvSelection(params) {
 		}]
 	}) === "ref" ? "ref" : "plaintext";
 }
-
 //#endregion
 //#region src/plugin-sdk/onboarding.ts
 async function promptAccountId$1(params) {
 	const existingIds = params.listAccountIds(params.cfg);
-	const initial = params.currentId?.trim() || params.defaultAccountId || DEFAULT_ACCOUNT_ID;
+	const initial = params.currentId?.trim() || params.defaultAccountId || "default";
 	const choice = await params.prompter.select({
 		message: `${params.label} account`,
 		options: [...existingIds.map((id) => ({
 			value: id,
-			label: id === DEFAULT_ACCOUNT_ID ? "default (primary)" : id
+			label: id === "default" ? "default (primary)" : id
 		})), {
 			value: "__new__",
 			label: "Add a new account"
@@ -9700,7 +9418,6 @@ async function promptAccountId$1(params) {
 	if (String(entered).trim() !== normalized) await params.prompter.note(`Normalized account id to "${normalized}".`, `${params.label} account`);
 	return normalized;
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/helpers.ts
 const promptAccountId = async (params) => {
@@ -9764,12 +9481,12 @@ function setOnboardingChannelEnabled(cfg, channel, enabled) {
 }
 function patchConfigForScopedAccount(params) {
 	const { cfg, channel, accountId, patch, ensureEnabled } = params;
-	const seededCfg = accountId === DEFAULT_ACCOUNT_ID ? cfg : moveSingleAccountChannelSectionToDefaultAccount({
+	const seededCfg = accountId === "default" ? cfg : moveSingleAccountChannelSectionToDefaultAccount({
 		cfg,
 		channelKey: channel
 	});
 	const channelConfig = seededCfg.channels?.[channel] ?? {};
-	if (accountId === DEFAULT_ACCOUNT_ID) return {
+	if (accountId === "default") return {
 		...seededCfg,
 		channels: {
 			...seededCfg.channels,
@@ -9942,7 +9659,6 @@ async function promptResolvedAllowFrom(params) {
 		return mergeAllowFromEntries(params.existing, ids);
 	}
 }
-
 //#endregion
 //#region src/channels/plugins/onboarding/telegram.ts
 const channel = "telegram";
@@ -10038,19 +9754,6 @@ async function promptTelegramAllowFromForAccount(params) {
 		accountId
 	});
 }
-const dmPolicy = {
-	label: "Telegram",
-	channel,
-	policyKey: "channels.telegram.dmPolicy",
-	allowFromKey: "channels.telegram.allowFrom",
-	getCurrent: (cfg) => cfg.channels?.telegram?.dmPolicy ?? "pairing",
-	setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
-		cfg,
-		channel: "telegram",
-		dmPolicy: policy
-	}),
-	promptAllowFrom: promptTelegramAllowFromForAccount
-};
 const telegramOnboardingAdapter = {
 	channel,
 	getStatus: async ({ cfg }) => {
@@ -10140,10 +9843,21 @@ const telegramOnboardingAdapter = {
 			accountId: telegramAccountId
 		};
 	},
-	dmPolicy,
+	dmPolicy: {
+		label: "Telegram",
+		channel,
+		policyKey: "channels.telegram.dmPolicy",
+		allowFromKey: "channels.telegram.allowFrom",
+		getCurrent: (cfg) => cfg.channels?.telegram?.dmPolicy ?? "pairing",
+		setPolicy: (cfg, policy) => setChannelDmPolicyWithAllowFrom({
+			cfg,
+			channel: "telegram",
+			dmPolicy: policy
+		}),
+		promptAllowFrom: promptTelegramAllowFromForAccount
+	},
 	disable: (cfg) => setOnboardingChannelEnabled(cfg, channel, false)
 };
-
 //#endregion
 //#region src/plugin-sdk/status-helpers.ts
 function buildBaseChannelStatusSummary(snapshot) {
@@ -10168,6 +9882,5 @@ function buildTokenChannelStatusSummary(snapshot, opts) {
 		mode: snapshot.mode ?? null
 	};
 }
-
 //#endregion
-export { DEFAULT_ACCOUNT_ID, PAIRING_APPROVED_MESSAGE, TelegramConfigSchema, applyAccountNameToChannelSection, buildChannelConfigSchema, buildTokenChannelStatusSummary, collectTelegramStatusIssues, deleteAccountFromConfigSection, emptyPluginConfigSchema, formatPairingApproveHint, getChatChannelMeta, inspectTelegramAccount, listTelegramAccountIds, listTelegramDirectoryGroupsFromConfig, listTelegramDirectoryPeersFromConfig, looksLikeTelegramTargetId, migrateBaseNameToDefaultAccount, normalizeAccountId, normalizeTelegramMessagingTarget, parseTelegramReplyToMessageId, parseTelegramThreadId, projectCredentialSnapshotFields, resolveAllowlistProviderRuntimeGroupPolicy, resolveConfiguredFromCredentialStatuses, resolveDefaultGroupPolicy, resolveDefaultTelegramAccountId, resolveTelegramAccount, resolveTelegramGroupRequireMention, resolveTelegramGroupToolPolicy, setAccountEnabledInConfigSection, telegramOnboardingAdapter };
+export { DEFAULT_ACCOUNT_ID, PAIRING_APPROVED_MESSAGE, TelegramConfigSchema, applyAccountNameToChannelSection, buildChannelConfigSchema, buildTokenChannelStatusSummary, clearAccountEntryFields, collectTelegramStatusIssues, deleteAccountFromConfigSection, emptyPluginConfigSchema, formatPairingApproveHint, getChatChannelMeta, inspectTelegramAccount, listTelegramAccountIds, listTelegramDirectoryGroupsFromConfig, listTelegramDirectoryPeersFromConfig, looksLikeTelegramTargetId, migrateBaseNameToDefaultAccount, normalizeAccountId, normalizeTelegramMessagingTarget, parseTelegramReplyToMessageId, parseTelegramThreadId, projectCredentialSnapshotFields, resolveAllowlistProviderRuntimeGroupPolicy, resolveConfiguredFromCredentialStatuses, resolveDefaultGroupPolicy, resolveDefaultTelegramAccountId, resolveTelegramAccount, resolveTelegramGroupRequireMention, resolveTelegramGroupToolPolicy, setAccountEnabledInConfigSection, telegramOnboardingAdapter };

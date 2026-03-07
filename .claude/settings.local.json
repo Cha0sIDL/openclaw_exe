@@ -36,7 +36,14 @@
       "Bash(cmd.exe:*)",
       "Bash(/tmp/check_reparse.ps1:*)",
       "Bash(/tmp/check_dist.ps1:*)",
-      "Bash(/tmp/size_check.ps1:*)"
+      "Bash(/tmp/size_check.ps1:*)",
+      "Read(//c/Program Files/**)",
+      "Read(//d/nodejs//**)",
+      "Read(//c/Users/Administrator/AppData/Roaming/**)",
+      "Read(//c/Users/Administrator/AppData/Local/pnpm//**)",
+      "Read(//c/Users/Administrator/**)",
+      "Read(//e/Git/bin/**)",
+      "Read(//e/Git/usr/bin/**)"
     ]
   }
 }

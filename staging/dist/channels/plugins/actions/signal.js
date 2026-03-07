@@ -1,9 +1,8 @@
-import { i as jsonResult, n as resolveFetch, r as createActionGate, t as resolveReactionMessageId, u as readStringParam } from "../../../reaction-message-id-CihDmOyk.js";
-import "../../../utils-Bjm99Ief.js";
-import { t as loadConfig } from "../../../config-foDU1NKP.js";
-import { n as fetchWithTimeout } from "../../../fetch-timeout-BshLAVgx.js";
-import { i as resolveSignalAccount, n as resolveReactionLevel, r as listEnabledSignalAccounts, t as generateSecureUuid } from "../../../secure-random-Behs0EjU.js";
-
+import { i as jsonResult, n as resolveFetch, r as createActionGate, t as resolveReactionMessageId, u as readStringParam } from "../../../reaction-message-id-DSDAFV_r.js";
+import "../../../utils-CUUJ4XQX.js";
+import { t as loadConfig } from "../../../config-BPE_RRkt.js";
+import { n as fetchWithTimeout } from "../../../fetch-timeout-pYqaKGwK.js";
+import { i as resolveSignalAccount, n as resolveReactionLevel, r as listEnabledSignalAccounts, t as generateSecureUuid } from "../../../secure-random-Cj2EYzuw.js";
 //#region src/signal/reaction-level.ts
 /**
 * Resolve the effective reaction level and its implications for Signal.
@@ -24,7 +23,6 @@ function resolveSignalReactionLevel(params) {
 		invalidFallback: "minimal"
 	});
 }
-
 //#endregion
 //#region src/signal/client.ts
 const DEFAULT_TIMEOUT_MS = 1e4;
@@ -77,7 +75,6 @@ async function signalRpcRequest(method, params, opts) {
 	}
 	return parsed.result;
 }
-
 //#endregion
 //#region src/signal/rpc-context.ts
 function resolveSignalRpcContext(opts, accountInfo) {
@@ -94,7 +91,6 @@ function resolveSignalRpcContext(opts, accountInfo) {
 		account: opts.account?.trim() || resolvedAccount?.config.account?.trim()
 	};
 }
-
 //#endregion
 //#region src/signal/send-reactions.ts
 /**
@@ -204,7 +200,6 @@ async function removeReactionSignal(recipient, targetTimestamp, emoji, opts = {}
 		}
 	});
 }
-
 //#endregion
 //#region src/channels/plugins/actions/signal.ts
 const providerId = "signal";
@@ -319,6 +314,5 @@ const signalMessageActions = {
 		throw new Error(`Action ${action} not supported for ${providerId}.`);
 	}
 };
-
 //#endregion
 export { signalMessageActions };

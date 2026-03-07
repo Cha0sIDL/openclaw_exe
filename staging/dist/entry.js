@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { B as isRootHelpInvocation, R as hasHelpOrVersion, V as isRootVersionInvocation } from "./globals-d3aR1MYC.js";
-import { y as resolveRequiredHomeDir } from "./paths-BMo6kTge.js";
-import { t as isValidProfileName } from "./profile-utils-DMZjJPo2.js";
-import { t as createSubsystemLogger } from "./subsystem-Cfn2Pryx.js";
-import { t as parseBooleanValue } from "./boolean-DtWR5bt3.js";
+import { B as isRootHelpInvocation, R as hasHelpOrVersion, V as isRootVersionInvocation } from "./globals-Bv4ZcVWM.js";
+import { y as resolveRequiredHomeDir } from "./paths-BfR2LXbA.js";
+import { t as isValidProfileName } from "./profile-utils-BLR70_pd.js";
+import { t as createSubsystemLogger } from "./subsystem-B4CcvtwB.js";
+import { t as parseBooleanValue } from "./boolean-DTgd5CzD.js";
 import { enableCompileCache } from "node:module";
 import { spawn } from "node:child_process";
 import process$1 from "node:process";
@@ -11,7 +11,6 @@ import { fileURLToPath } from "node:url";
 import os from "node:os";
 import path from "node:path";
 import fs from "node:fs";
-
 //#region src/cli/profile.ts
 function takeValue(raw, next) {
 	if (raw.includes("=")) {
@@ -100,13 +99,11 @@ function applyCliProfileEnv(params) {
 	if (!env.OPENCLAW_CONFIG_PATH?.trim()) env.OPENCLAW_CONFIG_PATH = path.join(stateDir, "openclaw.json");
 	if (profile === "dev" && !env.OPENCLAW_GATEWAY_PORT?.trim()) env.OPENCLAW_GATEWAY_PORT = "19001";
 }
-
 //#endregion
 //#region src/cli/respawn-policy.ts
 function shouldSkipRespawnForArgv(argv) {
 	return hasHelpOrVersion(argv);
 }
-
 //#endregion
 //#region src/cli/windows-argv.ts
 function normalizeWindowsArgv(argv) {
@@ -157,7 +154,6 @@ function normalizeWindowsArgv(argv) {
 	}
 	return cleaned;
 }
-
 //#endregion
 //#region src/infra/env.ts
 const log = createSubsystemLogger("env");
@@ -185,7 +181,6 @@ function isTruthyEnvValue(value) {
 function normalizeEnv() {
 	normalizeZaiEnv();
 }
-
 //#endregion
 //#region src/infra/is-main.ts
 function normalizePathCandidate(candidate, cwd) {
@@ -211,7 +206,6 @@ function isMainModule({ currentFile, argv = process.argv, env = process.env, cwd
 	if (normalizedCurrent && normalizedArgv1 && path.basename(normalizedCurrent) === path.basename(normalizedArgv1)) return true;
 	return false;
 }
-
 //#endregion
 //#region src/infra/warning-filter.ts
 const warningFilterKey = Symbol.for("openclaw.warning-filter");
@@ -258,7 +252,6 @@ function installProcessWarningFilter() {
 	process.emitWarning = wrappedEmitWarning;
 	globalState[warningFilterKey] = { installed: true };
 }
-
 //#endregion
 //#region src/process/child-process-bridge.ts
 const defaultSignals = process$1.platform === "win32" ? [
@@ -293,7 +286,6 @@ function attachChildProcessBridge(child, { signals = defaultSignals, onSignal } 
 	child.once("error", detach);
 	return { detach };
 }
-
 //#endregion
 //#region src/entry.ts
 const ENTRY_WRAPPER_PAIRS = [{
@@ -360,7 +352,7 @@ if (!isMainModule({
 	}
 	function tryHandleRootVersionFastPath(argv) {
 		if (!isRootVersionInvocation(argv)) return false;
-		import("./version-DdJhsIqk.js").then((n) => n.r).then(({ VERSION }) => {
+		import("./version-CWAlVg1Z.js").then((n) => n.r).then(({ VERSION }) => {
 			console.log(VERSION);
 		}).catch((error) => {
 			console.error("[openclaw] Failed to resolve version:", error instanceof Error ? error.stack ?? error.message : error);
@@ -370,7 +362,7 @@ if (!isMainModule({
 	}
 	function tryHandleRootHelpFastPath(argv) {
 		if (!isRootHelpInvocation(argv)) return false;
-		import("./program-CQsYfCfS.js").then(({ buildProgram }) => {
+		import("./program-mbhvq0nl.js").then(({ buildProgram }) => {
 			buildProgram().outputHelp();
 		}).catch((error) => {
 			console.error("[openclaw] Failed to display help:", error instanceof Error ? error.stack ?? error.message : error);
@@ -389,12 +381,11 @@ if (!isMainModule({
 			applyCliProfileEnv({ profile: parsed.profile });
 			process$1.argv = parsed.argv;
 		}
-		if (!tryHandleRootVersionFastPath(process$1.argv) && !tryHandleRootHelpFastPath(process$1.argv)) import("./run-main-D_hZWevI.js").then(({ runCli }) => runCli(process$1.argv)).catch((error) => {
+		if (!tryHandleRootVersionFastPath(process$1.argv) && !tryHandleRootHelpFastPath(process$1.argv)) import("./run-main-CipxoGWK.js").then(({ runCli }) => runCli(process$1.argv)).catch((error) => {
 			console.error("[openclaw] Failed to start CLI:", error instanceof Error ? error.stack ?? error.message : error);
 			process$1.exitCode = 1;
 		});
 	}
 }
-
 //#endregion
 export { normalizeEnv as a, parseCliProfileArgs as c, logAcceptedEnvOption as i, isMainModule as n, normalizeWindowsArgv as o, isTruthyEnvValue as r, applyCliProfileEnv as s, installProcessWarningFilter as t };

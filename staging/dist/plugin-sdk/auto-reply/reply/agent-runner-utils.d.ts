@@ -41,7 +41,7 @@ export declare function buildEmbeddedRunBaseParams(params: {
     model: string;
     runId: string;
     authProfile: ReturnType<typeof resolveProviderScopedAuthProfile>;
-    allowRateLimitCooldownProbe?: boolean;
+    allowTransientCooldownProbe?: boolean;
 }): {
     thinkLevel: import("./directives.ts").ThinkLevel | undefined;
     verboseLevel: import("./directives.ts").VerboseLevel | undefined;
@@ -54,7 +54,7 @@ export declare function buildEmbeddedRunBaseParams(params: {
     } | undefined;
     timeoutMs: number;
     runId: string;
-    allowRateLimitCooldownProbe: boolean | undefined;
+    allowTransientCooldownProbe: boolean | undefined;
     authProfileId?: string;
     authProfileIdSource?: "auto" | "user";
     sessionFile: string;

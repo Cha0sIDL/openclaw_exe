@@ -1,26 +1,24 @@
-import { A as resolvePollMaxSelections, C as resolveChunkMode, F as normalizeDiscordToken, M as createDiscordActionGate, N as listEnabledDiscordAccounts, O as normalizePollDurationHours, P as resolveDiscordAccount, S as chunkMarkdownTextWithMode, T as loadWebMediaRaw, a as renderMarkdownWithMarkers, c as resolveMarkdownTableMode, i as readBooleanParam, j as buildOutboundMediaLoadOptions, k as normalizePollInput, m as createDiscordRetryRunner, n as listTokenSourcedAccounts, r as assertMediaNotDataUrl, s as markdownToIRWithMeta, t as createUnionActionGate, w as loadWebMedia } from "../../../shared-BVt3PDUf.js";
-import { n as normalizeAccountId, t as DEFAULT_ACCOUNT_ID } from "../../../account-id-JwW97xNZ.js";
-import { a as parseAvailableTags, c as readStringArrayParam, g as extensionForMime, i as jsonResult, n as resolveFetch, o as readNumberParam, s as readReactionParams, t as resolveReactionMessageId, u as readStringParam, x as maxBytesForKind } from "../../../reaction-message-id-CihDmOyk.js";
-import { M as resolvePreferredOpenClawTmpDir } from "../../../utils-Bjm99Ief.js";
-import { t as loadConfig, v as resolveRetryConfig, y as retryAsync } from "../../../config-foDU1NKP.js";
-import "../../../accounts-BS719DCr.js";
-import { t as recordChannelActivity } from "../../../channel-activity-DUOy6BRw.js";
+import { A as resolvePollMaxSelections, C as resolveChunkMode, F as normalizeDiscordToken, M as createDiscordActionGate, N as listEnabledDiscordAccounts, O as normalizePollDurationHours, P as resolveDiscordAccount, S as chunkMarkdownTextWithMode, T as loadWebMediaRaw, a as renderMarkdownWithMarkers, c as resolveMarkdownTableMode, i as readBooleanParam, j as buildOutboundMediaLoadOptions, k as normalizePollInput, m as createDiscordRetryRunner, n as listTokenSourcedAccounts, r as assertMediaNotDataUrl, s as markdownToIRWithMeta, t as createUnionActionGate, w as loadWebMedia } from "../../../shared-DA33Zg3v.js";
+import { n as normalizeAccountId } from "../../../account-id-DQE6gyMr.js";
+import { a as parseAvailableTags, c as readStringArrayParam, g as extensionForMime, i as jsonResult, n as resolveFetch, o as readNumberParam, s as readReactionParams, t as resolveReactionMessageId, u as readStringParam, x as maxBytesForKind } from "../../../reaction-message-id-DSDAFV_r.js";
+import { M as resolvePreferredOpenClawTmpDir } from "../../../utils-CUUJ4XQX.js";
+import { t as loadConfig, v as resolveRetryConfig, y as retryAsync } from "../../../config-BPE_RRkt.js";
+import "../../../accounts-CK9RlXY1.js";
+import { t as recordChannelActivity } from "../../../channel-activity-DG1U3WvI.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { execFile, execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import { ButtonStyle, ChannelType, MessageFlags, PermissionFlagsBits, Routes } from "discord-api-types/v10";
 import { Button, ChannelSelectMenu, Container, Embed, File, LinkButton, MediaGallery, MentionableSelectMenu, RateLimitError, RequestClient, RoleSelectMenu, Row, Section, Separator, StringSelectMenu, TextDisplay, Thumbnail, UserSelectMenu, serializePayload } from "@buape/carbon";
 import { PollLayoutType } from "discord-api-types/payloads/v10";
 import crypto from "node:crypto";
-
 //#region src/agents/tools/discord-actions-shared.ts
 function readDiscordParentIdParam(params) {
 	if (params.clearParent === true) return null;
 	if (params.parentId === null) return null;
 	return readStringParam(params, "parentId");
 }
-
 //#endregion
 //#region src/discord/monitor/presence-cache.ts
 const presenceCache = /* @__PURE__ */ new Map();
@@ -31,7 +29,6 @@ function resolveAccountKey$1(accountId) {
 function getPresence(accountId, userId) {
 	return presenceCache.get(resolveAccountKey$1(accountId))?.get(userId);
 }
-
 //#endregion
 //#region src/discord/chunk.ts
 const DEFAULT_MAX_CHARS = 2e3;
@@ -183,7 +180,6 @@ function rebalanceReasoningItalics(source, chunks) {
 	}
 	return adjusted;
 }
-
 //#endregion
 //#region src/discord/client.ts
 function resolveToken(params) {
@@ -227,7 +223,6 @@ function createDiscordClient(opts, cfg = loadConfig()) {
 function resolveDiscordRest(opts) {
 	return createDiscordRestClient(opts).rest;
 }
-
 //#endregion
 //#region src/discord/send.permissions.ts
 const PERMISSION_ENTRIES = Object.entries(PermissionFlagsBits).filter(([, value]) => typeof value === "bigint");
@@ -347,7 +342,6 @@ async function fetchChannelPermissionsDiscord(channelId, opts = {}) {
 		channelType
 	};
 }
-
 //#endregion
 //#region src/discord/send.types.ts
 var DiscordSendError = class extends Error {
@@ -362,7 +356,6 @@ var DiscordSendError = class extends Error {
 };
 const DISCORD_MAX_EMOJI_BYTES = 256 * 1024;
 const DISCORD_MAX_STICKER_BYTES = 512 * 1024;
-
 //#endregion
 //#region src/channels/targets.ts
 function normalizeTargetId(kind, id) {
@@ -432,14 +425,13 @@ function requireTargetKind(params) {
 	if (params.target.kind !== params.kind) throw new Error(`${params.platform} ${kindLabel} id is required (use ${kindLabel}:<id>).`);
 	return params.target.id;
 }
-
 //#endregion
 //#region src/discord/directory-cache.ts
 const DISCORD_DIRECTORY_CACHE_MAX_ENTRIES = 4e3;
 const DISCORD_DISCRIMINATOR_SUFFIX = /#\d{4}$/;
 const DIRECTORY_HANDLE_CACHE = /* @__PURE__ */ new Map();
 function normalizeAccountCacheKey(accountId) {
-	return normalizeAccountId(accountId ?? DEFAULT_ACCOUNT_ID) || DEFAULT_ACCOUNT_ID;
+	return normalizeAccountId(accountId ?? "default") || "default";
 }
 function normalizeSnowflake$1(value) {
 	const text = String(value ?? "").trim();
@@ -492,7 +484,6 @@ function resolveDiscordDirectoryUserId(params) {
 	if (!withoutDiscriminator || withoutDiscriminator === handle) return;
 	return cache.get(withoutDiscriminator);
 }
-
 //#endregion
 //#region src/discord/api.ts
 const DISCORD_API_BASE = "https://discord.com/api/v10";
@@ -562,7 +553,6 @@ async function fetchDiscord(path, token, fetcher = fetch, options) {
 		retryAfterMs: (err) => err instanceof DiscordApiError && typeof err.retryAfter === "number" ? err.retryAfter * 1e3 : void 0
 	});
 }
-
 //#endregion
 //#region src/discord/directory-live.ts
 function normalizeQuery(value) {
@@ -626,7 +616,6 @@ async function listDiscordDirectoryPeersLive(params) {
 	}
 	return rows;
 }
-
 //#endregion
 //#region src/discord/targets.ts
 function parseDiscordTarget(raw, options = {}) {
@@ -727,7 +716,6 @@ function isLikelyUsername(input) {
 	if (/^(user:|channel:|discord:|@|<@!?)|[\d]+$/.test(input)) return false;
 	return true;
 }
-
 //#endregion
 //#region src/discord/send.shared.ts
 const DISCORD_TEXT_LIMIT = 2e3;
@@ -927,8 +915,11 @@ async function sendDiscordText(rest, channelId, text, replyTo, request, maxLines
 	if (!last) throw new Error("Discord send failed (empty chunk result)");
 	return last;
 }
-async function sendDiscordMedia(rest, channelId, text, mediaUrl, mediaLocalRoots, replyTo, request, maxLinesPerMessage, components, embeds, chunkMode, silent) {
-	const media = await loadWebMedia(mediaUrl, buildOutboundMediaLoadOptions({ mediaLocalRoots }));
+async function sendDiscordMedia(rest, channelId, text, mediaUrl, mediaLocalRoots, maxBytes, replyTo, request, maxLinesPerMessage, components, embeds, chunkMode, silent) {
+	const media = await loadWebMedia(mediaUrl, buildOutboundMediaLoadOptions({
+		maxBytes,
+		mediaLocalRoots
+	}));
 	const chunks = text ? buildDiscordTextChunks(text, {
 		maxLinesPerMessage,
 		chunkMode
@@ -974,7 +965,6 @@ function buildReactionIdentifier(emoji) {
 function formatReactionEmoji(emoji) {
 	return buildReactionIdentifier(emoji);
 }
-
 //#endregion
 //#region src/discord/send.channels.ts
 async function createChannelDiscord(payload, opts = {}) {
@@ -1037,7 +1027,6 @@ async function removeChannelPermissionDiscord(channelId, targetId, opts = {}) {
 	await resolveDiscordRest(opts).delete(`/channels/${channelId}/permissions/${targetId}`);
 	return { ok: true };
 }
-
 //#endregion
 //#region src/discord/send.emojis-stickers.ts
 async function listGuildEmojisDiscord(guildId, opts = {}) {
@@ -1081,7 +1070,6 @@ async function uploadStickerDiscord(payload, opts = {}) {
 		}]
 	} });
 }
-
 //#endregion
 //#region src/discord/send.guild.ts
 async function fetchMemberInfoDiscord(guildId, userId, opts = {}) {
@@ -1138,7 +1126,6 @@ async function banMemberDiscord(payload, opts = {}) {
 	});
 	return { ok: true };
 }
-
 //#endregion
 //#region src/discord/send.messages.ts
 async function readMessagesDiscord(channelId, query = {}, opts = {}) {
@@ -1217,7 +1204,6 @@ async function searchMessagesDiscord(query, opts = {}) {
 	}
 	return await rest.get(`/guilds/${query.guildId}/messages/search?${params.toString()}`);
 }
-
 //#endregion
 //#region src/markdown/tables.ts
 const MARKDOWN_STYLE_MARKERS = {
@@ -1268,7 +1254,6 @@ function convertMarkdownTables(markdown, mode) {
 		}
 	});
 }
-
 //#endregion
 //#region src/media/temp-files.ts
 async function unlinkIfExists(filePath) {
@@ -1277,7 +1262,6 @@ async function unlinkIfExists(filePath) {
 		await fs.unlink(filePath);
 	} catch {}
 }
-
 //#endregion
 //#region src/discord/mentions.ts
 const MARKDOWN_CODE_SEGMENT_PATTERN = /```[\s\S]*?```|`[^`\n]*`/g;
@@ -1341,21 +1325,16 @@ function rewriteDiscordKnownMentions(text, params) {
 	rewritten += rewritePlainTextMentions(text.slice(offset), params.accountId);
 	return rewritten;
 }
-
-//#endregion
-//#region src/media/ffmpeg-limits.ts
-const MEDIA_FFMPEG_MAX_BUFFER_BYTES = 10 * 1024 * 1024;
 const MEDIA_FFPROBE_TIMEOUT_MS = 1e4;
 const MEDIA_FFMPEG_TIMEOUT_MS = 45e3;
 const MEDIA_FFMPEG_MAX_AUDIO_DURATION_SECS = 1200;
-
 //#endregion
 //#region src/media/ffmpeg-exec.ts
 const execFileAsync = promisify(execFile);
 function resolveExecOptions(defaultTimeoutMs, options) {
 	return {
 		timeout: options?.timeoutMs ?? defaultTimeoutMs,
-		maxBuffer: options?.maxBufferBytes ?? MEDIA_FFMPEG_MAX_BUFFER_BYTES
+		maxBuffer: options?.maxBufferBytes ?? 10485760
 	};
 }
 async function runFfprobe(args, options) {
@@ -1378,7 +1357,6 @@ function parseFfprobeCodecAndSampleRate(stdout) {
 		sampleRateHz: Number.isFinite(sampleRate) ? sampleRate : null
 	};
 }
-
 //#endregion
 //#region src/discord/voice-message.ts
 /**
@@ -1612,7 +1590,6 @@ async function sendDiscordVoiceMessage(rest, channelId, audioBuffer, metadata, r
 	};
 	return await request(() => rest.post(`/channels/${channelId}/messages`, { body: messagePayload }), "voice-message");
 }
-
 //#endregion
 //#region src/discord/send.outbound.ts
 async function sendDiscordThreadTextChunks(params) {
@@ -1656,6 +1633,7 @@ async function sendMessageDiscord(to, text, opts = {}) {
 		accountId: accountInfo.accountId
 	});
 	const chunkMode = resolveChunkMode(cfg, "discord", accountInfo.accountId);
+	const mediaMaxBytes = typeof accountInfo.config.mediaMaxMb === "number" ? accountInfo.config.mediaMaxMb * 1024 * 1024 : 8 * 1024 * 1024;
 	const textWithTables = convertMarkdownTables(text ?? "", tableMode);
 	const textWithMentions = rewriteDiscordKnownMentions(textWithTables, { accountId: accountInfo.accountId });
 	const { token, rest, request } = createDiscordClient(opts, cfg);
@@ -1701,7 +1679,7 @@ async function sendMessageDiscord(to, text, opts = {}) {
 		try {
 			if (opts.mediaUrl) {
 				const [mediaCaption, ...afterMediaChunks] = remainingChunks;
-				await sendDiscordMedia(rest, threadId, mediaCaption ?? "", opts.mediaUrl, opts.mediaLocalRoots, void 0, request, accountInfo.config.maxLinesPerMessage, void 0, void 0, chunkMode, opts.silent);
+				await sendDiscordMedia(rest, threadId, mediaCaption ?? "", opts.mediaUrl, opts.mediaLocalRoots, mediaMaxBytes, void 0, request, accountInfo.config.maxLinesPerMessage, void 0, void 0, chunkMode, opts.silent);
 				await sendDiscordThreadTextChunks({
 					rest,
 					threadId,
@@ -1740,7 +1718,7 @@ async function sendMessageDiscord(to, text, opts = {}) {
 	}
 	let result;
 	try {
-		if (opts.mediaUrl) result = await sendDiscordMedia(rest, channelId, textWithMentions, opts.mediaUrl, opts.mediaLocalRoots, opts.replyTo, request, accountInfo.config.maxLinesPerMessage, opts.components, opts.embeds, chunkMode, opts.silent);
+		if (opts.mediaUrl) result = await sendDiscordMedia(rest, channelId, textWithMentions, opts.mediaUrl, opts.mediaLocalRoots, mediaMaxBytes, opts.replyTo, request, accountInfo.config.maxLinesPerMessage, opts.components, opts.embeds, chunkMode, opts.silent);
 		else result = await sendDiscordText(rest, channelId, textWithMentions, opts.replyTo, request, accountInfo.config.maxLinesPerMessage, opts.components, opts.embeds, chunkMode, opts.silent);
 	} catch (err) {
 		throw await buildDiscordSendError(err, {
@@ -1844,7 +1822,6 @@ async function sendVoiceMessageDiscord(to, audioPath, opts = {}) {
 		await unlinkIfExists(localInputPath);
 	}
 }
-
 //#endregion
 //#region src/discord/components-registry.ts
 const DEFAULT_COMPONENT_TTL_MS = 1800 * 1e3;
@@ -1877,7 +1854,6 @@ function registerDiscordComponentEntries(params) {
 		modalEntries.set(modal.id, normalized);
 	}
 }
-
 //#endregion
 //#region src/discord/components.ts
 const DISCORD_COMPONENT_CUSTOM_ID_KEY = "occomp";
@@ -1918,14 +1894,14 @@ function normalizeModalFieldName(value, index) {
 }
 function normalizeAttachmentRef(value, label) {
 	const trimmed = value.trim();
-	if (!trimmed.startsWith(DISCORD_COMPONENT_ATTACHMENT_PREFIX)) throw new Error(`${label} must start with "${DISCORD_COMPONENT_ATTACHMENT_PREFIX}"`);
+	if (!trimmed.startsWith("attachment://")) throw new Error(`${label} must start with "${DISCORD_COMPONENT_ATTACHMENT_PREFIX}"`);
 	const attachmentName = trimmed.slice(13).trim();
 	if (!attachmentName) throw new Error(`${label} must include an attachment filename`);
 	return `${DISCORD_COMPONENT_ATTACHMENT_PREFIX}${attachmentName}`;
 }
 function resolveDiscordComponentAttachmentName(value) {
 	const trimmed = value.trim();
-	if (!trimmed.startsWith(DISCORD_COMPONENT_ATTACHMENT_PREFIX)) throw new Error(`Attachment reference must start with "${DISCORD_COMPONENT_ATTACHMENT_PREFIX}"`);
+	if (!trimmed.startsWith("attachment://")) throw new Error(`Attachment reference must start with "${DISCORD_COMPONENT_ATTACHMENT_PREFIX}"`);
 	const attachmentName = trimmed.slice(13).trim();
 	if (!attachmentName) throw new Error("Attachment reference must include a filename");
 	return attachmentName;
@@ -2431,7 +2407,6 @@ function buildDiscordComponentMessage(params) {
 function buildDiscordComponentMessageFlags(components) {
 	return components.some((component) => component.isV2) ? MessageFlags.IsComponentsV2 : void 0;
 }
-
 //#endregion
 //#region src/discord/send.components.ts
 const DISCORD_FORUM_LIKE_TYPES = new Set([ChannelType.GuildForum, ChannelType.GuildMedia]);
@@ -2510,7 +2485,6 @@ async function sendDiscordComponentMessage(to, spec, opts = {}) {
 		channelId: result.channel_id ?? channelId
 	};
 }
-
 //#endregion
 //#region src/discord/send.reactions.ts
 async function reactMessageDiscord(channelId, messageId, emoji, opts = {}) {
@@ -2574,7 +2548,6 @@ async function fetchReactionsDiscord(channelId, messageId, opts = {}) {
 	}
 	return summaries;
 }
-
 //#endregion
 //#region src/agents/tools/discord-actions-guild.ts
 async function runRoleMutation(params) {
@@ -2914,7 +2887,6 @@ async function handleDiscordGuildAction(action, params, isActionEnabled) {
 		default: throw new Error(`Unknown action: ${action}`);
 	}
 }
-
 //#endregion
 //#region src/agents/date-time.ts
 function normalizeTimestamp(raw) {
@@ -2950,7 +2922,6 @@ function withNormalizedTimestamp(value, rawTimestamp) {
 		timestampUtc: typeof value.timestampUtc === "string" && value.timestampUtc.trim() ? value.timestampUtc : normalized.timestampUtc
 	};
 }
-
 //#endregion
 //#region src/agents/tools/discord-actions-messaging.ts
 function parseDiscordMessageLink(link) {
@@ -3311,7 +3282,6 @@ async function handleDiscordMessagingAction(action, params, isActionEnabled, opt
 		default: throw new Error(`Unknown action: ${action}`);
 	}
 }
-
 //#endregion
 //#region src/agents/tools/discord-actions-moderation-shared.ts
 const moderationPermissions = {
@@ -3337,7 +3307,6 @@ function readDiscordModerationCommand(action, params) {
 		deleteMessageDays: readNumberParam(params, "deleteMessageDays", { integer: true })
 	};
 }
-
 //#endregion
 //#region src/agents/tools/discord-actions-moderation.ts
 async function verifySenderModerationPermission(params) {
@@ -3401,7 +3370,6 @@ async function handleDiscordModerationAction(action, params, isActionEnabled) {
 			return jsonResult({ ok: true });
 	}
 }
-
 //#endregion
 //#region src/discord/monitor/gateway-registry.ts
 /**
@@ -3419,7 +3387,6 @@ function resolveAccountKey(accountId) {
 function getGateway(accountId) {
 	return gatewayRegistry.get(resolveAccountKey(accountId));
 }
-
 //#endregion
 //#region src/agents/tools/discord-actions-presence.ts
 const ACTIVITY_TYPE_MAP = {
@@ -3483,7 +3450,6 @@ async function handleDiscordPresenceAction(action, params, isActionEnabled) {
 		}))
 	});
 }
-
 //#endregion
 //#region src/agents/tools/discord-actions.ts
 const messagingActions = new Set([
@@ -3546,7 +3512,6 @@ async function handleDiscordAction(params, cfg, options) {
 	if (presenceActions.has(action)) return await handleDiscordPresenceAction(action, params, isActionEnabled);
 	throw new Error(`Unknown action: ${action}`);
 }
-
 //#endregion
 //#region src/channels/plugins/actions/discord/handle-action.guild-admin.ts
 async function tryHandleDiscordMessageActionGuildAdmin(params) {
@@ -3850,7 +3815,6 @@ async function tryHandleDiscordMessageActionGuildAdmin(params) {
 		}, cfg);
 	}
 }
-
 //#endregion
 //#region src/channels/plugins/actions/discord/handle-action.ts
 const providerId = "discord";
@@ -4035,7 +3999,6 @@ async function handleDiscordMessageAction(ctx) {
 	if (adminResult !== void 0) return adminResult;
 	throw new Error(`Action ${String(action)} is not supported for provider ${providerId}.`);
 }
-
 //#endregion
 //#region src/channels/plugins/actions/discord.ts
 const discordMessageActions = {
@@ -4130,6 +4093,5 @@ const discordMessageActions = {
 		});
 	}
 };
-
 //#endregion
 export { discordMessageActions };

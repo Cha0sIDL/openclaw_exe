@@ -44,7 +44,6 @@ function datetimePickerAction(label, data, mode, options) {
 		min: options?.min
 	};
 }
-
 //#endregion
 //#region src/line/template-messages.ts
 function buildTemplatePayloadAction(action) {
@@ -211,6 +210,5 @@ function buildTemplateMessageFromPayload(payload) {
 		default: return null;
 	}
 }
-
 //#endregion
 export { buildTemplateMessageFromPayload, createButtonMenu, createButtonTemplate, createCarouselColumn, createConfirmTemplate, createImageCarousel, createImageCarouselColumn, createLinkMenu, createProductCarousel, createTemplateCarousel, createYesNoConfirm, datetimePickerAction, messageAction, postbackAction, uriAction };

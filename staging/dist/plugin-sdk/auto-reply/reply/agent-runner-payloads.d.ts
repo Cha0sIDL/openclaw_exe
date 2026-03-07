@@ -21,7 +21,8 @@ export declare function buildReplyPayloads(params: {
     originatingChannel?: OriginatingChannelType;
     originatingTo?: string;
     accountId?: string;
-}): {
+    normalizeMediaPaths?: (payload: ReplyPayload) => Promise<ReplyPayload>;
+}): Promise<{
     replyPayloads: ReplyPayload[];
     didLogHeartbeatStrip: boolean;
-};
+}>;

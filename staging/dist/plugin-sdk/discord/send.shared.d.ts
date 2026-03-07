@@ -71,7 +71,7 @@ declare function sendDiscordText(rest: RequestClient, channelId: string, text: s
     id: string;
     channel_id: string;
 }>;
-declare function sendDiscordMedia(rest: RequestClient, channelId: string, text: string, mediaUrl: string, mediaLocalRoots: readonly string[] | undefined, replyTo: string | undefined, request: DiscordRequest, maxLinesPerMessage?: number, components?: DiscordSendComponents, embeds?: DiscordSendEmbeds, chunkMode?: ChunkMode, silent?: boolean): Promise<{
+declare function sendDiscordMedia(rest: RequestClient, channelId: string, text: string, mediaUrl: string, mediaLocalRoots: readonly string[] | undefined, maxBytes: number | undefined, replyTo: string | undefined, request: DiscordRequest, maxLinesPerMessage?: number, components?: DiscordSendComponents, embeds?: DiscordSendEmbeds, chunkMode?: ChunkMode, silent?: boolean): Promise<{
     id: string;
     channel_id: string;
 }>;

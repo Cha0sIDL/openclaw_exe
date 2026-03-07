@@ -55,17 +55,47 @@ export declare function buildBaseAccountStatusSnapshot(params: {
     runtime?: RuntimeLifecycleSnapshot | null;
     probe?: unknown;
 }): {
-    accountId: string;
-    name: string | undefined;
-    enabled: boolean | undefined;
-    configured: boolean | undefined;
+    lastInboundAt: number | null;
+    lastOutboundAt: number | null;
     running: boolean;
     lastStartAt: number | null;
     lastStopAt: number | null;
     lastError: string | null;
     probe: unknown;
+    accountId: string;
+    name: string | undefined;
+    enabled: boolean | undefined;
+    configured: boolean | undefined;
+};
+export declare function buildComputedAccountStatusSnapshot(params: {
+    accountId: string;
+    name?: string;
+    enabled?: boolean;
+    configured?: boolean;
+    runtime?: RuntimeLifecycleSnapshot | null;
+    probe?: unknown;
+}): {
     lastInboundAt: number | null;
     lastOutboundAt: number | null;
+    running: boolean;
+    lastStartAt: number | null;
+    lastStopAt: number | null;
+    lastError: string | null;
+    probe: unknown;
+    accountId: string;
+    name: string | undefined;
+    enabled: boolean | undefined;
+    configured: boolean | undefined;
+};
+export declare function buildRuntimeAccountStatusSnapshot(params: {
+    runtime?: RuntimeLifecycleSnapshot | null;
+    probe?: unknown;
+}): {
+    running: boolean;
+    lastStartAt: number | null;
+    lastStopAt: number | null;
+    lastError: string | null;
+    probe: unknown;
 };
 export declare function buildTokenChannelStatusSummary(snapshot: {
     configured?: boolean | null;

@@ -1,9 +1,10 @@
 import type { AgentToolResult } from "@mariozechner/pi-agent-core";
-import type { ExecAsk, ExecHost, ExecSecurity } from "../infra/exec-approvals.js";
+import { type ExecHost } from "../infra/exec-approvals.js";
 import type { ProcessSession } from "./bash-process-registry.js";
 import type { ExecToolDetails } from "./bash-tools.exec-types.js";
 import type { BashSandboxConfig } from "./bash-tools.shared.js";
 export { applyPathPrepend, findPathKey, normalizePathPrepend } from "../infra/path-prepend.js";
+export { normalizeExecAsk, normalizeExecHost, normalizeExecSecurity, } from "../infra/exec-approvals.js";
 export declare function sanitizeHostBaseEnv(env: Record<string, string>): Record<string, string>;
 export declare function validateHostEnv(env: Record<string, string>): void;
 export declare const DEFAULT_MAX_OUTPUT: number;
@@ -42,9 +43,6 @@ export type ExecProcessHandle = {
     promise: Promise<ExecProcessOutcome>;
     kill: () => void;
 };
-export declare function normalizeExecHost(value?: string | null): ExecHost | null;
-export declare function normalizeExecSecurity(value?: string | null): ExecSecurity | null;
-export declare function normalizeExecAsk(value?: string | null): ExecAsk | null;
 export declare function renderExecHostLabel(host: ExecHost): "sandbox" | "gateway" | "node";
 export declare function normalizeNotifyOutput(value: string): string;
 export declare function applyShellPath(env: Record<string, string>, shellPath?: string | null): void;

@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-
 //#region src/infra/tmp-openclaw-dir.ts
 const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
 const TMP_DIR_ACCESS_MODE = fs.constants.W_OK | fs.constants.X_OK;
@@ -83,7 +82,7 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
 	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
 	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return POSIX_OPENCLAW_TMP_DIR;
+		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
 		return ensureTrustedFallbackDir();
 	}
 	try {
@@ -93,12 +92,11 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 			mode: 448
 		});
 		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState(POSIX_OPENCLAW_TMP_DIR) !== "available" && !tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return ensureTrustedFallbackDir();
+		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
 		return POSIX_OPENCLAW_TMP_DIR;
 	} catch {
 		return ensureTrustedFallbackDir();
 	}
 }
-
 //#endregion
 export { resolvePreferredOpenClawTmpDir };

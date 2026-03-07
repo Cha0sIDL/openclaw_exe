@@ -3,7 +3,6 @@ import path from "node:path";
 import "tslog";
 import os from "node:os";
 import "json5";
-
 //#region src/infra/diagnostic-events.ts
 function getDiagnosticEventsState() {
 	const globalStore = globalThis;
@@ -41,7 +40,6 @@ function onDiagnosticEvent(listener) {
 		state.listeners.delete(listener);
 	};
 }
-
 //#endregion
 //#region src/infra/tmp-openclaw-dir.ts
 const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
@@ -124,7 +122,7 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
 	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
 	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return POSIX_OPENCLAW_TMP_DIR;
+		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
 		return ensureTrustedFallbackDir();
 	}
 	try {
@@ -134,13 +132,12 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 			mode: 448
 		});
 		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState(POSIX_OPENCLAW_TMP_DIR) !== "available" && !tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return ensureTrustedFallbackDir();
+		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
 		return POSIX_OPENCLAW_TMP_DIR;
 	} catch {
 		return ensureTrustedFallbackDir();
 	}
 }
-
 //#endregion
 //#region src/infra/home-dir.ts
 function normalize(value) {
@@ -183,7 +180,6 @@ function expandHomePrefix(input, opts) {
 	if (!home) return input;
 	return input.replace(/^~(?=$|[\\/])/, home);
 }
-
 //#endregion
 //#region src/config/paths.ts
 /**
@@ -196,7 +192,7 @@ function expandHomePrefix(input, opts) {
 function resolveIsNixMode(env = process.env) {
 	return env.OPENCLAW_NIX_MODE === "1";
 }
-const isNixMode = resolveIsNixMode();
+resolveIsNixMode();
 const LEGACY_STATE_DIRNAMES = [
 	".clawdbot",
 	".moldbot",
@@ -258,7 +254,7 @@ function resolveUserPath(input, env = process.env, homedir = envHomedir(env)) {
 	}
 	return path.resolve(trimmed);
 }
-const STATE_DIR = resolveStateDir();
+resolveStateDir();
 /**
 * Config file path (JSON5).
 * Can be overridden via OPENCLAW_CONFIG_PATH.
@@ -285,7 +281,7 @@ function resolveConfigPathCandidate(env = process.env, homedir = envHomedir(env)
 	if (existing) return existing;
 	return resolveCanonicalConfigPath(env, resolveStateDir(env, homedir));
 }
-const CONFIG_PATH = resolveConfigPathCandidate();
+resolveConfigPathCandidate();
 /**
 * Resolve default config path candidates across default locations.
 * Order: explicit config path → state-dir-derived paths → new default.
@@ -308,7 +304,6 @@ function resolveDefaultConfigCandidates(env = process.env, homedir = envHomedir(
 	}
 	return candidates;
 }
-
 //#endregion
 //#region src/logging/state.ts
 const loggingState = {
@@ -325,7 +320,6 @@ const loggingState = {
 	streamErrorHandlersInstalled: false,
 	rawConsole: null
 };
-
 //#endregion
 //#region src/logging/node-require.ts
 function resolveNodeRequireFromMeta(metaUrl) {
@@ -339,14 +333,11 @@ function resolveNodeRequireFromMeta(metaUrl) {
 		return null;
 	}
 }
-
 //#endregion
 //#region src/logging/logger.ts
 const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
-const DEFAULT_LOG_FILE = path.join(DEFAULT_LOG_DIR, "openclaw.log");
-const MAX_LOG_AGE_MS = 1440 * 60 * 1e3;
-const DEFAULT_MAX_LOG_FILE_BYTES = 500 * 1024 * 1024;
-const requireConfig$1 = resolveNodeRequireFromMeta(import.meta.url);
+path.join(DEFAULT_LOG_DIR, "openclaw.log");
+resolveNodeRequireFromMeta(import.meta.url);
 const externalTransports = /* @__PURE__ */ new Set();
 function attachExternalTransport(logger, transport) {
 	logger.attachTransport((logObj) => {
@@ -364,7 +355,6 @@ function registerLogTransport(transport) {
 		externalTransports.delete(transport);
 	};
 }
-
 //#endregion
 //#region src/security/safe-regex.ts
 const SAFE_REGEX_CACHE_MAX = 256;
@@ -568,20 +558,14 @@ function compileSafeRegex(source, flags = "") {
 	}
 	return compiled;
 }
-
-//#endregion
-//#region src/logging/redact-bounded.ts
-const REDACT_REGEX_CHUNK_THRESHOLD = 32768;
-const REDACT_REGEX_CHUNK_SIZE = 16384;
 function replacePatternBounded(text, pattern, replacer, options) {
-	const chunkThreshold = options?.chunkThreshold ?? REDACT_REGEX_CHUNK_THRESHOLD;
-	const chunkSize = options?.chunkSize ?? REDACT_REGEX_CHUNK_SIZE;
+	const chunkThreshold = options?.chunkThreshold ?? 32768;
+	const chunkSize = options?.chunkSize ?? 16384;
 	if (chunkThreshold <= 0 || chunkSize <= 0 || text.length <= chunkThreshold) return text.replace(pattern, replacer);
 	let output = "";
 	for (let index = 0; index < text.length; index += chunkSize) output += text.slice(index, index + chunkSize).replace(pattern, replacer);
 	return output;
 }
-
 //#endregion
 //#region src/logging/redact.ts
 const requireConfig = resolveNodeRequireFromMeta(import.meta.url);
@@ -664,7 +648,6 @@ function redactSensitiveText(text, options) {
 	if (!patterns.length) return text;
 	return redactText(text, patterns);
 }
-
 //#endregion
 //#region src/plugins/config-schema.ts
 function error(message) {
@@ -697,6 +680,5 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 export { emitDiagnosticEvent, emptyPluginConfigSchema, onDiagnosticEvent, redactSensitiveText, registerLogTransport };

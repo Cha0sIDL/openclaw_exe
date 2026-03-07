@@ -30,7 +30,7 @@ export type OAuthCredential = OAuthCredentials & {
     email?: string;
 };
 export type AuthProfileCredential = ApiKeyCredential | TokenCredential | OAuthCredential;
-export type AuthProfileFailureReason = "auth" | "auth_permanent" | "format" | "rate_limit" | "billing" | "timeout" | "model_not_found" | "session_expired" | "unknown";
+export type AuthProfileFailureReason = "auth" | "auth_permanent" | "format" | "overloaded" | "rate_limit" | "billing" | "timeout" | "model_not_found" | "session_expired" | "unknown";
 /** Per-profile usage statistics for round-robin and cooldown tracking */
 export type ProfileUsageStats = {
     lastUsed?: number;

@@ -1,5 +1,5 @@
 export declare const BrowserToolSchema: import("@sinclair/typebox").TObject<{
-    action: import("@sinclair/typebox").TUnsafe<"close" | "stop" | "open" | "start" | "status" | "console" | "navigate" | "profiles" | "snapshot" | "focus" | "upload" | "tabs" | "screenshot" | "pdf" | "dialog" | "act">;
+    action: import("@sinclair/typebox").TUnsafe<"close" | "stop" | "open" | "start" | "status" | "console" | "navigate" | "profiles" | "snapshot" | "dialog" | "pdf" | "screenshot" | "tabs" | "focus" | "upload" | "act">;
     target: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnsafe<"sandbox" | "node" | "host">>;
     node: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     profile: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -27,7 +27,7 @@ export declare const BrowserToolSchema: import("@sinclair/typebox").TObject<{
     timeoutMs: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNumber>;
     accept: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     promptText: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
-    kind: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnsafe<"fill" | "close" | "type" | "resize" | "wait" | "select" | "click" | "drag" | "evaluate" | "hover" | "press">>;
+    kind: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnsafe<"fill" | "close" | "type" | "resize" | "click" | "press" | "hover" | "drag" | "select" | "wait" | "evaluate">>;
     doubleClick: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     button: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     modifiers: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
@@ -47,7 +47,7 @@ export declare const BrowserToolSchema: import("@sinclair/typebox").TObject<{
     loadState: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     fn: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
     request: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TObject<{
-        kind: import("@sinclair/typebox").TUnsafe<"fill" | "close" | "type" | "resize" | "wait" | "select" | "click" | "drag" | "evaluate" | "hover" | "press">;
+        kind: import("@sinclair/typebox").TUnsafe<"fill" | "close" | "type" | "resize" | "click" | "press" | "hover" | "drag" | "select" | "wait" | "evaluate">;
         targetId: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         ref: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
         doubleClick: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;

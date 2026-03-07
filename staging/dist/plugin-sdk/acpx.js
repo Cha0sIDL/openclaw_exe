@@ -1,6 +1,5 @@
 import { readFileSync, statSync } from "node:fs";
 import path from "node:path";
-
 //#region src/acp/runtime/errors.ts
 var AcpRuntimeError = class extends Error {
 	constructor(code, message, options) {
@@ -10,7 +9,6 @@ var AcpRuntimeError = class extends Error {
 		this.cause = options?.cause;
 	}
 };
-
 //#endregion
 //#region src/acp/runtime/registry.ts
 const ACP_RUNTIME_REGISTRY_STATE_KEY = Symbol.for("openclaw.acpRuntimeRegistryState");
@@ -40,7 +38,6 @@ function unregisterAcpRuntimeBackend(id) {
 	if (!normalized) return;
 	ACP_BACKENDS_BY_ID.delete(normalized);
 }
-
 //#endregion
 //#region src/plugin-sdk/windows-spawn.ts
 function isFilePath(candidate) {
@@ -181,6 +178,5 @@ function materializeWindowsSpawnProgram(program, argv) {
 		windowsHide: program.windowsHide
 	};
 }
-
 //#endregion
 export { AcpRuntimeError, applyWindowsSpawnProgramPolicy, materializeWindowsSpawnProgram, registerAcpRuntimeBackend, resolveWindowsSpawnProgramCandidate, unregisterAcpRuntimeBackend };

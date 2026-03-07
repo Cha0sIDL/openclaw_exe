@@ -17,7 +17,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 # Ensure D:\nodejs and npm global bin are on PATH for this session
-foreach ($p in @('D:\nodejs', 'C:\Users\Administrator\AppData\Roaming\npm', 'E:\Git\cmd')) {
+foreach ($p in @('D:\nodejs', 'C:\Users\Administrator\AppData\Roaming\npm', 'E:\Git\bin', 'E:\Git\cmd')) {
     if ((Test-Path $p) -and ($env:PATH -notlike "*$p*")) {
         $env:PATH = "$p;$env:PATH"
     }

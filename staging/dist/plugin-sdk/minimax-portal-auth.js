@@ -1,5 +1,4 @@
 import { createHash, randomBytes } from "node:crypto";
-
 //#region src/plugins/config-schema.ts
 function error(message) {
 	return {
@@ -31,7 +30,28 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
+//#endregion
+//#region src/plugin-sdk/provider-auth-result.ts
+function buildOauthProviderAuthResult(params) {
+	const email = params.email ?? void 0;
+	return {
+		profiles: [{
+			profileId: `${params.profilePrefix ?? params.providerId}:${email ?? "default"}`,
+			credential: {
+				type: "oauth",
+				provider: params.providerId,
+				access: params.access,
+				...params.refresh ? { refresh: params.refresh } : {},
+				...Number.isFinite(params.expires) ? { expires: params.expires } : {},
+				...email ? { email } : {},
+				...params.credentialExtra
+			}
+		}],
+		configPatch: params.configPatch ?? { agents: { defaults: { models: { [params.defaultModel]: {} } } } },
+		defaultModel: params.defaultModel,
+		notes: params.notes
+	};
+}
 //#endregion
 //#region src/plugin-sdk/oauth-utils.ts
 function toFormUrlEncoded(data) {
@@ -44,6 +64,5 @@ function generatePkceVerifierChallenge() {
 		challenge: createHash("sha256").update(verifier).digest("base64url")
 	};
 }
-
 //#endregion
-export { emptyPluginConfigSchema, generatePkceVerifierChallenge, toFormUrlEncoded };
+export { buildOauthProviderAuthResult, emptyPluginConfigSchema, generatePkceVerifierChallenge, toFormUrlEncoded };

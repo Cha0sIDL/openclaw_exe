@@ -1,5 +1,4 @@
 import { Type } from "@sinclair/typebox";
-
 //#region src/channels/plugins/agent-tools/whatsapp-login.ts
 function createWhatsAppLoginTool() {
 	return {
@@ -16,7 +15,7 @@ function createWhatsAppLoginTool() {
 			force: Type.Optional(Type.Boolean())
 		}),
 		execute: async (_toolCallId, args) => {
-			const { startWebLoginWithQr, waitForWebLogin } = await import("../../../login-qr-CS9lzZZi.js");
+			const { startWebLoginWithQr, waitForWebLogin } = await import("../../../login-qr-B-YWmL1v.js");
 			if ((args?.action ?? "start") === "wait") {
 				const result = await waitForWebLogin({ timeoutMs: typeof args.timeoutMs === "number" ? args.timeoutMs : void 0 });
 				return {
@@ -54,6 +53,5 @@ function createWhatsAppLoginTool() {
 		}
 	};
 }
-
 //#endregion
 export { createWhatsAppLoginTool };

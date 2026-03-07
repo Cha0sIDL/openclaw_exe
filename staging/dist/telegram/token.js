@@ -1,7 +1,6 @@
-import { n as normalizeAccountId, t as DEFAULT_ACCOUNT_ID } from "../account-id-JwW97xNZ.js";
-import { r as normalizeResolvedSecretInputString } from "../types.secrets-CnuIGXr5.js";
+import { n as normalizeAccountId, t as DEFAULT_ACCOUNT_ID } from "../account-id-DQE6gyMr.js";
+import { r as normalizeResolvedSecretInputString } from "../types.secrets-D9YNIyIP.js";
 import fs from "node:fs";
-
 //#region src/telegram/token.ts
 function resolveTelegramToken(cfg, opts = {}) {
 	const accountId = normalizeAccountId(opts.accountId);
@@ -14,7 +13,7 @@ function resolveTelegramToken(cfg, opts = {}) {
 		const matchKey = Object.keys(accounts).find((key) => normalizeAccountId(key) === id);
 		return matchKey ? accounts[matchKey] : void 0;
 	};
-	const accountCfg = resolveAccountCfg(accountId !== DEFAULT_ACCOUNT_ID ? accountId : DEFAULT_ACCOUNT_ID);
+	const accountCfg = resolveAccountCfg(accountId !== "default" ? accountId : DEFAULT_ACCOUNT_ID);
 	const accountTokenFile = accountCfg?.tokenFile?.trim();
 	if (accountTokenFile) {
 		if (!fs.existsSync(accountTokenFile)) {
@@ -92,6 +91,5 @@ function resolveTelegramToken(cfg, opts = {}) {
 		source: "none"
 	};
 }
-
 //#endregion
 export { resolveTelegramToken };

@@ -7,7 +7,6 @@ const BLOCKED_OBJECT_KEYS = new Set([
 function isBlockedObjectKey(key) {
 	return BLOCKED_OBJECT_KEYS.has(key);
 }
-
 //#endregion
 //#region src/routing/account-id.ts
 const DEFAULT_ACCOUNT_ID = "default";
@@ -32,7 +31,7 @@ function normalizeAccountId(value) {
 	if (!trimmed) return DEFAULT_ACCOUNT_ID;
 	const cached = normalizeAccountIdCache.get(trimmed);
 	if (cached) return cached;
-	const normalized = normalizeCanonicalAccountId(trimmed) || DEFAULT_ACCOUNT_ID;
+	const normalized = normalizeCanonicalAccountId(trimmed) || "default";
 	setNormalizeCache(normalizeAccountIdCache, trimmed, normalized);
 	return normalized;
 }
@@ -50,6 +49,5 @@ function setNormalizeCache(cache, key, value) {
 	const oldest = cache.keys().next();
 	if (!oldest.done) cache.delete(oldest.value);
 }
-
 //#endregion
 export { DEFAULT_ACCOUNT_ID, normalizeAccountId, normalizeOptionalAccountId };

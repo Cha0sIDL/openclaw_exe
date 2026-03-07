@@ -1,9 +1,8 @@
-import { c as resolveStateDir } from "../../paths-C6TxBCvO.js";
-import { t as createSubsystemLogger } from "../../subsystem-D7UWJNhH.js";
+import { c as resolveStateDir } from "../../paths-hfkBoC7i.js";
+import { t as createSubsystemLogger } from "../../subsystem-C4EPfZvP.js";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-
 //#region src/hooks/bundled/command-logger/handler.ts
 /**
 * Example hook handler: Log all commands to a file
@@ -53,6 +52,5 @@ const logCommand = async (event) => {
 		log.error(`Failed to log command: ${message}`);
 	}
 };
-
 //#endregion
 export { logCommand as default };

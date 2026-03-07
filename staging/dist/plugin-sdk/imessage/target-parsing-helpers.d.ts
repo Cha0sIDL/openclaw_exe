@@ -19,11 +19,36 @@ export type ParsedChatTarget = {
     kind: "chat_identifier";
     chatIdentifier: string;
 };
+export type ParsedChatAllowTarget = ParsedChatTarget | {
+    kind: "handle";
+    handle: string;
+};
+export type ChatSenderAllowParams = {
+    allowFrom: Array<string | number>;
+    sender: string;
+    chatId?: number | null;
+    chatGuid?: string | null;
+    chatIdentifier?: string | null;
+};
 export declare function resolveServicePrefixedTarget<TService extends string, TTarget>(params: {
     trimmed: string;
     lower: string;
     servicePrefixes: Array<ServicePrefix<TService>>;
     isChatTarget: (remainderLower: string) => boolean;
+    parseTarget: (remainder: string) => TTarget;
+}): ({
+    kind: "handle";
+    to: string;
+    service: TService;
+} | TTarget) | null;
+export declare function resolveServicePrefixedChatTarget<TService extends string, TTarget>(params: {
+    trimmed: string;
+    lower: string;
+    servicePrefixes: Array<ServicePrefix<TService>>;
+    chatIdPrefixes: string[];
+    chatGuidPrefixes: string[];
+    chatIdentifierPrefixes: string[];
+    extraChatPrefixes?: string[];
     parseTarget: (remainder: string) => TTarget;
 }): ({
     kind: "handle";
@@ -42,4 +67,19 @@ export declare function resolveServicePrefixedAllowTarget<TAllowTarget>(params: 
     kind: "handle";
     handle: string;
 }) | null;
+export declare function resolveServicePrefixedOrChatAllowTarget<TAllowTarget extends ParsedChatAllowTarget>(params: {
+    trimmed: string;
+    lower: string;
+    servicePrefixes: Array<{
+        prefix: string;
+    }>;
+    parseAllowTarget: (remainder: string) => TAllowTarget;
+    chatIdPrefixes: string[];
+    chatGuidPrefixes: string[];
+    chatIdentifierPrefixes: string[];
+}): TAllowTarget | null;
+export declare function createAllowedChatSenderMatcher<TParsed extends ParsedChatAllowTarget>(params: {
+    normalizeSender: (sender: string) => string;
+    parseAllowTarget: (entry: string) => TParsed;
+}): (input: ChatSenderAllowParams) => boolean;
 export declare function parseChatAllowTargetPrefixes(params: ChatTargetPrefixesParams): ParsedChatTarget | null;

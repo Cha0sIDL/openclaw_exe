@@ -8,13 +8,10 @@ import chalk, { Chalk } from "chalk";
 import { lookup } from "node:dns";
 import { lookup as lookup$1 } from "node:dns/promises";
 import ipaddr from "ipaddr.js";
-
-//#region src/infra/cli-root-options.ts
-const FLAG_TERMINATOR = "--";
 const ROOT_BOOLEAN_FLAGS = new Set(["--dev", "--no-color"]);
 const ROOT_VALUE_FLAGS = new Set(["--profile", "--log-level"]);
 function isValueToken(arg) {
-	if (!arg || arg === FLAG_TERMINATOR) return false;
+	if (!arg || arg === "--") return false;
 	if (!arg.startsWith("-")) return true;
 	return /^-\d+(?:\.\d+)?$/.test(arg);
 }
@@ -26,7 +23,6 @@ function consumeRootOptionToken(args, index) {
 	if (ROOT_VALUE_FLAGS.has(arg)) return isValueToken(args[index + 1]) ? 2 : 1;
 	return 0;
 }
-
 //#endregion
 //#region src/cli/argv.ts
 function getCommandPathWithRootOptions(argv, depth = 2) {
@@ -52,7 +48,6 @@ function getCommandPathInternal(argv, depth, opts) {
 	}
 	return path;
 }
-
 //#endregion
 //#region src/infra/tmp-openclaw-dir.ts
 const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
@@ -135,7 +130,7 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
 	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
 	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return POSIX_OPENCLAW_TMP_DIR;
+		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
 		return ensureTrustedFallbackDir();
 	}
 	try {
@@ -145,13 +140,12 @@ function resolvePreferredOpenClawTmpDir(options = {}) {
 			mode: 448
 		});
 		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState(POSIX_OPENCLAW_TMP_DIR) !== "available" && !tryRepairWritableBits(POSIX_OPENCLAW_TMP_DIR)) return ensureTrustedFallbackDir();
+		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
 		return POSIX_OPENCLAW_TMP_DIR;
 	} catch {
 		return ensureTrustedFallbackDir();
 	}
 }
-
 //#endregion
 //#region src/infra/home-dir.ts
 function normalize(value) {
@@ -194,7 +188,6 @@ function expandHomePrefix(input, opts) {
 	if (!home) return input;
 	return input.replace(/^~(?=$|[\\/])/, home);
 }
-
 //#endregion
 //#region src/config/paths.ts
 /**
@@ -207,7 +200,7 @@ function expandHomePrefix(input, opts) {
 function resolveIsNixMode(env = process.env) {
 	return env.OPENCLAW_NIX_MODE === "1";
 }
-const isNixMode = resolveIsNixMode();
+resolveIsNixMode();
 const LEGACY_STATE_DIRNAMES = [
 	".clawdbot",
 	".moldbot",
@@ -269,7 +262,7 @@ function resolveUserPath(input, env = process.env, homedir = envHomedir(env)) {
 	}
 	return path.resolve(trimmed);
 }
-const STATE_DIR = resolveStateDir();
+resolveStateDir();
 /**
 * Config file path (JSON5).
 * Can be overridden via OPENCLAW_CONFIG_PATH.
@@ -317,7 +310,7 @@ function resolveConfigPath(env = process.env, stateDir = resolveStateDir(env, en
 	if (path.resolve(stateDir) === path.resolve(defaultStateDir)) return resolveConfigPathCandidate(env, homedir);
 	return path.join(stateDir, CONFIG_FILENAME);
 }
-const CONFIG_PATH = resolveConfigPathCandidate();
+resolveConfigPathCandidate();
 /**
 * Resolve default config path candidates across default locations.
 * Order: explicit config path → state-dir-derived paths → new default.
@@ -340,7 +333,6 @@ function resolveDefaultConfigCandidates(env = process.env, homedir = envHomedir(
 	}
 	return candidates;
 }
-
 //#endregion
 //#region src/logging/config.ts
 function readLoggingConfig() {
@@ -355,7 +347,6 @@ function readLoggingConfig() {
 		return;
 	}
 }
-
 //#endregion
 //#region src/logging/levels.ts
 const ALLOWED_LOG_LEVELS = [
@@ -386,7 +377,6 @@ function levelToMinLevel(level) {
 		silent: Number.POSITIVE_INFINITY
 	}[level];
 }
-
 //#endregion
 //#region src/logging/state.ts
 const loggingState = {
@@ -403,7 +393,6 @@ const loggingState = {
 	streamErrorHandlersInstalled: false,
 	rawConsole: null
 };
-
 //#endregion
 //#region src/logging/env-log-level.ts
 function resolveEnvLogLevelOverride() {
@@ -423,7 +412,6 @@ function resolveEnvLogLevelOverride() {
 		process.stderr.write(`[openclaw] Ignoring invalid OPENCLAW_LOG_LEVEL="${trimmed}" (allowed: ${ALLOWED_LOG_LEVELS.join("|")}).\n`);
 	}
 }
-
 //#endregion
 //#region src/logging/node-require.ts
 function resolveNodeRequireFromMeta(metaUrl) {
@@ -437,7 +425,6 @@ function resolveNodeRequireFromMeta(metaUrl) {
 		return null;
 	}
 }
-
 //#endregion
 //#region src/logging/timestamps.ts
 function isValidTimeZone(tz) {
@@ -468,11 +455,10 @@ function formatLocalIsoWithOffset(now, timeZone) {
 	const offset = offsetRaw === "GMT" ? "+00:00" : offsetRaw.slice(3);
 	return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}.${parts.fractionalSecond}${offset}`;
 }
-
 //#endregion
 //#region src/logging/logger.ts
 const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
-const DEFAULT_LOG_FILE = path.join(DEFAULT_LOG_DIR, "openclaw.log");
+path.join(DEFAULT_LOG_DIR, "openclaw.log");
 const LOG_PREFIX = "openclaw";
 const LOG_SUFFIX = ".log";
 const MAX_LOG_AGE_MS = 1440 * 60 * 1e3;
@@ -632,7 +618,6 @@ function pruneOldRollingLogs(dir) {
 		}
 	} catch {}
 }
-
 //#endregion
 //#region src/terminal/palette.ts
 const LOBSTER_PALETTE = {
@@ -645,7 +630,6 @@ const LOBSTER_PALETTE = {
 	error: "#E23D2D",
 	muted: "#8B7F77"
 };
-
 //#endregion
 //#region src/terminal/theme.ts
 const hasForceColor = typeof process.env.FORCE_COLOR === "string" && process.env.FORCE_COLOR.trim().length > 0 && process.env.FORCE_COLOR.trim() !== "0";
@@ -664,18 +648,16 @@ const theme = {
 	command: hex(LOBSTER_PALETTE.accentBright),
 	option: hex(LOBSTER_PALETTE.warn)
 };
-
 //#endregion
 //#region src/globals.ts
 let globalVerbose = false;
 function isVerbose() {
 	return globalVerbose;
 }
-const success = theme.success;
+theme.success;
 const warn = theme.warn;
-const info = theme.info;
-const danger = theme.error;
-
+theme.info;
+theme.error;
 //#endregion
 //#region src/terminal/progress-line.ts
 let activeStream = null;
@@ -683,7 +665,6 @@ function clearActiveProgressLine() {
 	if (!activeStream?.isTTY) return;
 	activeStream.write("\r\x1B[2K");
 }
-
 //#endregion
 //#region src/terminal/restore.ts
 const RESET_SEQUENCE = "\x1B[0m\x1B[?25h\x1B[?1000l\x1B[?1002l\x1B[?1003l\x1B[?1006l\x1B[?2004l";
@@ -722,7 +703,6 @@ function restoreTerminalState(reason, options = {}) {
 		reportRestoreFailure("stdout reset", err, reason);
 	}
 }
-
 //#endregion
 //#region src/runtime.ts
 function shouldEmitRuntimeLog(env = process.env) {
@@ -751,14 +731,12 @@ const defaultRuntime = {
 		throw new Error("unreachable");
 	}
 };
-
 //#endregion
 //#region src/terminal/ansi.ts
 const ANSI_SGR_PATTERN = "\\x1b\\[[0-9;]*m";
 const OSC8_PATTERN = "\\x1b\\]8;;.*?\\x1b\\\\|\\x1b\\]8;;\\x1b\\\\";
-const ANSI_REGEX = new RegExp(ANSI_SGR_PATTERN, "g");
-const OSC8_REGEX = new RegExp(OSC8_PATTERN, "g");
-
+new RegExp(ANSI_SGR_PATTERN, "g");
+new RegExp(OSC8_PATTERN, "g");
 //#endregion
 //#region src/logging/console.ts
 const requireConfig = resolveNodeRequireFromMeta(import.meta.url);
@@ -821,14 +799,13 @@ function formatConsoleTimestamp(style) {
 	if (style === "pretty") return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 	return formatLocalIsoWithOffset(now);
 }
-
 //#endregion
 //#region src/logging/subsystem.ts
 function shouldLogToConsole(level, settings) {
 	if (settings.level === "silent") return false;
 	return levelToMinLevel(level) <= levelToMinLevel(settings.level);
 }
-const inspectValue = (() => {
+(() => {
 	const getBuiltinModule = process.getBuiltinModule;
 	if (typeof getBuiltinModule !== "function") return null;
 	try {
@@ -1002,7 +979,6 @@ function createSubsystemLogger(subsystem) {
 		child: (name) => createSubsystemLogger(`${subsystem}/${name}`)
 	};
 }
-
 //#endregion
 //#region src/logger.ts
 const subsystemPrefixRe = /^([a-z][a-z0-9-]{1,20}):\s+(.*)$/i;
@@ -1034,7 +1010,6 @@ function logWarn(message, runtime = defaultRuntime) {
 		subsystemMethod: "warn"
 	});
 }
-
 //#endregion
 //#region src/utils/fetch-timeout.ts
 /**
@@ -1048,7 +1023,6 @@ function relayAbort() {
 function bindAbortRelay(controller) {
 	return relayAbort.bind(controller);
 }
-
 //#endregion
 //#region src/infra/net/proxy-env.ts
 const PROXY_ENV_KEYS = [
@@ -1066,7 +1040,6 @@ function hasProxyEnvConfigured(env = process.env) {
 	}
 	return false;
 }
-
 //#endregion
 //#region src/shared/net/ip.ts
 const BLOCKED_IPV4_SPECIAL_USE_RANGES = new Set([
@@ -1197,7 +1170,6 @@ function extractEmbeddedIpv4FromIpv6(address) {
 		return decodeIpv4FromHextets(high, low);
 	}
 }
-
 //#endregion
 //#region src/infra/net/hostname.ts
 function normalizeHostname(hostname) {
@@ -1205,7 +1177,6 @@ function normalizeHostname(hostname) {
 	if (normalized.startsWith("[") && normalized.endsWith("]")) return normalized.slice(1, -1);
 	return normalized;
 }
-
 //#endregion
 //#region src/infra/net/ssrf.ts
 var SsrFBlockedError = class extends Error {
@@ -1370,7 +1341,6 @@ async function closeDispatcher(dispatcher) {
 		if (typeof candidate.destroy === "function") candidate.destroy();
 	} catch {}
 }
-
 //#endregion
 //#region src/infra/net/fetch-guard.ts
 const GUARDED_FETCH_MODE = {
@@ -1508,7 +1478,6 @@ async function fetchWithSsrFGuard(params) {
 		}
 	}
 }
-
 //#endregion
 //#region src/infra/wsl.ts
 function isWSLEnv() {
@@ -1541,7 +1510,6 @@ function isWSL2Sync() {
 		return false;
 	}
 }
-
 //#endregion
 //#region src/plugins/config-schema.ts
 function error(message) {
@@ -1574,7 +1542,6 @@ function emptyPluginConfigSchema() {
 		}
 	};
 }
-
 //#endregion
 //#region src/plugin-sdk/provider-auth-result.ts
 function buildOauthProviderAuthResult(params) {
@@ -1597,6 +1564,5 @@ function buildOauthProviderAuthResult(params) {
 		notes: params.notes
 	};
 }
-
 //#endregion
 export { buildOauthProviderAuthResult, emptyPluginConfigSchema, fetchWithSsrFGuard, isWSL2Sync };

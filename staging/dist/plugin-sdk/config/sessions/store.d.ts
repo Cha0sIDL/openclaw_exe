@@ -44,6 +44,13 @@ type SessionStoreLockOptions = {
     pollIntervalMs?: number;
     staleMs?: number;
 };
+export declare function archiveRemovedSessionTranscripts(params: {
+    removedSessionFiles: Iterable<[string, string | undefined]>;
+    referencedSessionIds: ReadonlySet<string>;
+    storePath: string;
+    reason: "deleted" | "reset";
+    restrictToStoreDir?: boolean;
+}): Set<string>;
 export declare function updateSessionStoreEntry(params: {
     storePath: string;
     sessionKey: string;

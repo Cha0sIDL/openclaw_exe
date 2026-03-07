@@ -7,4 +7,14 @@ export declare function createLoggerBackedRuntime(params: {
     logger: LoggerLike;
     exitError?: (code: number) => Error;
 }): RuntimeEnv;
+export declare function resolveRuntimeEnv(params: {
+    runtime?: RuntimeEnv;
+    logger: LoggerLike;
+    exitError?: (code: number) => Error;
+}): RuntimeEnv;
+export declare function resolveRuntimeEnvWithUnavailableExit(params: {
+    runtime?: RuntimeEnv;
+    logger: LoggerLike;
+    unavailableMessage?: string;
+}): RuntimeEnv;
 export {};

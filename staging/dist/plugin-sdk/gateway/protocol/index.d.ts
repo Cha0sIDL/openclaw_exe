@@ -12,6 +12,8 @@ export declare const validateConnectParams: AjvPkg.ValidateFunction<{
         deviceToken?: string | undefined;
     } | undefined;
     role?: string | undefined;
+    userAgent?: string | undefined;
+    locale?: string | undefined;
     scopes?: string[] | undefined;
     device?: {
         id: string;
@@ -22,8 +24,6 @@ export declare const validateConnectParams: AjvPkg.ValidateFunction<{
     } | undefined;
     caps?: string[] | undefined;
     pathEnv?: string | undefined;
-    locale?: string | undefined;
-    userAgent?: string | undefined;
     minProtocol: number;
     maxProtocol: number;
     client: {
@@ -85,8 +85,8 @@ export declare const validatePollParams: AjvPkg.ValidateFunction<{
     isAnonymous?: boolean | undefined;
     options: string[];
     to: string;
-    idempotencyKey: string;
     question: string;
+    idempotencyKey: string;
 }>;
 export declare const validateAgentParams: AjvPkg.ValidateFunction<{
     message: any;
@@ -175,8 +175,8 @@ export declare const validateNodeInvokeParams: AjvPkg.ValidateFunction<{
     timeoutMs?: number | undefined;
     params?: unknown;
     command: string;
-    idempotencyKey: string;
     nodeId: string;
+    idempotencyKey: string;
 }>;
 export declare const validateNodeInvokeResultParams: AjvPkg.ValidateFunction<{
     payload?: unknown;
@@ -287,15 +287,15 @@ export declare const validateConfigSetParams: AjvPkg.ValidateFunction<{
 }>;
 export declare const validateConfigApplyParams: AjvPkg.ValidateFunction<{
     sessionKey?: string | undefined;
-    baseHash?: string | undefined;
     note?: string | undefined;
+    baseHash?: string | undefined;
     restartDelayMs?: number | undefined;
     raw: string;
 }>;
 export declare const validateConfigPatchParams: AjvPkg.ValidateFunction<{
     sessionKey?: string | undefined;
-    baseHash?: string | undefined;
     note?: string | undefined;
+    baseHash?: string | undefined;
     restartDelayMs?: number | undefined;
     raw: string;
 }>;
@@ -310,9 +310,9 @@ export declare const validateConfigSchemaLookupResult: AjvPkg.ValidateFunction<{
         label?: string | undefined;
         order?: number | undefined;
         tags?: string[] | undefined;
+        placeholder?: string | undefined;
         help?: string | undefined;
         sensitive?: boolean | undefined;
-        placeholder?: string | undefined;
         itemTemplate?: unknown;
     } | undefined;
     hintPath?: string | undefined;
@@ -326,9 +326,9 @@ export declare const validateConfigSchemaLookupResult: AjvPkg.ValidateFunction<{
             label?: string | undefined;
             order?: number | undefined;
             tags?: string[] | undefined;
+            placeholder?: string | undefined;
             help?: string | undefined;
             sensitive?: boolean | undefined;
-            placeholder?: string | undefined;
             itemTemplate?: unknown;
         } | undefined;
         hintPath?: string | undefined;
@@ -395,11 +395,11 @@ export declare const validateSkillsUpdateParams: AjvPkg.ValidateFunction<{
 export declare const validateCronListParams: AjvPkg.ValidateFunction<{
     enabled?: "all" | "disabled" | "enabled" | undefined;
     limit?: number | undefined;
-    includeDisabled?: boolean | undefined;
-    offset?: number | undefined;
     query?: string | undefined;
+    offset?: number | undefined;
+    includeDisabled?: boolean | undefined;
     sortBy?: "name" | "updatedAtMs" | "nextRunAtMs" | undefined;
-    sortDir?: "asc" | "desc" | undefined;
+    sortDir?: "desc" | "asc" | undefined;
 }>;
 export declare const validateCronStatusParams: AjvPkg.ValidateFunction<{}>;
 export declare const validateCronAddParams: AjvPkg.ValidateFunction<{
@@ -449,8 +449,8 @@ export declare const validateCronAddParams: AjvPkg.ValidateFunction<{
         channel?: string | undefined;
         mode?: "announce" | "webhook" | undefined;
         accountId?: string | undefined;
-        to?: string | undefined;
         after?: number | undefined;
+        to?: string | undefined;
         cooldownMs?: number | undefined;
     } | undefined;
     name: string;
@@ -507,10 +507,10 @@ export declare const validateCronRunsParams: AjvPkg.ValidateFunction<{
     status?: "skipped" | "error" | "all" | "ok" | undefined;
     limit?: number | undefined;
     scope?: "all" | "job" | undefined;
-    jobId?: string | undefined;
-    offset?: number | undefined;
     query?: string | undefined;
-    sortDir?: "asc" | "desc" | undefined;
+    offset?: number | undefined;
+    jobId?: string | undefined;
+    sortDir?: "desc" | "asc" | undefined;
     statuses?: ("skipped" | "error" | "ok")[] | undefined;
     deliveryStatuses?: ("unknown" | "delivered" | "not-delivered" | "not-requested")[] | undefined;
     deliveryStatus?: "unknown" | "delivered" | "not-delivered" | "not-requested" | undefined;
@@ -665,16 +665,16 @@ export declare const validateChatInjectParams: AjvPkg.ValidateFunction<{
 export declare const validateChatEvent: AjvPkg.ValidateFunction<{
     sessionKey: any;
     state: any;
-    seq: any;
     runId: any;
+    seq: any;
 } & {
     sessionKey: any;
 } & {
     state: any;
 } & {
-    seq: any;
-} & {
     runId: any;
+} & {
+    seq: any;
 }>;
 export declare const validateUpdateRunParams: AjvPkg.ValidateFunction<{
     sessionKey?: string | undefined;

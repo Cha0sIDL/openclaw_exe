@@ -1,61 +1,60 @@
-import { a as resolveAgentDir, c as resolveAgentWorkspaceDir, l as resolveDefaultAgentId, o as resolveAgentEffectiveModelPrimary } from "./run-with-concurrency-CzUbPnkS.js";
-import "./paths-C6TxBCvO.js";
-import { t as createSubsystemLogger } from "./subsystem-D7UWJNhH.js";
-import "./workspace-B1VBj0cY.js";
-import "./logger-B-R_-5mh.js";
-import { Cr as DEFAULT_PROVIDER, Sr as DEFAULT_MODEL, l as parseModelRef } from "./model-selection-CMGcSezC.js";
-import "./github-copilot-token-D13V9YBz.js";
-import "./legacy-names-BCm4ov65.js";
-import "./thinking-CWTLku2g.js";
-import "./tokens-Csbpu55k.js";
-import { t as runEmbeddedPiAgent } from "./pi-embedded-COPIxB-N.js";
-import "./accounts-CFmx3Ko8.js";
-import "./plugins-xdrpMlbb.js";
-import "./send-DK2Qq7Q8.js";
-import "./send-B7YAq4iR.js";
-import "./deliver-CJafxnVk.js";
-import "./diagnostic-BHeUaYDb.js";
-import "./accounts-BGFa9f-K.js";
-import "./image-ops-CZyWVo3J.js";
-import "./send-B33olMh0.js";
-import "./pi-model-discovery-CybKBU2K.js";
-import "./pi-embedded-helpers-ra_Qj9lm.js";
-import "./chrome-Bp1X9DNi.js";
-import "./frontmatter-DH91cf0z.js";
-import "./skills-D8UkPedh.js";
-import "./path-alias-guards-BL8yV-Ja.js";
-import "./redact-Ce4hro-U.js";
-import "./errors-D2ORDJPK.js";
-import "./fs-safe-DiYRXeBI.js";
-import "./proxy-env-xv4vJgUz.js";
-import "./store-9xYjVnEt.js";
-import "./accounts-Myzf9IRA.js";
-import "./paths-BRjL6K6G.js";
-import "./tool-images-DlUOK7tr.js";
-import "./image-CgO6GuwE.js";
-import "./audio-transcription-runner-CptLNA_4.js";
-import "./fetch-ChItq85A.js";
-import "./fetch-guard-NC0zgpoh.js";
-import "./api-key-rotation-zd1593PT.js";
-import "./proxy-fetch-CF5kidRK.js";
-import "./ir-BTWnurHH.js";
-import "./render-DW7AcFdD.js";
-import "./target-errors-CmfYcvda.js";
-import "./commands-registry-D88O9lbl.js";
-import "./skill-commands-Bh-m92m4.js";
-import "./fetch-BfuG8uZ8.js";
-import "./channel-activity-BWCDy7rb.js";
-import "./tables-BjlPmYDz.js";
-import "./send-YarWUTVS.js";
-import "./outbound-attachment-CL_CnCT4.js";
-import "./send-CvvoqlSY.js";
-import "./proxy-CecQTx_Z.js";
-import "./manager-_o21DoNC.js";
-import "./query-expansion-D5Cn44Qx.js";
+import { a as resolveAgentDir, c as resolveAgentWorkspaceDir, l as resolveDefaultAgentId, o as resolveAgentEffectiveModelPrimary } from "./run-with-concurrency-C1raW7MB.js";
+import "./paths-hfkBoC7i.js";
+import { t as createSubsystemLogger } from "./subsystem-C4EPfZvP.js";
+import "./workspace-C-WsJ6YD.js";
+import "./logger-CrRR9XqM.js";
+import { Tr as DEFAULT_PROVIDER, l as parseModelRef } from "./model-selection-BebDf0Oe.js";
+import "./github-copilot-token-CQmATy5E.js";
+import "./legacy-names-PdEWCM6o.js";
+import "./thinking-e8AYL_Pc.js";
+import "./tokens-AfovIVys.js";
+import { t as runEmbeddedPiAgent } from "./pi-embedded-Duj9ZRlt.js";
+import "./accounts-C-Va__6p.js";
+import "./plugins-D8bZQOC6.js";
+import "./send-Cp5ni0er.js";
+import "./send-D4kNoSE1.js";
+import "./deliver-CoNTqNDS.js";
+import "./diagnostic-CuUUOc87.js";
+import "./accounts-t9UxPKg7.js";
+import "./image-ops-bE_0rjXg.js";
+import "./send-Cv2kzl1q.js";
+import "./pi-model-discovery-DXRJZf5l.js";
+import "./pi-embedded-helpers-Cf7LfIfV.js";
+import "./chrome-BAySnG__.js";
+import "./frontmatter-DDNsrGxl.js";
+import "./skills-OJ4_aEbD.js";
+import "./path-alias-guards-CehkTmf1.js";
+import "./redact-dO0soxAw.js";
+import "./errors-CiwC5WY-.js";
+import "./fs-safe-r7wHNnYj.js";
+import "./proxy-env-CKjRmVoX.js";
+import "./store-Clf0bFAY.js";
+import "./accounts-CpO6e3Di.js";
+import "./paths-CikpXE25.js";
+import "./tool-images-C0JUp3Ro.js";
+import "./image-CHsF33rj.js";
+import "./audio-transcription-runner-ByJvhIA5.js";
+import "./fetch-C6-X--uo.js";
+import "./fetch-guard-DW6bn9qe.js";
+import "./api-key-rotation-ChonxG9E.js";
+import "./proxy-fetch-VohjYre9.js";
+import "./ir-DBLhVAfx.js";
+import "./render-7C7EDC8_.js";
+import "./target-errors-Bgv2rq5i.js";
+import "./commands-registry-DzSjD7US.js";
+import "./skill-commands-BYlQU8Gv.js";
+import "./fetch-CONQGbzL.js";
+import "./channel-activity-B9PalD2W.js";
+import "./tables-CVg0mSpU.js";
+import "./send-HCtJQSld.js";
+import "./outbound-attachment-Dtib2Ff9.js";
+import "./send-DyeZqCvf.js";
+import "./proxy-BzwL4n0W.js";
+import "./manager-D6SGLc61.js";
+import "./query-expansion-Bwu67gdy.js";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-
 //#region src/hooks/llm-slug-generator.ts
 /**
 * LLM-based slug generator for session memory filenames
@@ -80,8 +79,8 @@ ${params.sessionContent.slice(0, 2e3)}
 Reply with ONLY the slug, nothing else. Examples: "vendor-pitch", "api-design", "bug-fix"`;
 		const modelRef = resolveAgentEffectiveModelPrimary(params.cfg, agentId);
 		const parsed = modelRef ? parseModelRef(modelRef, DEFAULT_PROVIDER) : null;
-		const provider = parsed?.provider ?? DEFAULT_PROVIDER;
-		const model = parsed?.model ?? DEFAULT_MODEL;
+		const provider = parsed?.provider ?? "anthropic";
+		const model = parsed?.model ?? "claude-opus-4-6";
 		const result = await runEmbeddedPiAgent({
 			sessionId: `slug-generator-${Date.now()}`,
 			sessionKey: "temp:slug-generator",
@@ -114,6 +113,5 @@ Reply with ONLY the slug, nothing else. Examples: "vendor-pitch", "api-design", 
 		} catch {}
 	}
 }
-
 //#endregion
 export { generateSlugViaLLM };

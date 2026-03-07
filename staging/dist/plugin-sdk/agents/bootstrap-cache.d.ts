@@ -4,4 +4,8 @@ export declare function getOrLoadBootstrapFiles(params: {
     sessionKey: string;
 }): Promise<WorkspaceBootstrapFile[]>;
 export declare function clearBootstrapSnapshot(sessionKey: string): void;
+export declare function clearBootstrapSnapshotOnSessionRollover(params: {
+    sessionKey?: string;
+    previousSessionId?: string;
+}): void;
 export declare function clearAllBootstrapSnapshots(): void;

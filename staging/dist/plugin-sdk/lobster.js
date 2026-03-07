@@ -1,6 +1,5 @@
 import { readFileSync, statSync } from "node:fs";
 import path from "node:path";
-
 //#region src/plugin-sdk/windows-spawn.ts
 function isFilePath(candidate) {
 	try {
@@ -140,6 +139,5 @@ function materializeWindowsSpawnProgram(program, argv) {
 		windowsHide: program.windowsHide
 	};
 }
-
 //#endregion
 export { applyWindowsSpawnProgramPolicy, materializeWindowsSpawnProgram, resolveWindowsSpawnProgramCandidate };

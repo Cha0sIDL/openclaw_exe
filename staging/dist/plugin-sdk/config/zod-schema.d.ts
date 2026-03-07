@@ -238,6 +238,7 @@ export declare const OpenClawSchema: z.ZodObject<{
                     supportsDeveloperRole: z.ZodOptional<z.ZodBoolean>;
                     supportsReasoningEffort: z.ZodOptional<z.ZodBoolean>;
                     supportsUsageInStreaming: z.ZodOptional<z.ZodBoolean>;
+                    supportsTools: z.ZodOptional<z.ZodBoolean>;
                     supportsStrictMode: z.ZodOptional<z.ZodBoolean>;
                     maxTokensField: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"max_completion_tokens">, z.ZodLiteral<"max_tokens">]>>;
                     thinkingFormat: z.ZodOptional<z.ZodUnion<readonly [z.ZodLiteral<"openai">, z.ZodLiteral<"zai">, z.ZodLiteral<"qwen">]>>;
@@ -452,6 +453,7 @@ export declare const OpenClawSchema: z.ZodObject<{
                     enabled: z.ZodOptional<z.ZodBoolean>;
                     maxRetries: z.ZodOptional<z.ZodNumber>;
                 }, z.core.$strict>>;
+                postCompactionSections: z.ZodOptional<z.ZodArray<z.ZodString>>;
                 memoryFlush: z.ZodOptional<z.ZodObject<{
                     enabled: z.ZodOptional<z.ZodBoolean>;
                     softThresholdTokens: z.ZodOptional<z.ZodNumber>;
@@ -1356,6 +1358,7 @@ export declare const OpenClawSchema: z.ZodObject<{
     }, z.core.$strict>>;
     media: z.ZodOptional<z.ZodObject<{
         preserveFilenames: z.ZodOptional<z.ZodBoolean>;
+        ttlHours: z.ZodOptional<z.ZodNumber>;
     }, z.core.$strict>>;
     messages: z.ZodOptional<z.ZodObject<{
         messagePrefix: z.ZodOptional<z.ZodString>;
@@ -1632,6 +1635,7 @@ export declare const OpenClawSchema: z.ZodObject<{
             retryOn: z.ZodOptional<z.ZodArray<z.ZodEnum<{
                 timeout: "timeout";
                 network: "network";
+                overloaded: "overloaded";
                 rate_limit: "rate_limit";
                 server_error: "server_error";
             }>>>;
@@ -4840,6 +4844,7 @@ export declare const OpenClawSchema: z.ZodObject<{
         }, z.core.$strict>>;
         slots: z.ZodOptional<z.ZodObject<{
             memory: z.ZodOptional<z.ZodString>;
+            contextEngine: z.ZodOptional<z.ZodString>;
         }, z.core.$strict>>;
         entries: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
             enabled: z.ZodOptional<z.ZodBoolean>;

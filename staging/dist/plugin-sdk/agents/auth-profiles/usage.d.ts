@@ -2,7 +2,7 @@ import type { OpenClawConfig } from "../../config/config.js";
 import type { AuthProfileFailureReason, AuthProfileStore, ProfileUsageStats } from "./types.js";
 export declare function resolveProfileUnusableUntil(stats: Pick<ProfileUsageStats, "cooldownUntil" | "disabledUntil">): number | null;
 /**
- * Check if a profile is currently in cooldown (due to rate limiting or errors).
+ * Check if a profile is currently in cooldown (due to rate limits, overload, or other transient failures).
  */
 export declare function isProfileInCooldown(store: AuthProfileStore, profileId: string, now?: number): boolean;
 /**
@@ -65,7 +65,7 @@ export declare function markAuthProfileFailure(params: {
     agentDir?: string;
 }): Promise<void>;
 /**
- * Mark a profile as failed/rate-limited. Applies exponential backoff cooldown.
+ * Mark a profile as transiently failed. Applies exponential backoff cooldown.
  * Cooldown times: 1min, 5min, 25min, max 1 hour.
  * Uses store lock to avoid overwriting concurrent usage updates.
  */
