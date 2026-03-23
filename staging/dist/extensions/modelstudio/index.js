@@ -1,0 +1,274 @@
+import "../../redact-BDinS1q9.js";
+import "../../errors-BxyFnvP3.js";
+import "../../unhandled-rejections-CDJ8dOVP.js";
+import "../../logger-kwZIqwuw.js";
+import "../../paths-ViKUYWUK.js";
+import "../../tmp-openclaw-dir-idKIOMmb.js";
+import "../../theme-CdOoMzRk.js";
+import "../../globals-DBUMOBZ8.js";
+import "../../subsystem-DISldKSB.js";
+import "../../ansi-BEJF8NKS.js";
+import "../../boolean-C3GkJetE.js";
+import "../../env-Dnra1IpT.js";
+import "../../warning-filter-CBhOcgHd.js";
+import "../../utils-CS0Ikux6.js";
+import "../../links-8xRhWBQL.js";
+import "../../paths-BFl2-hCf.js";
+import "../../auth-profiles-CERaUUqX.js";
+import "../../boundary-path-Dm0QJ7-y.js";
+import "../../boundary-file-read-DcZxlWD8.js";
+import "../../logger-BmpSCz93.js";
+import "../../exec-B5_AYfQG.js";
+import "../../workspace-D4K6QX9X.js";
+import "../../agent-scope-DoT9OqaV.js";
+import "../../model-selection-B6ao45a4.js";
+import "../../io-cPs4dU7X.js";
+import "../../host-env-security-DEKL50zA.js";
+import "../../shell-env-BKuVS72k.js";
+import "../../safe-text-DIDDfQyI.js";
+import "../../version-BpHNkJed.js";
+import "../../env-substitution-B8NFl2Jd.js";
+import "../../includes-CCK6fRRs.js";
+import "../../zod-schema.providers-core-DLPfih2y.js";
+import "../../legacy-web-search-CTvir-Bl.js";
+import "../../registry-xyHjVLxh.js";
+import "../../config-state-Dx9-tLPS.js";
+import "../../min-host-version-xbc6BJ_K.js";
+import "../../manifest-registry-D5E7Gxgl.js";
+import "../../runtime-guard-QGt7fm0l.js";
+import "../../avatar-policy-DVf9B9eu.js";
+import "../../ip-DIgtRRTW.js";
+import "../../zod-schema.agent-runtime-C659GPl8.js";
+import "../../zod-schema.core-yLTNC4-K.js";
+import "../../config-CB4aYWqd.js";
+import "../../file-lock-DoKDW8jx.js";
+import "../../audit-fs-CEN00XrG.js";
+import "../../resolve-uXRpJb-M.js";
+import "../../profiles-Cyg58FCO.js";
+import "../../tailscale-CSUwCuE9.js";
+import "../../tailnet-BVzEE6AW.js";
+import "../../net-Dk658jWW.js";
+import "../../auth-C_pTuZtn.js";
+import "../../credentials-CO55Yx_u.js";
+import "../../message-channel-DUrzQUcI.js";
+import "../../store-D_eNuCKK.js";
+import "../../runtime-C8dQugND.js";
+import "../../plugins-DGdgUNcN.js";
+import "../../sessions-C8WesgCl.js";
+import "../../paths-BPfguEtH.js";
+import "../../session-write-lock-bE2vQvvO.js";
+import "../../method-scopes-BWG4Q18M.js";
+import "../../call-VZCb020X.js";
+import "../../prompt-style-MhFLSlua.js";
+import "../../ports-lsof-C3NOmuKA.js";
+import "../../restart-stale-pids-CQbYk99d.js";
+import "../../ports-CQIuVpXl.js";
+import "../../logging-C2L37N2X.js";
+import "../../commands-CrPoYX9r.js";
+import "../../issue-format-CP-gqjZB.js";
+import "../../identity-D8H54Ni5.js";
+import "../../heartbeat-FZaB85hC.js";
+import { Sd as defineSingleProviderPluginEntry } from "../../pi-embedded-D3aYWCrT.js";
+import "../../internal-hooks-D4lZfNM5.js";
+import "../../multimodal-De3qv_72.js";
+import "../../memory-search-DRm4OVlH.js";
+import { S as buildModelStudioProvider } from "../../provider-catalog-7bUKai5_.js";
+import "../../secret-input-BNBMqe2K.js";
+import "../../bindings-RcwGGOd3.js";
+import "../../resolve-route-DbP_XX4E.js";
+import "../../routing-B37UwRwq.js";
+import "../../identity-file-CCks_qJo.js";
+import "../../outbound-runtime-oDjCAP7B.js";
+import "../../provider-env-vars-Bhzl_gIs.js";
+import "../../provider-auth-input-DxjPWsSV.js";
+import "../../provider-model-minimax-XdwKeUOE.js";
+import "../../provider-models-DfgBoVpf.js";
+import "../../anthropic-vertex-provider-e_sRR8fp.js";
+import "../../models-config.providers.discovery-Ch23kOpG.js";
+import "../../text-runtime-B9_24WY5.js";
+import "../../tool-catalog-6VPSKPp9.js";
+import "../../docker-YL21-mX4.js";
+import "../../sandbox-Dy3vKrxx.js";
+import "../../common-De-BVwIv.js";
+import "../../image-ops-BLXW6hKm.js";
+import "../../thinking-CSfcimRZ.js";
+import "../../path-alias-guards-CgP-6a1d.js";
+import "../../sandbox-paths-Bk2ZwMsR.js";
+import "../../channel-actions-BzT1SAu9.js";
+import "../../mime-D7Q9o2pi.js";
+import "../../ssrf-rHmQXFZ4.js";
+import "../../fetch-guard-BH3MjZoA.js";
+import "../../provider-web-search-DYdDI2c9.js";
+import "../../manager-CTkU8M9E.js";
+import "../../config-schema-Bpwy_blm.js";
+import "../../channel-plugin-common-COvcxNrG.js";
+import "../../status-helpers-Dd-hr4j4.js";
+import "../../conversation-runtime-CqOm9f5F.js";
+import "../../runtime-whatsapp-boundary-CWceJs-_.js";
+import "../../pairing-store-ClZkWB4v.js";
+import "../../json-store-Ju23bywi.js";
+import "../../secret-file-Ctk8Gt6Y.js";
+import "../../channel-config-schema-DGuU5OU5.js";
+import "../../setup-binary-DXdzcWG_.js";
+import "../../archive-Bk8HKpaY.js";
+import "../../fs-safe-Dvzkbqib.js";
+import "../../signal-cli-install-BJB9N18P.js";
+import "../../setup-wizard-proxy-D0W3ulU0.js";
+import "../../setup-BYrV6xB7.js";
+import "../../dm-policy-shared-DSMJu_ZS.js";
+import "../../hook-runtime-DEbp5SYL.js";
+import "../../diagnostic-DNoCLiOo.js";
+import "../../templating-BueU7auS.js";
+import "../../channel-reply-pipeline-C0iCnI2R.js";
+import "../../reply-history-BVE7m0XA.js";
+import "../../commands-registry.data-Dr5wKe-o.js";
+import "../../commands-registry-C-vLUx3f.js";
+import "../../frontmatter-DUZeCF_V.js";
+import "../../env-overrides-DbK0fm-W.js";
+import "../../skills-CreXENx9.js";
+import "../../skills-remote-Ctc3qkkj.js";
+import "../../workspace-dirs-CKrvld61.js";
+import "../../pairing-token-CT1j20jA.js";
+import "../../skill-commands-DDonxE3L.js";
+import "../../level-overrides-pDiOPsgd.js";
+import "../../config-BkPtspys.js";
+import "../../routes-BbrNKa8i.js";
+import "../../ssh-tunnel-CnI7n7iv.js";
+import "../../server-middleware-DcKqo5DB.js";
+import "../../logging-CSCaAwMS.js";
+import "../../config-runtime-ST43sCMq.js";
+import "../../exec-approvals-CVzy3Vfp.js";
+import "../../webhook-ingress-BcLBvsy0.js";
+import "../../system-events-D9mayVHC.js";
+import "../../ssrf-policy-C4n9geuA.js";
+import "../../provider-auth-ref-D7iRHU8I.js";
+import "../../provider-auth-helpers-BeqTsaJO.js";
+import "../../provider-api-key-auth-BRg5733-.js";
+import "../../runtime-env-CjqWVeEh.js";
+import "../../pairing-labels-BOG3E444.js";
+import "../../directory-runtime-Dv9ukfmB.js";
+import "../../read-only-account-inspect-CI8Acn7V.js";
+import "../../src-BtOJllZl.js";
+import "../../web-media-DiWkPbmA.js";
+import "../../temp-path-DWrivwFl.js";
+import "../../media-understanding-Dq7oUfcD.js";
+import "../../web-media-BR4PzU9s.js";
+import "../../state-paths-DCS7oDHS.js";
+import "../../llm-task-DPBJEtc9.js";
+import "../../pi-model-discovery-CnIuFJqz.js";
+import "../../exec-inline-eval-D-f8HFse.js";
+import "../../target-registry-OPF22cyh.js";
+import "../../external-content-EaiMEyB5.js";
+import "../../brave-D0M7h2uu.js";
+import "../../duckduckgo-BGywj4mG.js";
+import "../../exa-Ck55X5yZ.js";
+import "../../security-runtime-BgVUCAQn.js";
+import "../../provider-usage-BQ76VwEQ.js";
+import { d as createModelCatalogPresetAppliers } from "../../provider-onboarding-config-DV2e26YS.js";
+import "../../provider-onboard-BIL4F3N4.js";
+import "../../perplexity-CHeba5ua.js";
+import "../../stagger-CmrcNovb.js";
+import "../../command-secret-targets-C0ZVtvSJ.js";
+import "../../delivery-queue-ogw66DXo.js";
+import "../../channel-summary-TN23o1-D.js";
+import "../../session-system-events-N0UUhzUH.js";
+import "../../tool-policy-match-CwxOHp7o.js";
+import "../../runtime-CyQWw2V0.js";
+import "../../channel-status-CKxclc13.js";
+import "../../discord-core-D8UAKzsj.js";
+import "../../cli-runtime-FV2YwWah.js";
+import "../../config-presence-g2roOSEE.js";
+import "../../query-expansion-B8XjXGEW.js";
+import "../../search-manager-ln9SNtGS.js";
+import "../../acp-runtime-CB1LKa-8.js";
+import "../../telegram-core-CEsvkNyG.js";
+import "../../audit-CChGpjlz.js";
+import "../../gateway-runtime-B5M5_sR0.js";
+import "../../connection-auth-DKVFW_D7.js";
+import "../../mcp-config-egoiCJ68.js";
+//#region extensions/modelstudio/model-definitions.ts
+const MODELSTUDIO_CN_BASE_URL = "https://coding.dashscope.aliyuncs.com/v1";
+const MODELSTUDIO_GLOBAL_BASE_URL = "https://coding-intl.dashscope.aliyuncs.com/v1";
+const MODELSTUDIO_DEFAULT_MODEL_REF = `modelstudio/qwen3.5-plus`;
+//#endregion
+//#region extensions/modelstudio/onboard.ts
+const modelStudioPresetAppliers = createModelCatalogPresetAppliers({
+	primaryModelRef: MODELSTUDIO_DEFAULT_MODEL_REF,
+	resolveParams: (_cfg, baseUrl) => {
+		const provider = buildModelStudioProvider();
+		return {
+			providerId: "modelstudio",
+			api: provider.api ?? "openai-completions",
+			baseUrl,
+			catalogModels: provider.models ?? [],
+			aliases: [...(provider.models ?? []).map((model) => `modelstudio/${model.id}`), {
+				modelRef: MODELSTUDIO_DEFAULT_MODEL_REF,
+				alias: "Qwen"
+			}]
+		};
+	}
+});
+function applyModelStudioConfig(cfg) {
+	return modelStudioPresetAppliers.applyConfig(cfg, MODELSTUDIO_GLOBAL_BASE_URL);
+}
+function applyModelStudioConfigCn(cfg) {
+	return modelStudioPresetAppliers.applyConfig(cfg, MODELSTUDIO_CN_BASE_URL);
+}
+var modelstudio_default = defineSingleProviderPluginEntry({
+	id: "modelstudio",
+	name: "Model Studio Provider",
+	description: "Bundled Model Studio provider plugin",
+	provider: {
+		label: "Model Studio",
+		docsPath: "/providers/models",
+		auth: [{
+			methodId: "api-key-cn",
+			label: "Coding Plan API Key for China (subscription)",
+			hint: "Endpoint: coding.dashscope.aliyuncs.com",
+			optionKey: "modelstudioApiKeyCn",
+			flagName: "--modelstudio-api-key-cn",
+			envVar: "MODELSTUDIO_API_KEY",
+			promptMessage: "Enter Alibaba Cloud Model Studio Coding Plan API key (China)",
+			defaultModel: MODELSTUDIO_DEFAULT_MODEL_REF,
+			applyConfig: (cfg) => applyModelStudioConfigCn(cfg),
+			noteMessage: [
+				"Get your API key at: https://bailian.console.aliyun.com/",
+				"Endpoint: coding.dashscope.aliyuncs.com",
+				"Models: qwen3.5-plus, glm-4.7, kimi-k2.5, MiniMax-M2.5, etc."
+			].join("\n"),
+			noteTitle: "Alibaba Cloud Model Studio Coding Plan (China)",
+			wizard: {
+				choiceHint: "Endpoint: coding.dashscope.aliyuncs.com",
+				groupLabel: "Alibaba Cloud Model Studio",
+				groupHint: "Coding Plan API key (CN / Global)"
+			}
+		}, {
+			methodId: "api-key",
+			label: "Coding Plan API Key for Global/Intl (subscription)",
+			hint: "Endpoint: coding-intl.dashscope.aliyuncs.com",
+			optionKey: "modelstudioApiKey",
+			flagName: "--modelstudio-api-key",
+			envVar: "MODELSTUDIO_API_KEY",
+			promptMessage: "Enter Alibaba Cloud Model Studio Coding Plan API key (Global/Intl)",
+			defaultModel: MODELSTUDIO_DEFAULT_MODEL_REF,
+			applyConfig: (cfg) => applyModelStudioConfig(cfg),
+			noteMessage: [
+				"Get your API key at: https://bailian.console.aliyun.com/",
+				"Endpoint: coding-intl.dashscope.aliyuncs.com",
+				"Models: qwen3.5-plus, glm-4.7, kimi-k2.5, MiniMax-M2.5, etc."
+			].join("\n"),
+			noteTitle: "Alibaba Cloud Model Studio Coding Plan (Global/Intl)",
+			wizard: {
+				choiceHint: "Endpoint: coding-intl.dashscope.aliyuncs.com",
+				groupLabel: "Alibaba Cloud Model Studio",
+				groupHint: "Coding Plan API key (CN / Global)"
+			}
+		}],
+		catalog: {
+			buildProvider: buildModelStudioProvider,
+			allowExplicitBaseUrl: true
+		}
+	}
+});
+//#endregion
+export { modelstudio_default as default };

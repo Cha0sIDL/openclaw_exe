@@ -2,7 +2,7 @@
 ; Generated for Inno Setup 6
 
 #define MyAppName "OpenClaw"
-#define MyAppVersion "2026.3.7"
+#define MyAppVersion "2026.3.22-beta.1"
 #define MyAppPublisher "lys46001"
 #define MyAppURL "https://github.com/openclaw/openclaw"
 #define MyAppExeName "start-gateway.bat"
@@ -36,7 +36,7 @@ ChangesEnvironment=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"; Flags: unchecked
+Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"
 
 [Files]
 ; Application files from pnpm deploy staging
@@ -147,6 +147,10 @@ function InitializeSetup(): Boolean;
 begin
   Result := True;
 end;
+
+
+
+
 
 
 

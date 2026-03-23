@@ -1,681 +1,208 @@
-import "./message-channel-DKhmLKbn.js";
-import "./utils-CRWW6TlT.js";
-import "./paths-Dmn791zP.js";
-import "./tool-images-YfaTOvUj.js";
-import { nt as DEFAULT_ACCOUNT_ID, pt as runCommandWithTimeout, rt as normalizeAccountId } from "./run-with-concurrency-D7pi7JWf.js";
-import { d as readNumberParam, f as readReactionParams, h as readStringParam, l as jsonResult, o as createActionGate } from "./target-errors-Aei68toE.js";
-import { $ as createReplyPrefixOptions, B as formatDocsLink, G as issuePairingChallenge, J as resolveAllowlistProviderRuntimeGroupPolicy, Q as createTypingCallbacks, U as resolveDmGroupAccessWithLists, V as readStoreAllowFromForDmPolicy, Y as resolveDefaultGroupPolicy, Z as warnMissingProviderGroupPolicyFallbackOnce, at as mergeAllowlist, ct as resolveAllowlistMatchByCandidates, it as resolveControlCommandGate, n as dispatchReplyFromConfig, nt as logInboundDrop, ot as summarizeMapping, q as GROUP_POLICY_BLOCKED_LABEL, rt as logTypingFailure, st as formatAllowlistMatchMeta, t as withReplyDispatcher, v as resolveInboundSessionEnvelopeContext } from "./dispatch-DYpI3Eh9.js";
-import { at as toLocationContext, it as formatLocationText } from "./send-B5ufpDIX.js";
-import { At as resolveChannelEntryMatch, Ot as buildChannelKeyCandidates } from "./send-ClSzilFL.js";
-import { C as encodeJsonPointerToken, H as MarkdownConfigSchema, Pr as formatCliCommand, U as isValidFileSecretRefId, V as ToolPolicySchema, W as resolveDefaultSecretProviderAlias, _r as hasConfiguredSecretInput, br as normalizeSecretInputString, g as resolveSecretRefString, vr as isValidEnvSecretRefId, yr as normalizeResolvedSecretInputString } from "./model-auth-CeqyUT3y.js";
-import "./github-copilot-token-Dd61hN7H.js";
-import "./thinking-DaGh6pJs.js";
-import "./ssrf-BxOowUJg.js";
-import { t as fetchWithSsrFGuard } from "./fetch-guard-CQPlORUu.js";
-import "./accounts-B8D01RUu.js";
-import "./plugins-PWME-iPc.js";
-import "./send-DYSCWIZu.js";
-import "./pi-embedded-helpers-flrQUKFF.js";
-import "./accounts-DiseXDW3.js";
-import "./accounts-DA3m7wfI.js";
-import "./paths-CBpVWw1O.js";
-import "./deliver-BRUqewRJ.js";
-import "./diagnostic-DhaUIoES.js";
-import "./pi-model-discovery-Bynu5NdR.js";
-import "./audio-transcription-runner-DUzJ9p5H.js";
-import "./image-D0g3r_0E.js";
-import "./chrome-mIZnjOxc.js";
-import "./skills-AvcMUIbd.js";
-import "./path-alias-guards-CTafI77c.js";
-import "./redact-DC5QZh88.js";
-import "./errors-Y5v4UB27.js";
-import "./fs-safe-BQyLyMpm.js";
-import "./store-Bt4ar0TV.js";
-import "./api-key-rotation-BuvWhY3o.js";
-import "./local-roots-CQmtV-Dx.js";
-import "./proxy-fetch-CH_RVIlN.js";
-import "./tokens-l6vMK-bb.js";
-import "./commands-registry-D3_mxeWa.js";
-import "./skill-commands-DVO6RHX6.js";
-import "./ir-CW36iO3M.js";
-import "./render-CzX4G4T8.js";
-import "./channel-activity-DlctY6A7.js";
-import "./fetch-C-zffyBF.js";
-import "./tables-BVs5tc0E.js";
-import "./send-DfBzBSyU.js";
-import "./proxy-CgXTW63Y.js";
-import "./outbound-attachment-RM_AbZKF.js";
-import "./send-B5CPqRq8.js";
-import "./manager-42OL6F0Y.js";
-import "./query-expansion-WsSTRvHJ.js";
-import { format } from "node:util";
-//#region src/channels/plugins/config-helpers.ts
-function setAccountEnabledInConfigSection(params) {
-	const accountKey = params.accountId || "default";
-	const base = params.cfg.channels?.[params.sectionKey];
-	const hasAccounts = Boolean(base?.accounts);
-	if (params.allowTopLevel && accountKey === "default" && !hasAccounts) return {
-		...params.cfg,
-		channels: {
-			...params.cfg.channels,
-			[params.sectionKey]: {
-				...base,
-				enabled: params.enabled
-			}
-		}
-	};
-	const baseAccounts = base?.accounts ?? {};
-	const existing = baseAccounts[accountKey] ?? {};
-	return {
-		...params.cfg,
-		channels: {
-			...params.cfg.channels,
-			[params.sectionKey]: {
-				...base,
-				accounts: {
-					...baseAccounts,
-					[accountKey]: {
-						...existing,
-						enabled: params.enabled
-					}
-				}
-			}
-		}
-	};
-}
-function deleteAccountFromConfigSection(params) {
-	const accountKey = params.accountId || "default";
-	const base = params.cfg.channels?.[params.sectionKey];
-	if (!base) return params.cfg;
-	const baseAccounts = base.accounts && typeof base.accounts === "object" ? { ...base.accounts } : void 0;
-	if (accountKey !== "default") {
-		const accounts = baseAccounts ? { ...baseAccounts } : {};
-		delete accounts[accountKey];
-		return {
-			...params.cfg,
-			channels: {
-				...params.cfg.channels,
-				[params.sectionKey]: {
-					...base,
-					accounts: Object.keys(accounts).length ? accounts : void 0
-				}
-			}
-		};
-	}
-	if (baseAccounts && Object.keys(baseAccounts).length > 0) {
-		delete baseAccounts[accountKey];
-		const baseRecord = { ...base };
-		for (const field of params.clearBaseFields ?? []) if (field in baseRecord) baseRecord[field] = void 0;
-		return {
-			...params.cfg,
-			channels: {
-				...params.cfg.channels,
-				[params.sectionKey]: {
-					...baseRecord,
-					accounts: Object.keys(baseAccounts).length ? baseAccounts : void 0
-				}
-			}
-		};
-	}
-	const nextChannels = { ...params.cfg.channels };
-	delete nextChannels[params.sectionKey];
-	const nextCfg = { ...params.cfg };
-	if (Object.keys(nextChannels).length > 0) nextCfg.channels = nextChannels;
-	else delete nextCfg.channels;
-	return nextCfg;
-}
-//#endregion
-//#region src/channels/plugins/config-schema.ts
-function buildChannelConfigSchema(schema) {
-	const schemaWithJson = schema;
-	if (typeof schemaWithJson.toJSONSchema === "function") return { schema: schemaWithJson.toJSONSchema({
-		target: "draft-07",
-		unrepresentable: "any"
-	}) };
-	return { schema: {
-		type: "object",
-		additionalProperties: true
-	} };
-}
-//#endregion
-//#region src/channels/plugins/helpers.ts
-function formatPairingApproveHint(channelId) {
-	return `Approve via: ${formatCliCommand(`openclaw pairing list ${channelId}`)} / ${formatCliCommand(`openclaw pairing approve ${channelId} <code>`)}`;
-}
-//#endregion
-//#region src/secrets/provider-env-vars.ts
-const PROVIDER_ENV_VARS = {
-	openai: ["OPENAI_API_KEY"],
-	anthropic: ["ANTHROPIC_API_KEY"],
-	google: ["GEMINI_API_KEY"],
-	minimax: ["MINIMAX_API_KEY"],
-	"minimax-cn": ["MINIMAX_API_KEY"],
-	moonshot: ["MOONSHOT_API_KEY"],
-	"kimi-coding": ["KIMI_API_KEY", "KIMICODE_API_KEY"],
-	synthetic: ["SYNTHETIC_API_KEY"],
-	venice: ["VENICE_API_KEY"],
-	zai: ["ZAI_API_KEY", "Z_AI_API_KEY"],
-	xiaomi: ["XIAOMI_API_KEY"],
-	openrouter: ["OPENROUTER_API_KEY"],
-	"cloudflare-ai-gateway": ["CLOUDFLARE_AI_GATEWAY_API_KEY"],
-	litellm: ["LITELLM_API_KEY"],
-	"vercel-ai-gateway": ["AI_GATEWAY_API_KEY"],
-	opencode: ["OPENCODE_API_KEY", "OPENCODE_ZEN_API_KEY"],
-	together: ["TOGETHER_API_KEY"],
-	huggingface: ["HUGGINGFACE_HUB_TOKEN", "HF_TOKEN"],
-	qianfan: ["QIANFAN_API_KEY"],
-	xai: ["XAI_API_KEY"],
-	mistral: ["MISTRAL_API_KEY"],
-	kilocode: ["KILOCODE_API_KEY"],
-	volcengine: ["VOLCANO_ENGINE_API_KEY"],
-	byteplus: ["BYTEPLUS_API_KEY"]
-};
-//#endregion
-//#region src/commands/auth-choice.apply-helpers.ts
-function formatErrorMessage(error) {
-	if (error instanceof Error && typeof error.message === "string" && error.message.trim()) return error.message;
-	return String(error);
-}
-function resolveDefaultProviderEnvVar(provider) {
-	return PROVIDER_ENV_VARS[provider]?.find((candidate) => candidate.trim().length > 0);
-}
-function resolveDefaultFilePointerId(provider) {
-	return `/providers/${encodeJsonPointerToken(provider)}/apiKey`;
-}
-async function promptSecretRefForOnboarding(params) {
-	const defaultEnvVar = params.preferredEnvVar ?? resolveDefaultProviderEnvVar(params.provider) ?? "";
-	const defaultFilePointer = resolveDefaultFilePointerId(params.provider);
-	let sourceChoice = "env";
-	while (true) {
-		const source = await params.prompter.select({
-			message: params.copy?.sourceMessage ?? "Where is this API key stored?",
-			initialValue: sourceChoice,
-			options: [{
-				value: "env",
-				label: "Environment variable",
-				hint: "Reference a variable from your runtime environment"
-			}, {
-				value: "provider",
-				label: "Configured secret provider",
-				hint: "Use a configured file or exec secret provider"
-			}]
-		}) === "provider" ? "provider" : "env";
-		sourceChoice = source;
-		if (source === "env") {
-			const envVarRaw = await params.prompter.text({
-				message: params.copy?.envVarMessage ?? "Environment variable name",
-				initialValue: defaultEnvVar || void 0,
-				placeholder: params.copy?.envVarPlaceholder ?? "OPENAI_API_KEY",
-				validate: (value) => {
-					const candidate = value.trim();
-					if (!isValidEnvSecretRefId(candidate)) return params.copy?.envVarFormatError ?? "Use an env var name like \"OPENAI_API_KEY\" (uppercase letters, numbers, underscores).";
-					if (!process.env[candidate]?.trim()) return params.copy?.envVarMissingError?.(candidate) ?? `Environment variable "${candidate}" is missing or empty in this session.`;
-				}
-			});
-			const envCandidate = String(envVarRaw ?? "").trim();
-			const envVar = envCandidate && isValidEnvSecretRefId(envCandidate) ? envCandidate : defaultEnvVar;
-			if (!envVar) throw new Error(`No valid environment variable name provided for provider "${params.provider}".`);
-			const ref = {
-				source: "env",
-				provider: resolveDefaultSecretProviderAlias(params.config, "env", { preferFirstProviderForSource: true }),
-				id: envVar
-			};
-			const resolvedValue = await resolveSecretRefString(ref, {
-				config: params.config,
-				env: process.env
-			});
-			await params.prompter.note(params.copy?.envValidatedMessage?.(envVar) ?? `Validated environment variable ${envVar}. OpenClaw will store a reference, not the key value.`, "Reference validated");
-			return {
-				ref,
-				resolvedValue
-			};
-		}
-		const externalProviders = Object.entries(params.config.secrets?.providers ?? {}).filter(([, provider]) => provider?.source === "file" || provider?.source === "exec");
-		if (externalProviders.length === 0) {
-			await params.prompter.note(params.copy?.noProvidersMessage ?? "No file/exec secret providers are configured yet. Add one under secrets.providers, or select Environment variable.", "No providers configured");
-			continue;
-		}
-		const defaultProvider = resolveDefaultSecretProviderAlias(params.config, "file", { preferFirstProviderForSource: true });
-		const selectedProvider = await params.prompter.select({
-			message: "Select secret provider",
-			initialValue: externalProviders.find(([providerName]) => providerName === defaultProvider)?.[0] ?? externalProviders[0]?.[0],
-			options: externalProviders.map(([providerName, provider]) => ({
-				value: providerName,
-				label: providerName,
-				hint: provider?.source === "exec" ? "Exec provider" : "File provider"
-			}))
-		});
-		const providerEntry = params.config.secrets?.providers?.[selectedProvider];
-		if (!providerEntry || providerEntry.source !== "file" && providerEntry.source !== "exec") {
-			await params.prompter.note(`Provider "${selectedProvider}" is not a file/exec provider.`, "Invalid provider");
-			continue;
-		}
-		const idPrompt = providerEntry.source === "file" ? "Secret id (JSON pointer for json mode, or 'value' for singleValue mode)" : "Secret id for the exec provider";
-		const idDefault = providerEntry.source === "file" ? providerEntry.mode === "singleValue" ? "value" : defaultFilePointer : `${params.provider}/apiKey`;
-		const idRaw = await params.prompter.text({
-			message: idPrompt,
-			initialValue: idDefault,
-			placeholder: providerEntry.source === "file" ? "/providers/openai/apiKey" : "openai/api-key",
-			validate: (value) => {
-				const candidate = value.trim();
-				if (!candidate) return "Secret id cannot be empty.";
-				if (providerEntry.source === "file" && providerEntry.mode !== "singleValue" && !isValidFileSecretRefId(candidate)) return "Use an absolute JSON pointer like \"/providers/openai/apiKey\".";
-				if (providerEntry.source === "file" && providerEntry.mode === "singleValue" && candidate !== "value") return "singleValue mode expects id \"value\".";
-			}
-		});
-		const id = String(idRaw ?? "").trim() || idDefault;
-		const ref = {
-			source: providerEntry.source,
-			provider: selectedProvider,
-			id
-		};
-		try {
-			const resolvedValue = await resolveSecretRefString(ref, {
-				config: params.config,
-				env: process.env
-			});
-			await params.prompter.note(params.copy?.providerValidatedMessage?.(selectedProvider, id, providerEntry.source) ?? `Validated ${providerEntry.source} reference ${selectedProvider}:${id}. OpenClaw will store a reference, not the key value.`, "Reference validated");
-			return {
-				ref,
-				resolvedValue
-			};
-		} catch (error) {
-			await params.prompter.note([
-				`Could not validate provider reference ${selectedProvider}:${id}.`,
-				formatErrorMessage(error),
-				"Check your provider configuration and try again."
-			].join("\n"), "Reference check failed");
-		}
-	}
-}
-async function resolveSecretInputModeForEnvSelection(params) {
-	if (params.explicitMode) return params.explicitMode;
-	if (typeof params.prompter.select !== "function") return "plaintext";
-	return await params.prompter.select({
-		message: params.copy?.modeMessage ?? "How do you want to provide this API key?",
-		initialValue: "plaintext",
-		options: [{
-			value: "plaintext",
-			label: params.copy?.plaintextLabel ?? "Paste API key now",
-			hint: params.copy?.plaintextHint ?? "Stores the key directly in OpenClaw config"
-		}, {
-			value: "ref",
-			label: params.copy?.refLabel ?? "Use external secret provider",
-			hint: params.copy?.refHint ?? "Stores a reference to env or configured external secret providers"
-		}]
-	}) === "ref" ? "ref" : "plaintext";
-}
-//#endregion
-//#region src/channels/plugins/setup-helpers.ts
-function channelHasAccounts(cfg, channelKey) {
-	const base = cfg.channels?.[channelKey];
-	return Boolean(base?.accounts && Object.keys(base.accounts).length > 0);
-}
-function shouldStoreNameInAccounts(params) {
-	if (params.alwaysUseAccounts) return true;
-	if (params.accountId !== "default") return true;
-	return channelHasAccounts(params.cfg, params.channelKey);
-}
-function applyAccountNameToChannelSection(params) {
-	const trimmed = params.name?.trim();
-	if (!trimmed) return params.cfg;
-	const accountId = normalizeAccountId(params.accountId);
-	const baseConfig = params.cfg.channels?.[params.channelKey];
-	const base = typeof baseConfig === "object" && baseConfig ? baseConfig : void 0;
-	if (!shouldStoreNameInAccounts({
-		cfg: params.cfg,
-		channelKey: params.channelKey,
-		accountId,
-		alwaysUseAccounts: params.alwaysUseAccounts
-	}) && accountId === "default") {
-		const safeBase = base ?? {};
-		return {
-			...params.cfg,
-			channels: {
-				...params.cfg.channels,
-				[params.channelKey]: {
-					...safeBase,
-					name: trimmed
-				}
-			}
-		};
-	}
-	const baseAccounts = base?.accounts ?? {};
-	const existingAccount = baseAccounts[accountId] ?? {};
-	const baseWithoutName = accountId === "default" ? (({ name: _ignored, ...rest }) => rest)(base ?? {}) : base ?? {};
-	return {
-		...params.cfg,
-		channels: {
-			...params.cfg.channels,
-			[params.channelKey]: {
-				...baseWithoutName,
-				accounts: {
-					...baseAccounts,
-					[accountId]: {
-						...existingAccount,
-						name: trimmed
-					}
-				}
-			}
-		}
-	};
-}
-//#endregion
-//#region src/channels/plugins/onboarding/helpers.ts
-function addWildcardAllowFrom(allowFrom) {
-	const next = (allowFrom ?? []).map((v) => String(v).trim()).filter(Boolean);
-	if (!next.includes("*")) next.push("*");
-	return next;
-}
-function mergeAllowFromEntries(current, additions) {
-	const merged = [...current ?? [], ...additions].map((v) => String(v).trim()).filter(Boolean);
-	return [...new Set(merged)];
-}
-function splitOnboardingEntries(raw) {
-	return raw.split(/[\n,;]+/g).map((entry) => entry.trim()).filter(Boolean);
-}
-async function promptSingleChannelToken(params) {
-	const promptToken = async () => String(await params.prompter.text({
-		message: params.inputPrompt,
-		validate: (value) => value?.trim() ? void 0 : "Required"
-	})).trim();
-	if (params.canUseEnv) {
-		if (await params.prompter.confirm({
-			message: params.envPrompt,
-			initialValue: true
-		})) return {
-			useEnv: true,
-			token: null
-		};
-		return {
-			useEnv: false,
-			token: await promptToken()
-		};
-	}
-	if (params.hasConfigToken && params.accountConfigured) {
-		if (await params.prompter.confirm({
-			message: params.keepPrompt,
-			initialValue: true
-		})) return {
-			useEnv: false,
-			token: null
-		};
-	}
-	return {
-		useEnv: false,
-		token: await promptToken()
-	};
-}
-async function promptSingleChannelSecretInput(params) {
-	if (await resolveSecretInputModeForEnvSelection({
-		prompter: params.prompter,
-		explicitMode: params.secretInputMode,
-		copy: {
-			modeMessage: `How do you want to provide this ${params.credentialLabel}?`,
-			plaintextLabel: `Enter ${params.credentialLabel}`,
-			plaintextHint: "Stores the credential directly in OpenClaw config",
-			refLabel: "Use external secret provider",
-			refHint: "Stores a reference to env or configured external secret providers"
-		}
-	}) === "plaintext") {
-		const plainResult = await promptSingleChannelToken({
-			prompter: params.prompter,
-			accountConfigured: params.accountConfigured,
-			canUseEnv: params.canUseEnv,
-			hasConfigToken: params.hasConfigToken,
-			envPrompt: params.envPrompt,
-			keepPrompt: params.keepPrompt,
-			inputPrompt: params.inputPrompt
-		});
-		if (plainResult.useEnv) return { action: "use-env" };
-		if (plainResult.token) return {
-			action: "set",
-			value: plainResult.token,
-			resolvedValue: plainResult.token
-		};
-		return { action: "keep" };
-	}
-	if (params.hasConfigToken && params.accountConfigured) {
-		if (await params.prompter.confirm({
-			message: params.keepPrompt,
-			initialValue: true
-		})) return { action: "keep" };
-	}
-	const resolved = await promptSecretRefForOnboarding({
-		provider: params.providerHint,
-		config: params.cfg,
-		prompter: params.prompter,
-		preferredEnvVar: params.preferredEnvVar,
-		copy: {
-			sourceMessage: `Where is this ${params.credentialLabel} stored?`,
-			envVarPlaceholder: params.preferredEnvVar ?? "OPENCLAW_SECRET",
-			envVarFormatError: "Use an env var name like \"OPENCLAW_SECRET\" (uppercase letters, numbers, underscores).",
-			noProvidersMessage: "No file/exec secret providers are configured yet. Add one under secrets.providers, or select Environment variable."
-		}
-	});
-	return {
-		action: "set",
-		value: resolved.ref,
-		resolvedValue: resolved.resolvedValue
-	};
-}
-//#endregion
-//#region src/channels/plugins/onboarding/channel-access.ts
-function parseAllowlistEntries(raw) {
-	return splitOnboardingEntries(String(raw ?? ""));
-}
-function formatAllowlistEntries(entries) {
-	return entries.map((entry) => entry.trim()).filter(Boolean).join(", ");
-}
-async function promptChannelAccessPolicy(params) {
-	const options = [{
-		value: "allowlist",
-		label: "Allowlist (recommended)"
-	}];
-	if (params.allowOpen !== false) options.push({
-		value: "open",
-		label: "Open (allow all channels)"
-	});
-	if (params.allowDisabled !== false) options.push({
-		value: "disabled",
-		label: "Disabled (block all channels)"
-	});
-	const initialValue = params.currentPolicy ?? "allowlist";
-	return await params.prompter.select({
-		message: `${params.label} access`,
-		options,
-		initialValue
-	});
-}
-async function promptChannelAllowlist(params) {
-	const initialValue = params.currentEntries && params.currentEntries.length > 0 ? formatAllowlistEntries(params.currentEntries) : void 0;
-	return parseAllowlistEntries(await params.prompter.text({
-		message: `${params.label} allowlist (comma-separated)`,
-		placeholder: params.placeholder,
-		initialValue
-	}));
-}
-async function promptChannelAccessConfig(params) {
-	const hasEntries = (params.currentEntries ?? []).length > 0;
-	const shouldPrompt = params.defaultPrompt ?? !hasEntries;
-	if (!await params.prompter.confirm({
-		message: params.updatePrompt ? `Update ${params.label} access?` : `Configure ${params.label} access?`,
-		initialValue: shouldPrompt
-	})) return null;
-	const policy = await promptChannelAccessPolicy({
-		prompter: params.prompter,
-		label: params.label,
-		currentPolicy: params.currentPolicy,
-		allowOpen: params.allowOpen,
-		allowDisabled: params.allowDisabled
-	});
-	if (policy !== "allowlist") return {
-		policy,
-		entries: []
-	};
-	return {
-		policy,
-		entries: await promptChannelAllowlist({
-			prompter: params.prompter,
-			label: params.label,
-			currentEntries: params.currentEntries,
-			placeholder: params.placeholder
-		})
-	};
-}
-//#endregion
-//#region src/channels/plugins/pairing-message.ts
-const PAIRING_APPROVED_MESSAGE = "✅ OpenClaw access approved. Send a message to start chatting.";
-//#endregion
-//#region src/plugins/config-schema.ts
-function error(message) {
-	return {
-		success: false,
-		error: { issues: [{
-			path: [],
-			message
-		}] }
-	};
-}
-function emptyPluginConfigSchema() {
-	return {
-		safeParse(value) {
-			if (value === void 0) return {
-				success: true,
-				data: void 0
-			};
-			if (!value || typeof value !== "object" || Array.isArray(value)) return error("expected config object");
-			if (Object.keys(value).length > 0) return error("config must be empty");
-			return {
-				success: true,
-				data: value
-			};
-		},
-		jsonSchema: {
-			type: "object",
-			additionalProperties: false,
-			properties: {}
-		}
-	};
-}
-//#endregion
-//#region src/plugin-sdk/pairing-access.ts
-function createScopedPairingAccess(params) {
-	const resolvedAccountId = normalizeAccountId(params.accountId);
-	return {
-		accountId: resolvedAccountId,
-		readAllowFromStore: () => params.core.channel.pairing.readAllowFromStore({
-			channel: params.channel,
-			accountId: resolvedAccountId
-		}),
-		readStoreForDmPolicy: (provider, accountId) => params.core.channel.pairing.readAllowFromStore({
-			channel: provider,
-			accountId: normalizeAccountId(accountId)
-		}),
-		upsertPairingRequest: (input) => params.core.channel.pairing.upsertPairingRequest({
-			channel: params.channel,
-			accountId: resolvedAccountId,
-			...input
-		})
-	};
-}
-//#endregion
-//#region src/plugin-sdk/resolution-notes.ts
-function formatResolvedUnresolvedNote(params) {
-	if (params.resolved.length === 0 && params.unresolved.length === 0) return;
-	return [params.resolved.length > 0 ? `Resolved: ${params.resolved.join(", ")}` : void 0, params.unresolved.length > 0 ? `Unresolved (kept as typed): ${params.unresolved.join(", ")}` : void 0].filter(Boolean).join("\n");
-}
-//#endregion
-//#region src/plugin-sdk/run-command.ts
-async function runPluginCommandWithTimeout(options) {
-	const [command] = options.argv;
-	if (!command) return {
-		code: 1,
-		stdout: "",
-		stderr: "command is required"
-	};
-	try {
-		const result = await runCommandWithTimeout(options.argv, {
-			timeoutMs: options.timeoutMs,
-			cwd: options.cwd,
-			env: options.env
-		});
-		const timedOut = result.termination === "timeout" || result.termination === "no-output-timeout";
-		return {
-			code: result.code ?? 1,
-			stdout: result.stdout,
-			stderr: timedOut ? result.stderr || `command timed out after ${options.timeoutMs}ms` : result.stderr
-		};
-	} catch (error) {
-		return {
-			code: 1,
-			stdout: "",
-			stderr: error instanceof Error ? error.message : String(error)
-		};
-	}
-}
-//#endregion
-//#region src/plugin-sdk/inbound-reply-dispatch.ts
-async function dispatchReplyFromConfigWithSettledDispatcher(params) {
-	return await withReplyDispatcher({
-		dispatcher: params.dispatcher,
-		onSettled: params.onSettled,
-		run: () => dispatchReplyFromConfig({
-			ctx: params.ctxPayload,
-			cfg: params.cfg,
-			dispatcher: params.dispatcher,
-			replyOptions: params.replyOptions
-		})
-	});
-}
-//#endregion
-//#region src/plugin-sdk/runtime.ts
-function createLoggerBackedRuntime(params) {
-	return {
-		log: (...args) => {
-			params.logger.info(format(...args));
-		},
-		error: (...args) => {
-			params.logger.error(format(...args));
-		},
-		exit: (code) => {
-			throw params.exitError?.(code) ?? /* @__PURE__ */ new Error(`exit ${code}`);
-		}
-	};
-}
-function resolveRuntimeEnv(params) {
-	return params.runtime ?? createLoggerBackedRuntime(params);
-}
-//#endregion
-//#region src/plugin-sdk/status-helpers.ts
-function buildBaseChannelStatusSummary(snapshot) {
-	return {
-		configured: snapshot.configured ?? false,
-		running: snapshot.running ?? false,
-		lastStartAt: snapshot.lastStartAt ?? null,
-		lastStopAt: snapshot.lastStopAt ?? null,
-		lastError: snapshot.lastError ?? null
-	};
-}
-function buildProbeChannelStatusSummary(snapshot, extra) {
-	return {
-		...buildBaseChannelStatusSummary(snapshot),
-		...extra ?? {},
-		probe: snapshot.probe,
-		lastProbeAt: snapshot.lastProbeAt ?? null
-	};
-}
-function collectStatusIssuesFromLastError(channel, accounts) {
-	return accounts.flatMap((account) => {
-		const lastError = typeof account.lastError === "string" ? account.lastError.trim() : "";
-		if (!lastError) return [];
-		return [{
-			channel,
-			accountId: account.accountId,
-			kind: "runtime",
-			message: `Channel error: ${lastError}`
-		}];
-	});
-}
-//#endregion
-export { DEFAULT_ACCOUNT_ID, GROUP_POLICY_BLOCKED_LABEL, MarkdownConfigSchema, PAIRING_APPROVED_MESSAGE, ToolPolicySchema, addWildcardAllowFrom, applyAccountNameToChannelSection, buildChannelConfigSchema, buildChannelKeyCandidates, buildProbeChannelStatusSummary, collectStatusIssuesFromLastError, createActionGate, createLoggerBackedRuntime, createReplyPrefixOptions, createScopedPairingAccess, createTypingCallbacks, deleteAccountFromConfigSection, dispatchReplyFromConfigWithSettledDispatcher, emptyPluginConfigSchema, fetchWithSsrFGuard, formatAllowlistMatchMeta, formatDocsLink, formatLocationText, formatPairingApproveHint, formatResolvedUnresolvedNote, hasConfiguredSecretInput, issuePairingChallenge, jsonResult, logInboundDrop, logTypingFailure, mergeAllowFromEntries, mergeAllowlist, normalizeAccountId, normalizeResolvedSecretInputString, normalizeSecretInputString, promptChannelAccessConfig, promptSingleChannelSecretInput, readNumberParam, readReactionParams, readStoreAllowFromForDmPolicy, readStringParam, resolveAllowlistMatchByCandidates, resolveAllowlistProviderRuntimeGroupPolicy, resolveChannelEntryMatch, resolveControlCommandGate, resolveDefaultGroupPolicy, resolveDmGroupAccessWithLists, resolveInboundSessionEnvelopeContext, resolveRuntimeEnv, runPluginCommandWithTimeout, setAccountEnabledInConfigSection, summarizeMapping, toLocationContext, warnMissingProviderGroupPolicyFallbackOnce };
+import { n as redactSensitiveText } from "../redact-BDinS1q9.js";
+import "../errors-BxyFnvP3.js";
+import "../unhandled-rejections-CDJ8dOVP.js";
+import "../logger-kwZIqwuw.js";
+import "../paths-ViKUYWUK.js";
+import "../tmp-openclaw-dir-idKIOMmb.js";
+import "../theme-CdOoMzRk.js";
+import "../globals-DBUMOBZ8.js";
+import "../subsystem-DISldKSB.js";
+import "../ansi-BEJF8NKS.js";
+import "../boolean-C3GkJetE.js";
+import "../env-Dnra1IpT.js";
+import "../warning-filter-CBhOcgHd.js";
+import "../utils-CS0Ikux6.js";
+import { t as formatDocsLink } from "../links-8xRhWBQL.js";
+import "../paths-BFl2-hCf.js";
+import "../auth-profiles-CERaUUqX.js";
+import { _ as normalizeAccountId, g as DEFAULT_ACCOUNT_ID, u as resolveAgentIdFromSessionKey, v as normalizeOptionalAccountId } from "../session-key-DAhnzjyr.js";
+import { r as normalizeStringEntries } from "../string-normalization-CohoSMRS.js";
+import "../boundary-path-Dm0QJ7-y.js";
+import "../boundary-file-read-DcZxlWD8.js";
+import "../logger-BmpSCz93.js";
+import "../exec-B5_AYfQG.js";
+import "../workspace-D4K6QX9X.js";
+import "../agent-scope-DoT9OqaV.js";
+import "../model-selection-B6ao45a4.js";
+import "../io-cPs4dU7X.js";
+import "../host-env-security-DEKL50zA.js";
+import "../shell-env-BKuVS72k.js";
+import "../safe-text-DIDDfQyI.js";
+import "../version-BpHNkJed.js";
+import { a as hasConfiguredSecretInput, c as normalizeResolvedSecretInputString, l as normalizeSecretInputString } from "../types.secrets-DiT8-OyD.js";
+import "../env-substitution-B8NFl2Jd.js";
+import "../includes-CCK6fRRs.js";
+import "../zod-schema.providers-core-DLPfih2y.js";
+import "../legacy-web-search-CTvir-Bl.js";
+import "../registry-xyHjVLxh.js";
+import "../config-state-Dx9-tLPS.js";
+import "../min-host-version-xbc6BJ_K.js";
+import "../manifest-registry-D5E7Gxgl.js";
+import "../runtime-guard-QGt7fm0l.js";
+import "../avatar-policy-DVf9B9eu.js";
+import "../ip-DIgtRRTW.js";
+import { o as ToolPolicySchema } from "../zod-schema.agent-runtime-C659GPl8.js";
+import { m as MarkdownConfigSchema } from "../zod-schema.core-yLTNC4-K.js";
+import "../config-CB4aYWqd.js";
+import "../file-lock-DoKDW8jx.js";
+import "../audit-fs-CEN00XrG.js";
+import "../resolve-uXRpJb-M.js";
+import "../profiles-Cyg58FCO.js";
+import "../tailscale-CSUwCuE9.js";
+import "../tailnet-BVzEE6AW.js";
+import { i as isPrivateOrLoopbackHost } from "../net-Dk658jWW.js";
+import "../auth-C_pTuZtn.js";
+import "../credentials-CO55Yx_u.js";
+import "../message-channel-DUrzQUcI.js";
+import "../store-D_eNuCKK.js";
+import "../runtime-C8dQugND.js";
+import { i as resolveAllowlistMatchByCandidates, n as formatAllowlistMatchMeta, o as resolveCompiledAllowlistMatch, r as resolveAllowlistCandidates, t as compileAllowlist } from "../plugins-DGdgUNcN.js";
+import { i as resolveChannelEntryMatch, n as buildChannelKeyCandidates } from "../channel-config-Fl7SBNeE.js";
+import "../sessions-C8WesgCl.js";
+import "../paths-BPfguEtH.js";
+import "../session-write-lock-bE2vQvvO.js";
+import "../method-scopes-BWG4Q18M.js";
+import "../call-VZCb020X.js";
+import "../prompt-style-MhFLSlua.js";
+import "../ports-lsof-C3NOmuKA.js";
+import "../restart-stale-pids-CQbYk99d.js";
+import "../ports-CQIuVpXl.js";
+import "../logging-C2L37N2X.js";
+import "../commands-CrPoYX9r.js";
+import "../issue-format-CP-gqjZB.js";
+import { t as resolveAckReaction } from "../identity-D8H54Ni5.js";
+import "../heartbeat-FZaB85hC.js";
+import { C_ as addAllowlistUserEntriesFromConfigEntry, D_ as patchAllowlistUsersInConfigEntries, E_ as mergeAllowlist, Eg as toLocationContext, O_ as summarizeMapping, T_ as canonicalizeAllowlistWithResolvedIds, Tg as formatLocationText, w_ as buildAllowlistResolutionSummary } from "../pi-embedded-D3aYWCrT.js";
+import "../internal-hooks-D4lZfNM5.js";
+import "../multimodal-De3qv_72.js";
+import "../memory-search-DRm4OVlH.js";
+import "../provider-catalog-7bUKai5_.js";
+import { t as createAccountListHelpers } from "../account-helpers-BVDd7S3q.js";
+import { r as buildSecretInputSchema } from "../secret-input-BNBMqe2K.js";
+import "../bindings-RcwGGOd3.js";
+import "../resolve-route-DbP_XX4E.js";
+import "../routing-B37UwRwq.js";
+import "../identity-file-CCks_qJo.js";
+import { r as resolveOutboundSendDep } from "../outbound-runtime-oDjCAP7B.js";
+import "../provider-env-vars-Bhzl_gIs.js";
+import "../provider-auth-input-DxjPWsSV.js";
+import "../provider-model-minimax-XdwKeUOE.js";
+import "../provider-models-DfgBoVpf.js";
+import "../anthropic-vertex-provider-e_sRR8fp.js";
+import "../models-config.providers.discovery-Ch23kOpG.js";
+import "../text-runtime-B9_24WY5.js";
+import "../tool-catalog-6VPSKPp9.js";
+import "../docker-YL21-mX4.js";
+import "../sandbox-Dy3vKrxx.js";
+import { c as jsonResult, d as readNumberParam, f as readReactionParams, h as readStringParam, i as createActionGate, p as readStringArrayParam } from "../common-De-BVwIv.js";
+import "../image-ops-BLXW6hKm.js";
+import "../thinking-CSfcimRZ.js";
+import "../path-alias-guards-CgP-6a1d.js";
+import "../sandbox-paths-Bk2ZwMsR.js";
+import "../channel-actions-BzT1SAu9.js";
+import "../mime-D7Q9o2pi.js";
+import "../ssrf-rHmQXFZ4.js";
+import { n as fetchWithSsrFGuard } from "../fetch-guard-BH3MjZoA.js";
+import "../provider-web-search-DYdDI2c9.js";
+import "../manager-CTkU8M9E.js";
+import { t as emptyPluginConfigSchema } from "../config-schema-WTc54khc.js";
+import { o as moveSingleAccountChannelSectionToDefaultAccount, t as applyAccountNameToChannelSection } from "../setup-helpers-CLK_iaLL.js";
+import { r as buildChannelConfigSchema } from "../config-schema-Bpwy_blm.js";
+import { n as deleteAccountFromConfigSection, r as setAccountEnabledInConfigSection } from "../channel-plugin-common-COvcxNrG.js";
+import { n as formatPairingApproveHint } from "../helpers-CdtBVdE4.js";
+import { t as PAIRING_APPROVED_MESSAGE } from "../pairing-message-I2-dQl_4.js";
+import { a as warnMissingProviderGroupPolicyFallbackOnce, n as resolveAllowlistProviderRuntimeGroupPolicy, r as resolveDefaultGroupPolicy, t as GROUP_POLICY_BLOCKED_LABEL } from "../runtime-group-policy-BoqLmPvt.js";
+import { i as buildProbeChannelStatusSummary, r as buildComputedAccountStatusSnapshot, s as collectStatusIssuesFromLastError } from "../status-helpers-Dd-hr4j4.js";
+import { K as registerSessionBindingAdapter, W as getSessionBindingService, n as resolveThreadBindingFarewellText, q as unregisterSessionBindingAdapter } from "../conversation-runtime-CqOm9f5F.js";
+import "../runtime-whatsapp-boundary-CWceJs-_.js";
+import "../pairing-store-ClZkWB4v.js";
+import { n as writeJsonFileAtomically, t as readJsonFileWithFallback } from "../json-store-Ju23bywi.js";
+import { n as createChannelPairingController } from "../channel-pairing-DorwL7gs.js";
+import "../secret-file-Ctk8Gt6Y.js";
+import "../channel-config-schema-DGuU5OU5.js";
+import "../setup-binary-DXdzcWG_.js";
+import "../archive-Bk8HKpaY.js";
+import "../fs-safe-Dvzkbqib.js";
+import "../signal-cli-install-BJB9N18P.js";
+import { D as mergeAllowFromEntries, L as promptAccountId, U as promptSingleChannelSecretInput, d as buildSingleChannelSecretPromptState, ot as setTopLevelChannelGroupPolicy, u as addWildcardAllowFrom } from "../setup-wizard-proxy-D0W3ulU0.js";
+import { t as formatResolvedUnresolvedNote } from "../setup-BYrV6xB7.js";
+import { u as resolveControlCommandGate } from "../dm-policy-shared-DSMJu_ZS.js";
+import { a as resolveSenderScopedGroupPolicy, t as evaluateGroupRouteAccessForPolicy } from "../group-access-Csh12wXF.js";
+import "../hook-runtime-DEbp5SYL.js";
+import "../diagnostic-DNoCLiOo.js";
+import "../templating-BueU7auS.js";
+import { n as createTypingCallbacks, o as createReplyPrefixOptions, t as createChannelReplyPipeline } from "../channel-reply-pipeline-C0iCnI2R.js";
+import { n as formatZonedTimestamp } from "../format-datetime-BG7EwJ79.js";
+import "../reply-history-BVE7m0XA.js";
+import "../commands-registry.data-Dr5wKe-o.js";
+import "../commands-registry-C-vLUx3f.js";
+import { d as logInboundDrop, f as logTypingFailure } from "../channel-feedback-n64lXuo0.js";
+import "../frontmatter-DUZeCF_V.js";
+import "../env-overrides-DbK0fm-W.js";
+import "../skills-CreXENx9.js";
+import "../skills-remote-Ctc3qkkj.js";
+import "../workspace-dirs-CKrvld61.js";
+import "../pairing-token-CT1j20jA.js";
+import "../skill-commands-DDonxE3L.js";
+import "../level-overrides-pDiOPsgd.js";
+import "../config-BkPtspys.js";
+import "../routes-BbrNKa8i.js";
+import "../ssh-tunnel-CnI7n7iv.js";
+import "../server-middleware-DcKqo5DB.js";
+import "../logging-CSCaAwMS.js";
+import "../config-runtime-ST43sCMq.js";
+import "../exec-approvals-CVzy3Vfp.js";
+import "../webhook-ingress-BcLBvsy0.js";
+import "../system-events-D9mayVHC.js";
+import "../ssrf-policy-C4n9geuA.js";
+import "../provider-auth-ref-D7iRHU8I.js";
+import "../provider-auth-helpers-BeqTsaJO.js";
+import "../provider-api-key-auth-BRg5733-.js";
+import "../runtime-env-CjqWVeEh.js";
+import { s as resolveThreadBindingIdleTimeoutMsForChannel, u as resolveThreadBindingMaxAgeMsForChannel } from "../thread-bindings-policy-9hlYF-wX.js";
+import "../pairing-labels-BOG3E444.js";
+import "../directory-runtime-Dv9ukfmB.js";
+import "../read-only-account-inspect-CI8Acn7V.js";
+import "../src-BtOJllZl.js";
+import { o as getAgentScopedMediaLocalRoots } from "../web-media-DiWkPbmA.js";
+import "../temp-path-DWrivwFl.js";
+import "../media-understanding-Dq7oUfcD.js";
+import { n as normalizePollInput } from "../polls-C_CtYUmj.js";
+import "../web-media-BR4PzU9s.js";
+import "../state-paths-DCS7oDHS.js";
+import "../llm-task-DPBJEtc9.js";
+import "../pi-model-discovery-CnIuFJqz.js";
+import "../exec-inline-eval-D-f8HFse.js";
+import "../target-registry-OPF22cyh.js";
+import "../external-content-EaiMEyB5.js";
+import "../brave-D0M7h2uu.js";
+import "../duckduckgo-BGywj4mG.js";
+import "../exa-Ck55X5yZ.js";
+import "../security-runtime-BgVUCAQn.js";
+import "../provider-usage-BQ76VwEQ.js";
+import "../provider-onboard-BIL4F3N4.js";
+import "../perplexity-CHeba5ua.js";
+import "../stagger-CmrcNovb.js";
+import "../command-secret-targets-C0ZVtvSJ.js";
+import "../delivery-queue-ogw66DXo.js";
+import "../channel-summary-TN23o1-D.js";
+import "../session-system-events-N0UUhzUH.js";
+import "../tool-policy-match-CwxOHp7o.js";
+import { n as resolveRuntimeEnv, t as createLoggerBackedRuntime } from "../runtime-CyQWw2V0.js";
+import "../channel-status-CKxclc13.js";
+import "../discord-core-D8UAKzsj.js";
+import "../cli-runtime-FV2YwWah.js";
+import "../config-presence-g2roOSEE.js";
+import "../query-expansion-B8XjXGEW.js";
+import "../search-manager-ln9SNtGS.js";
+import "../acp-runtime-CB1LKa-8.js";
+import "../telegram-core-CEsvkNyG.js";
+import "../audit-CChGpjlz.js";
+import "../gateway-runtime-B5M5_sR0.js";
+import "../connection-auth-DKVFW_D7.js";
+import "../mcp-config-egoiCJ68.js";
+import { t as runPluginCommandWithTimeout } from "../run-command-Co6IWubr.js";
+import "../channel-setup-DWLTzZGs.js";
+import { a as resolveMatrixAccountStorageRoot, c as resolveMatrixLegacyFlatStoragePaths, d as resolveConfiguredMatrixAccountIds, f as resolveMatrixChannelConfig, h as resolveMatrixAccountStringValues, i as setMatrixThreadBindingMaxAgeBySessionKey, l as findMatrixAccountEntry, m as getMatrixScopedEnvVarNames, n as matrixSetupWizard, o as resolveMatrixCredentialsDir, p as resolveMatrixDefaultOrOnlyAccountId, r as setMatrixThreadBindingIdleTimeoutBySessionKey, s as resolveMatrixCredentialsPath, t as matrixSetupAdapter, u as requiresExplicitMatrixDefaultAccount } from "../matrix-DIyqUfIu.js";
+import { t as promptChannelAccessConfig } from "../setup-group-access-COfUTa3c.js";
+export { DEFAULT_ACCOUNT_ID, GROUP_POLICY_BLOCKED_LABEL, MarkdownConfigSchema, PAIRING_APPROVED_MESSAGE, ToolPolicySchema, addAllowlistUserEntriesFromConfigEntry, addWildcardAllowFrom, applyAccountNameToChannelSection, buildAllowlistResolutionSummary, buildChannelConfigSchema, buildChannelKeyCandidates, buildComputedAccountStatusSnapshot, buildProbeChannelStatusSummary, buildSecretInputSchema, buildSingleChannelSecretPromptState, canonicalizeAllowlistWithResolvedIds, collectStatusIssuesFromLastError, compileAllowlist, createAccountListHelpers, createActionGate, createChannelPairingController, createChannelReplyPipeline, createLoggerBackedRuntime, createReplyPrefixOptions, createTypingCallbacks, deleteAccountFromConfigSection, emptyPluginConfigSchema, evaluateGroupRouteAccessForPolicy, fetchWithSsrFGuard, findMatrixAccountEntry, formatAllowlistMatchMeta, formatDocsLink, formatLocationText, formatPairingApproveHint, formatResolvedUnresolvedNote, formatZonedTimestamp, getAgentScopedMediaLocalRoots, getMatrixScopedEnvVarNames, getSessionBindingService, hasConfiguredSecretInput, isPrivateOrLoopbackHost, jsonResult, logInboundDrop, logTypingFailure, matrixSetupAdapter, matrixSetupWizard, mergeAllowFromEntries, mergeAllowlist, moveSingleAccountChannelSectionToDefaultAccount, normalizeAccountId, normalizeOptionalAccountId, normalizePollInput, normalizeResolvedSecretInputString, normalizeSecretInputString, normalizeStringEntries, patchAllowlistUsersInConfigEntries, promptAccountId, promptChannelAccessConfig, promptSingleChannelSecretInput, readJsonFileWithFallback, readNumberParam, readReactionParams, readStringArrayParam, readStringParam, redactSensitiveText, registerSessionBindingAdapter, requiresExplicitMatrixDefaultAccount, resolveAckReaction, resolveAgentIdFromSessionKey, resolveAllowlistCandidates, resolveAllowlistMatchByCandidates, resolveAllowlistProviderRuntimeGroupPolicy, resolveChannelEntryMatch, resolveCompiledAllowlistMatch, resolveConfiguredMatrixAccountIds, resolveControlCommandGate, resolveDefaultGroupPolicy, resolveMatrixAccountStorageRoot, resolveMatrixAccountStringValues, resolveMatrixChannelConfig, resolveMatrixCredentialsDir, resolveMatrixCredentialsPath, resolveMatrixDefaultOrOnlyAccountId, resolveMatrixLegacyFlatStoragePaths, resolveOutboundSendDep, resolveRuntimeEnv, resolveSenderScopedGroupPolicy, resolveThreadBindingFarewellText, resolveThreadBindingIdleTimeoutMsForChannel, resolveThreadBindingMaxAgeMsForChannel, runPluginCommandWithTimeout, setAccountEnabledInConfigSection, setMatrixThreadBindingIdleTimeoutBySessionKey, setMatrixThreadBindingMaxAgeBySessionKey, setTopLevelChannelGroupPolicy, summarizeMapping, toLocationContext, unregisterSessionBindingAdapter, warnMissingProviderGroupPolicyFallbackOnce, writeJsonFileAtomically };

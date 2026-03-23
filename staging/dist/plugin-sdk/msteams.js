@@ -1,336 +1,213 @@
-import { nt as DEFAULT_ACCOUNT_ID, rt as normalizeAccountId } from "./run-with-concurrency-BlQpCRCl.js";
-import "./paths-B9fwHuf0.js";
-import { C as sleep } from "./logger-BeJ9d38A.js";
-import "./accounts-DXgtJCYj.js";
-import { x as resolveToolsBySender } from "./thinking-DQ-RKqyc.js";
-import { A as MSTeamsConfigSchema, Dr as hasConfiguredSecretInput, Or as normalizeResolvedSecretInputString, fn as withFileLock, kr as normalizeSecretInputString } from "./model-auth-BEfxZHMu.js";
-import "./plugins-_B4xyyDE.js";
-import "./accounts-xXd2Iz5K.js";
-import "./accounts-DSdLPivi.js";
-import "./send-c4T93w3q.js";
-import { At as resolveChannelEntryMatchWithFallback, Ot as buildChannelKeyCandidates, jt as resolveNestedAllowlistDecision, kt as normalizeChannelSlug } from "./send-ClNu4Wxa.js";
-import { $ as resolveMentionGating, B as resolveEffectiveAllowFromLists, H as DEFAULT_WEBHOOK_MAX_BODY_BYTES, I as formatDocsLink, J as createTypingCallbacks, L as readStoreAllowFromForDmPolicy, Q as buildMediaPayload, U as resolveAllowlistProviderRuntimeGroupPolicy, W as resolveDefaultGroupPolicy, Y as createReplyPrefixOptions, at as DEFAULT_GROUP_HISTORY_LIMIT, ct as clearHistoryEntriesIfEnabled, et as logInboundDrop, ft as formatAllowlistMatchMeta, it as summarizeMapping, lt as recordPendingHistoryEntryIfEnabled, n as dispatchReplyFromConfig, nt as resolveControlCommandGate, pt as resolveAllowlistMatchSimple, q as isDangerousNameMatchingEnabled, rt as mergeAllowlist, st as buildPendingHistoryContextFromMap, t as withReplyDispatcher, tt as logTypingFailure, v as resolveInboundSessionEnvelopeContext, z as resolveDmGroupAccessWithLists } from "./dispatch-BmG42I7I.js";
-import { i as isSilentReplyText, n as SILENT_REPLY_TOKEN } from "./tokens-B1MvXdT5.js";
-import { j as resolveChannelMediaMaxBytes } from "./deliver-Dx6LJGWV.js";
-import "./github-copilot-token-B2m7CSyP.js";
-import { a as isPrivateIpAddress } from "./ssrf-Cv2PRyfN.js";
-import { t as fetchWithSsrFGuard } from "./fetch-guard-DktFqB-K.js";
-import { S as getFileExtension, b as detectMime, x as extensionForMime } from "./message-channel-DPruDb-o.js";
-import "./path-alias-guards-3SW7Ksc9.js";
-import "./fs-safe-BpD25TdC.js";
-import { r as extractOriginalFilename } from "./store-Dz5IlyDO.js";
-import { $ as writeJsonFileAtomically, Q as readJsonFileWithFallback } from "./send-DsaQzFc9.js";
-import "./local-roots-qCr5T3Ts.js";
-import { _ as loadWebMedia } from "./ir-C0QUHVE2.js";
-import "./pi-embedded-helpers-CCZOz14D.js";
-import "./paths-BlRPJu2t.js";
-import "./diagnostic-CU8X1X8C.js";
-import "./pi-model-discovery-SCZfBw6K.js";
-import "./audio-transcription-runner-CXqR8d92.js";
-import "./image-B8SKUTsc.js";
-import "./chrome-CnHBY1u4.js";
-import "./skills-BTKA4QVh.js";
-import "./redact-DqH9HZJJ.js";
-import "./errors-CTLuOiLA.js";
-import "./tool-images-C-HkPQ-p.js";
-import "./api-key-rotation-Bi_eqkKy.js";
-import "./proxy-fetch-CO6KBKen.js";
-import "./commands-registry-BASBn1oV.js";
-import "./skill-commands-BQJUftiD.js";
-import "./render-hUn-4tdL.js";
-import "./target-errors-XV0SLbiO.js";
-import "./channel-activity-lPy9ZWIN.js";
-import "./fetch-DIILzBoT.js";
-import "./tables-KNukfeow.js";
-import "./send-CQTozMlZ.js";
-import "./proxy-CgXTW63Y.js";
-import "./outbound-attachment-DWGepb72.js";
-import "./send-ziSccGYV.js";
-import "./manager-CTwpNnTA.js";
-import "./query-expansion-LKgQ4tFK.js";
-//#region src/channels/plugins/config-schema.ts
-function buildChannelConfigSchema(schema) {
-	const schemaWithJson = schema;
-	if (typeof schemaWithJson.toJSONSchema === "function") return { schema: schemaWithJson.toJSONSchema({
-		target: "draft-07",
-		unrepresentable: "any"
-	}) };
-	return { schema: {
-		type: "object",
-		additionalProperties: true
-	} };
-}
+import "../redact-BDinS1q9.js";
+import "../errors-BxyFnvP3.js";
+import "../unhandled-rejections-CDJ8dOVP.js";
+import "../logger-kwZIqwuw.js";
+import "../paths-ViKUYWUK.js";
+import "../tmp-openclaw-dir-idKIOMmb.js";
+import "../theme-CdOoMzRk.js";
+import "../globals-DBUMOBZ8.js";
+import "../subsystem-DISldKSB.js";
+import "../ansi-BEJF8NKS.js";
+import "../boolean-C3GkJetE.js";
+import "../env-Dnra1IpT.js";
+import "../warning-filter-CBhOcgHd.js";
+import { C as sleep } from "../utils-CS0Ikux6.js";
+import { t as formatDocsLink } from "../links-8xRhWBQL.js";
+import "../paths-BFl2-hCf.js";
+import "../auth-profiles-CERaUUqX.js";
+import { g as DEFAULT_ACCOUNT_ID } from "../session-key-DAhnzjyr.js";
+import { r as normalizeStringEntries } from "../string-normalization-CohoSMRS.js";
+import "../boundary-path-Dm0QJ7-y.js";
+import "../boundary-file-read-DcZxlWD8.js";
+import "../logger-BmpSCz93.js";
+import "../exec-B5_AYfQG.js";
+import "../workspace-D4K6QX9X.js";
+import "../agent-scope-DoT9OqaV.js";
+import "../model-selection-B6ao45a4.js";
+import "../io-cPs4dU7X.js";
+import "../host-env-security-DEKL50zA.js";
+import "../shell-env-BKuVS72k.js";
+import "../safe-text-DIDDfQyI.js";
+import "../version-BpHNkJed.js";
+import { a as hasConfiguredSecretInput, c as normalizeResolvedSecretInputString, l as normalizeSecretInputString } from "../types.secrets-DiT8-OyD.js";
+import "../env-substitution-B8NFl2Jd.js";
+import "../includes-CCK6fRRs.js";
+import { o as MSTeamsConfigSchema } from "../zod-schema.providers-core-DLPfih2y.js";
+import "../legacy-web-search-CTvir-Bl.js";
+import "../registry-xyHjVLxh.js";
+import "../config-state-Dx9-tLPS.js";
+import "../min-host-version-xbc6BJ_K.js";
+import "../manifest-registry-D5E7Gxgl.js";
+import "../runtime-guard-QGt7fm0l.js";
+import "../avatar-policy-DVf9B9eu.js";
+import "../ip-DIgtRRTW.js";
+import "../zod-schema.agent-runtime-C659GPl8.js";
+import "../zod-schema.core-yLTNC4-K.js";
+import "../config-CB4aYWqd.js";
+import { n as withFileLock } from "../file-lock-DoKDW8jx.js";
+import "../audit-fs-CEN00XrG.js";
+import "../resolve-uXRpJb-M.js";
+import "../profiles-Cyg58FCO.js";
+import "../tailscale-CSUwCuE9.js";
+import "../tailnet-BVzEE6AW.js";
+import "../net-Dk658jWW.js";
+import "../auth-C_pTuZtn.js";
+import "../credentials-CO55Yx_u.js";
+import "../message-channel-DUrzQUcI.js";
+import "../store-D_eNuCKK.js";
+import "../runtime-C8dQugND.js";
+import { a as resolveAllowlistMatchSimple, n as formatAllowlistMatchMeta } from "../plugins-DGdgUNcN.js";
+import { a as resolveChannelEntryMatchWithFallback, n as buildChannelKeyCandidates, r as normalizeChannelSlug, s as resolveNestedAllowlistDecision } from "../channel-config-Fl7SBNeE.js";
+import "../sessions-C8WesgCl.js";
+import "../paths-BPfguEtH.js";
+import "../session-write-lock-bE2vQvvO.js";
+import "../method-scopes-BWG4Q18M.js";
+import "../call-VZCb020X.js";
+import "../prompt-style-MhFLSlua.js";
+import "../ports-lsof-C3NOmuKA.js";
+import "../restart-stale-pids-CQbYk99d.js";
+import "../ports-CQIuVpXl.js";
+import "../logging-C2L37N2X.js";
+import "../commands-CrPoYX9r.js";
+import "../issue-format-CP-gqjZB.js";
+import "../identity-D8H54Ni5.js";
+import { l as isSilentReplyText, s as SILENT_REPLY_TOKEN } from "../heartbeat-FZaB85hC.js";
+import { Dg as resolveMentionGating, E_ as mergeAllowlist, Mm as resolveChannelMediaMaxBytes, O_ as summarizeMapping, qg as dispatchReplyFromConfigWithSettledDispatcher, wg as resolveInboundSessionEnvelopeContext } from "../pi-embedded-D3aYWCrT.js";
+import "../internal-hooks-D4lZfNM5.js";
+import "../multimodal-De3qv_72.js";
+import "../memory-search-DRm4OVlH.js";
+import "../provider-catalog-7bUKai5_.js";
+import "../secret-input-BNBMqe2K.js";
+import "../bindings-RcwGGOd3.js";
+import "../resolve-route-DbP_XX4E.js";
+import "../routing-B37UwRwq.js";
+import "../identity-file-CCks_qJo.js";
+import "../outbound-runtime-oDjCAP7B.js";
+import "../provider-env-vars-Bhzl_gIs.js";
+import "../provider-auth-input-DxjPWsSV.js";
+import "../provider-model-minimax-XdwKeUOE.js";
+import "../provider-models-DfgBoVpf.js";
+import "../anthropic-vertex-provider-e_sRR8fp.js";
+import "../models-config.providers.discovery-Ch23kOpG.js";
+import "../text-runtime-B9_24WY5.js";
+import "../tool-catalog-6VPSKPp9.js";
+import "../docker-YL21-mX4.js";
+import "../sandbox-Dy3vKrxx.js";
+import "../common-De-BVwIv.js";
+import "../image-ops-BLXW6hKm.js";
+import "../thinking-CSfcimRZ.js";
+import "../path-alias-guards-CgP-6a1d.js";
+import "../sandbox-paths-Bk2ZwMsR.js";
+import "../channel-actions-BzT1SAu9.js";
+import { n as extensionForMime, r as getFileExtension, t as detectMime } from "../mime-D7Q9o2pi.js";
+import { c as isPrivateIpAddress } from "../ssrf-rHmQXFZ4.js";
+import { n as fetchWithSsrFGuard } from "../fetch-guard-BH3MjZoA.js";
+import "../provider-web-search-DYdDI2c9.js";
+import "../manager-CTkU8M9E.js";
+import { t as emptyPluginConfigSchema } from "../config-schema-WTc54khc.js";
+import { r as buildChannelConfigSchema } from "../config-schema-Bpwy_blm.js";
+import "../channel-plugin-common-COvcxNrG.js";
+import { t as PAIRING_APPROVED_MESSAGE } from "../pairing-message-I2-dQl_4.js";
+import { n as resolveAllowlistProviderRuntimeGroupPolicy, r as resolveDefaultGroupPolicy } from "../runtime-group-policy-BoqLmPvt.js";
+import { a as buildRuntimeAccountStatusSnapshot, i as buildProbeChannelStatusSummary, n as buildBaseChannelStatusSummary, u as createDefaultChannelRuntimeState } from "../status-helpers-Dd-hr4j4.js";
+import "../conversation-runtime-CqOm9f5F.js";
+import "../runtime-whatsapp-boundary-CWceJs-_.js";
+import "../pairing-store-ClZkWB4v.js";
+import { n as writeJsonFileAtomically, t as readJsonFileWithFallback } from "../json-store-Ju23bywi.js";
+import { n as createChannelPairingController } from "../channel-pairing-DorwL7gs.js";
+import "../secret-file-Ctk8Gt6Y.js";
+import "../channel-config-schema-DGuU5OU5.js";
+import "../setup-binary-DXdzcWG_.js";
+import "../archive-Bk8HKpaY.js";
+import "../fs-safe-Dvzkbqib.js";
+import "../signal-cli-install-BJB9N18P.js";
+import { D as mergeAllowFromEntries, at as setTopLevelChannelDmPolicyWithAllowFrom, it as setTopLevelChannelAllowFrom, ot as setTopLevelChannelGroupPolicy, st as splitSetupEntries, u as addWildcardAllowFrom } from "../setup-wizard-proxy-D0W3ulU0.js";
+import "../setup-BYrV6xB7.js";
+import { d as resolveDualTextControlCommandGate, n as readStoreAllowFromForDmPolicy, o as resolveDmGroupAccessWithLists, s as resolveEffectiveAllowFromLists, u as resolveControlCommandGate } from "../dm-policy-shared-DSMJu_ZS.js";
+import { a as resolveSenderScopedGroupPolicy, i as evaluateSenderGroupAccessForPolicy } from "../group-access-Csh12wXF.js";
+import { d as resolveOutboundMediaUrls, p as resolveSendableOutboundReplyParts, x as buildMediaPayload } from "../reply-payload-MXtGsVoh.js";
+import "../hook-runtime-DEbp5SYL.js";
+import "../diagnostic-DNoCLiOo.js";
+import "../templating-BueU7auS.js";
+import { t as createChannelReplyPipeline } from "../channel-reply-pipeline-C0iCnI2R.js";
+import { a as buildPendingHistoryContextFromMap, s as clearHistoryEntriesIfEnabled, t as DEFAULT_GROUP_HISTORY_LIMIT, u as recordPendingHistoryEntryIfEnabled } from "../reply-history-BVE7m0XA.js";
+import "../commands-registry.data-Dr5wKe-o.js";
+import "../commands-registry-C-vLUx3f.js";
+import { d as logInboundDrop, f as logTypingFailure } from "../channel-feedback-n64lXuo0.js";
+import "../frontmatter-DUZeCF_V.js";
+import "../env-overrides-DbK0fm-W.js";
+import "../skills-CreXENx9.js";
+import "../skills-remote-Ctc3qkkj.js";
+import "../workspace-dirs-CKrvld61.js";
+import "../pairing-token-CT1j20jA.js";
+import "../skill-commands-DDonxE3L.js";
+import "../level-overrides-pDiOPsgd.js";
+import "../config-BkPtspys.js";
+import { M as extractOriginalFilename } from "../routes-BbrNKa8i.js";
+import "../ssh-tunnel-CnI7n7iv.js";
+import "../server-middleware-DcKqo5DB.js";
+import "../logging-CSCaAwMS.js";
+import { c as resolveToolsBySender } from "../config-runtime-ST43sCMq.js";
+import { n as isDangerousNameMatchingEnabled } from "../dangerous-name-matching-CnHOQpyv.js";
+import "../exec-approvals-CVzy3Vfp.js";
+import { A as DEFAULT_WEBHOOK_MAX_BODY_BYTES } from "../webhook-ingress-BcLBvsy0.js";
+import "../system-events-D9mayVHC.js";
+import { i as normalizeHostnameSuffixAllowlist, n as buildHostnameAllowlistPolicyFromSuffixAllowlist, r as isHttpsUrlAllowedByHostnameSuffixAllowlist } from "../ssrf-policy-C4n9geuA.js";
+import "../provider-auth-ref-D7iRHU8I.js";
+import "../provider-auth-helpers-BeqTsaJO.js";
+import "../provider-api-key-auth-BRg5733-.js";
+import "../runtime-env-CjqWVeEh.js";
+import "../pairing-labels-BOG3E444.js";
+import "../directory-runtime-Dv9ukfmB.js";
+import "../read-only-account-inspect-CI8Acn7V.js";
+import "../src-BtOJllZl.js";
+import { t as loadWebMedia } from "../web-media-DiWkPbmA.js";
+import "../temp-path-DWrivwFl.js";
+import "../media-understanding-Dq7oUfcD.js";
+import "../web-media-BR4PzU9s.js";
+import "../state-paths-DCS7oDHS.js";
+import "../llm-task-DPBJEtc9.js";
+import "../pi-model-discovery-CnIuFJqz.js";
+import "../exec-inline-eval-D-f8HFse.js";
+import "../target-registry-OPF22cyh.js";
+import "../external-content-EaiMEyB5.js";
+import "../brave-D0M7h2uu.js";
+import "../duckduckgo-BGywj4mG.js";
+import "../exa-Ck55X5yZ.js";
+import "../security-runtime-BgVUCAQn.js";
+import "../provider-usage-BQ76VwEQ.js";
+import "../provider-onboard-BIL4F3N4.js";
+import "../perplexity-CHeba5ua.js";
+import "../stagger-CmrcNovb.js";
+import "../command-secret-targets-C0ZVtvSJ.js";
+import "../delivery-queue-ogw66DXo.js";
+import "../channel-summary-TN23o1-D.js";
+import "../session-system-events-N0UUhzUH.js";
+import "../tool-policy-match-CwxOHp7o.js";
+import "../runtime-CyQWw2V0.js";
+import "../channel-status-CKxclc13.js";
+import "../discord-core-D8UAKzsj.js";
+import "../cli-runtime-FV2YwWah.js";
+import "../config-presence-g2roOSEE.js";
+import "../query-expansion-B8XjXGEW.js";
+import "../search-manager-ln9SNtGS.js";
+import "../acp-runtime-CB1LKa-8.js";
+import "../telegram-core-CEsvkNyG.js";
+import "../audit-CChGpjlz.js";
+import "../gateway-runtime-B5M5_sR0.js";
+import "../connection-auth-DKVFW_D7.js";
+import { n as keepHttpServerTaskAlive } from "../channel-lifecycle-Bzwr_G0Y.js";
+import "../mcp-config-egoiCJ68.js";
+import { t as createOptionalChannelSetupSurface } from "../channel-setup-DWLTzZGs.js";
+import { t as loadOutboundMediaFromUrl } from "../outbound-media-DSBfoff9.js";
+//#region src/plugin-sdk/msteams.ts
+const msteamsSetup = createOptionalChannelSetupSurface({
+	channel: "msteams",
+	label: "Microsoft Teams",
+	npmSpec: "@openclaw/msteams",
+	docsPath: "/channels/msteams"
+});
+const msteamsSetupWizard = msteamsSetup.setupWizard;
+const msteamsSetupAdapter = msteamsSetup.setupAdapter;
 //#endregion
-//#region src/channels/plugins/onboarding/helpers.ts
-function addWildcardAllowFrom(allowFrom) {
-	const next = (allowFrom ?? []).map((v) => String(v).trim()).filter(Boolean);
-	if (!next.includes("*")) next.push("*");
-	return next;
-}
-function mergeAllowFromEntries(current, additions) {
-	const merged = [...current ?? [], ...additions].map((v) => String(v).trim()).filter(Boolean);
-	return [...new Set(merged)];
-}
-function splitOnboardingEntries(raw) {
-	return raw.split(/[\n,;]+/g).map((entry) => entry.trim()).filter(Boolean);
-}
-//#endregion
-//#region src/channels/plugins/onboarding/channel-access.ts
-function parseAllowlistEntries(raw) {
-	return splitOnboardingEntries(String(raw ?? ""));
-}
-function formatAllowlistEntries(entries) {
-	return entries.map((entry) => entry.trim()).filter(Boolean).join(", ");
-}
-async function promptChannelAccessPolicy(params) {
-	const options = [{
-		value: "allowlist",
-		label: "Allowlist (recommended)"
-	}];
-	if (params.allowOpen !== false) options.push({
-		value: "open",
-		label: "Open (allow all channels)"
-	});
-	if (params.allowDisabled !== false) options.push({
-		value: "disabled",
-		label: "Disabled (block all channels)"
-	});
-	const initialValue = params.currentPolicy ?? "allowlist";
-	return await params.prompter.select({
-		message: `${params.label} access`,
-		options,
-		initialValue
-	});
-}
-async function promptChannelAllowlist(params) {
-	const initialValue = params.currentEntries && params.currentEntries.length > 0 ? formatAllowlistEntries(params.currentEntries) : void 0;
-	return parseAllowlistEntries(await params.prompter.text({
-		message: `${params.label} allowlist (comma-separated)`,
-		placeholder: params.placeholder,
-		initialValue
-	}));
-}
-async function promptChannelAccessConfig(params) {
-	const hasEntries = (params.currentEntries ?? []).length > 0;
-	const shouldPrompt = params.defaultPrompt ?? !hasEntries;
-	if (!await params.prompter.confirm({
-		message: params.updatePrompt ? `Update ${params.label} access?` : `Configure ${params.label} access?`,
-		initialValue: shouldPrompt
-	})) return null;
-	const policy = await promptChannelAccessPolicy({
-		prompter: params.prompter,
-		label: params.label,
-		currentPolicy: params.currentPolicy,
-		allowOpen: params.allowOpen,
-		allowDisabled: params.allowDisabled
-	});
-	if (policy !== "allowlist") return {
-		policy,
-		entries: []
-	};
-	return {
-		policy,
-		entries: await promptChannelAllowlist({
-			prompter: params.prompter,
-			label: params.label,
-			currentEntries: params.currentEntries,
-			placeholder: params.placeholder
-		})
-	};
-}
-//#endregion
-//#region src/channels/plugins/pairing-message.ts
-const PAIRING_APPROVED_MESSAGE = "✅ OpenClaw access approved. Send a message to start chatting.";
-//#endregion
-//#region src/plugins/config-schema.ts
-function error(message) {
-	return {
-		success: false,
-		error: { issues: [{
-			path: [],
-			message
-		}] }
-	};
-}
-function emptyPluginConfigSchema() {
-	return {
-		safeParse(value) {
-			if (value === void 0) return {
-				success: true,
-				data: void 0
-			};
-			if (!value || typeof value !== "object" || Array.isArray(value)) return error("expected config object");
-			if (Object.keys(value).length > 0) return error("config must be empty");
-			return {
-				success: true,
-				data: value
-			};
-		},
-		jsonSchema: {
-			type: "object",
-			additionalProperties: false,
-			properties: {}
-		}
-	};
-}
-//#endregion
-//#region src/plugin-sdk/channel-lifecycle.ts
-/**
-* Keep a channel/provider task pending until the HTTP server closes.
-*
-* When an abort signal is provided, `onAbort` is invoked once and should
-* trigger server shutdown. The returned promise resolves only after `close`.
-*/
-async function keepHttpServerTaskAlive(params) {
-	const { server, abortSignal, onAbort } = params;
-	let abortTask = Promise.resolve();
-	let abortTriggered = false;
-	const triggerAbort = () => {
-		if (abortTriggered) return;
-		abortTriggered = true;
-		abortTask = Promise.resolve(onAbort?.()).then(() => void 0);
-	};
-	const onAbortSignal = () => {
-		triggerAbort();
-	};
-	if (abortSignal) if (abortSignal.aborted) triggerAbort();
-	else abortSignal.addEventListener("abort", onAbortSignal, { once: true });
-	await new Promise((resolve) => {
-		server.once("close", () => resolve());
-	});
-	if (abortSignal) abortSignal.removeEventListener("abort", onAbortSignal);
-	await abortTask;
-}
-//#endregion
-//#region src/plugin-sdk/inbound-reply-dispatch.ts
-async function dispatchReplyFromConfigWithSettledDispatcher(params) {
-	return await withReplyDispatcher({
-		dispatcher: params.dispatcher,
-		onSettled: params.onSettled,
-		run: () => dispatchReplyFromConfig({
-			ctx: params.ctxPayload,
-			cfg: params.cfg,
-			dispatcher: params.dispatcher,
-			replyOptions: params.replyOptions
-		})
-	});
-}
-//#endregion
-//#region src/plugin-sdk/outbound-media.ts
-async function loadOutboundMediaFromUrl(mediaUrl, options = {}) {
-	return await loadWebMedia(mediaUrl, {
-		maxBytes: options.maxBytes,
-		localRoots: options.mediaLocalRoots
-	});
-}
-//#endregion
-//#region src/plugin-sdk/pairing-access.ts
-function createScopedPairingAccess(params) {
-	const resolvedAccountId = normalizeAccountId(params.accountId);
-	return {
-		accountId: resolvedAccountId,
-		readAllowFromStore: () => params.core.channel.pairing.readAllowFromStore({
-			channel: params.channel,
-			accountId: resolvedAccountId
-		}),
-		readStoreForDmPolicy: (provider, accountId) => params.core.channel.pairing.readAllowFromStore({
-			channel: provider,
-			accountId: normalizeAccountId(accountId)
-		}),
-		upsertPairingRequest: (input) => params.core.channel.pairing.upsertPairingRequest({
-			channel: params.channel,
-			accountId: resolvedAccountId,
-			...input
-		})
-	};
-}
-//#endregion
-//#region src/plugin-sdk/ssrf-policy.ts
-function normalizeHostnameSuffix(value) {
-	const trimmed = value.trim().toLowerCase();
-	if (!trimmed) return "";
-	if (trimmed === "*" || trimmed === "*.") return "*";
-	return trimmed.replace(/^\*\.?/, "").replace(/^\.+/, "").replace(/\.+$/, "");
-}
-function isHostnameAllowedBySuffixAllowlist(hostname, allowlist) {
-	if (allowlist.includes("*")) return true;
-	const normalized = hostname.toLowerCase();
-	return allowlist.some((entry) => normalized === entry || normalized.endsWith(`.${entry}`));
-}
-function normalizeHostnameSuffixAllowlist(input, defaults) {
-	const source = input && input.length > 0 ? input : defaults;
-	if (!source || source.length === 0) return [];
-	const normalized = source.map(normalizeHostnameSuffix).filter(Boolean);
-	if (normalized.includes("*")) return ["*"];
-	return Array.from(new Set(normalized));
-}
-function isHttpsUrlAllowedByHostnameSuffixAllowlist(url, allowlist) {
-	try {
-		const parsed = new URL(url);
-		if (parsed.protocol !== "https:") return false;
-		return isHostnameAllowedBySuffixAllowlist(parsed.hostname, allowlist);
-	} catch {
-		return false;
-	}
-}
-/**
-* Converts suffix-style host allowlists (for example "example.com") into SSRF
-* hostname allowlist patterns used by the shared fetch guard.
-*
-* Suffix semantics:
-* - "example.com" allows "example.com" and "*.example.com"
-* - "*" disables hostname allowlist restrictions
-*/
-function buildHostnameAllowlistPolicyFromSuffixAllowlist(allowHosts) {
-	const normalizedAllowHosts = normalizeHostnameSuffixAllowlist(allowHosts);
-	if (normalizedAllowHosts.length === 0) return;
-	const patterns = /* @__PURE__ */ new Set();
-	for (const normalized of normalizedAllowHosts) {
-		if (normalized === "*") return;
-		patterns.add(normalized);
-		patterns.add(`*.${normalized}`);
-	}
-	if (patterns.size === 0) return;
-	return { hostnameAllowlist: Array.from(patterns) };
-}
-//#endregion
-//#region src/plugin-sdk/status-helpers.ts
-function createDefaultChannelRuntimeState(accountId, extra) {
-	return {
-		accountId,
-		running: false,
-		lastStartAt: null,
-		lastStopAt: null,
-		lastError: null,
-		...extra ?? {}
-	};
-}
-function buildBaseChannelStatusSummary(snapshot) {
-	return {
-		configured: snapshot.configured ?? false,
-		running: snapshot.running ?? false,
-		lastStartAt: snapshot.lastStartAt ?? null,
-		lastStopAt: snapshot.lastStopAt ?? null,
-		lastError: snapshot.lastError ?? null
-	};
-}
-function buildProbeChannelStatusSummary(snapshot, extra) {
-	return {
-		...buildBaseChannelStatusSummary(snapshot),
-		...extra ?? {},
-		probe: snapshot.probe,
-		lastProbeAt: snapshot.lastProbeAt ?? null
-	};
-}
-function buildRuntimeAccountStatusSnapshot(params) {
-	const { runtime, probe } = params;
-	return {
-		running: runtime?.running ?? false,
-		lastStartAt: runtime?.lastStartAt ?? null,
-		lastStopAt: runtime?.lastStopAt ?? null,
-		lastError: runtime?.lastError ?? null,
-		probe
-	};
-}
-//#endregion
-export { DEFAULT_ACCOUNT_ID, DEFAULT_GROUP_HISTORY_LIMIT, DEFAULT_WEBHOOK_MAX_BODY_BYTES, MSTeamsConfigSchema, PAIRING_APPROVED_MESSAGE, SILENT_REPLY_TOKEN, addWildcardAllowFrom, buildBaseChannelStatusSummary, buildChannelConfigSchema, buildChannelKeyCandidates, buildHostnameAllowlistPolicyFromSuffixAllowlist, buildMediaPayload, buildPendingHistoryContextFromMap, buildProbeChannelStatusSummary, buildRuntimeAccountStatusSnapshot, clearHistoryEntriesIfEnabled, createDefaultChannelRuntimeState, createReplyPrefixOptions, createScopedPairingAccess, createTypingCallbacks, detectMime, dispatchReplyFromConfigWithSettledDispatcher, emptyPluginConfigSchema, extensionForMime, extractOriginalFilename, fetchWithSsrFGuard, formatAllowlistMatchMeta, formatDocsLink, getFileExtension, hasConfiguredSecretInput, isDangerousNameMatchingEnabled, isHttpsUrlAllowedByHostnameSuffixAllowlist, isPrivateIpAddress, isSilentReplyText, keepHttpServerTaskAlive, loadOutboundMediaFromUrl, loadWebMedia, logInboundDrop, logTypingFailure, mergeAllowFromEntries, mergeAllowlist, normalizeChannelSlug, normalizeHostnameSuffixAllowlist, normalizeResolvedSecretInputString, normalizeSecretInputString, promptChannelAccessConfig, readJsonFileWithFallback, readStoreAllowFromForDmPolicy, recordPendingHistoryEntryIfEnabled, resolveAllowlistMatchSimple, resolveAllowlistProviderRuntimeGroupPolicy, resolveChannelEntryMatchWithFallback, resolveChannelMediaMaxBytes, resolveControlCommandGate, resolveDefaultGroupPolicy, resolveDmGroupAccessWithLists, resolveEffectiveAllowFromLists, resolveInboundSessionEnvelopeContext, resolveMentionGating, resolveNestedAllowlistDecision, resolveToolsBySender, sleep, summarizeMapping, withFileLock, writeJsonFileAtomically };
+export { DEFAULT_ACCOUNT_ID, DEFAULT_GROUP_HISTORY_LIMIT, DEFAULT_WEBHOOK_MAX_BODY_BYTES, MSTeamsConfigSchema, PAIRING_APPROVED_MESSAGE, SILENT_REPLY_TOKEN, addWildcardAllowFrom, buildBaseChannelStatusSummary, buildChannelConfigSchema, buildChannelKeyCandidates, buildHostnameAllowlistPolicyFromSuffixAllowlist, buildMediaPayload, buildPendingHistoryContextFromMap, buildProbeChannelStatusSummary, buildRuntimeAccountStatusSnapshot, clearHistoryEntriesIfEnabled, createChannelPairingController, createChannelReplyPipeline, createDefaultChannelRuntimeState, detectMime, dispatchReplyFromConfigWithSettledDispatcher, emptyPluginConfigSchema, evaluateSenderGroupAccessForPolicy, extensionForMime, extractOriginalFilename, fetchWithSsrFGuard, formatAllowlistMatchMeta, formatDocsLink, getFileExtension, hasConfiguredSecretInput, isDangerousNameMatchingEnabled, isHttpsUrlAllowedByHostnameSuffixAllowlist, isPrivateIpAddress, isSilentReplyText, keepHttpServerTaskAlive, loadOutboundMediaFromUrl, loadWebMedia, logInboundDrop, logTypingFailure, mergeAllowFromEntries, mergeAllowlist, msteamsSetupAdapter, msteamsSetupWizard, normalizeChannelSlug, normalizeHostnameSuffixAllowlist, normalizeResolvedSecretInputString, normalizeSecretInputString, normalizeStringEntries, readJsonFileWithFallback, readStoreAllowFromForDmPolicy, recordPendingHistoryEntryIfEnabled, resolveAllowlistMatchSimple, resolveAllowlistProviderRuntimeGroupPolicy, resolveChannelEntryMatchWithFallback, resolveChannelMediaMaxBytes, resolveControlCommandGate, resolveDefaultGroupPolicy, resolveDmGroupAccessWithLists, resolveDualTextControlCommandGate, resolveEffectiveAllowFromLists, resolveInboundSessionEnvelopeContext, resolveMentionGating, resolveNestedAllowlistDecision, resolveOutboundMediaUrls, resolveSendableOutboundReplyParts, resolveSenderScopedGroupPolicy, resolveToolsBySender, setTopLevelChannelAllowFrom, setTopLevelChannelDmPolicyWithAllowFrom, setTopLevelChannelGroupPolicy, sleep, splitSetupEntries, summarizeMapping, withFileLock, writeJsonFileAtomically };

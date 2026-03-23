@@ -32,7 +32,7 @@ $TOOLS_DIR     = "$ROOT\tools"
 $INSTALLER_DIR = "$ROOT\installer"
 $OUTPUT_DIR    = "$ROOT\Output"
 
-$NODE_VERSION  = '22.14.0'
+$NODE_VERSION  = '24.14.0'
 $NODE_ZIP      = "node-v$NODE_VERSION-win-x64.zip"
 $NODE_URL      = "https://nodejs.org/dist/v$NODE_VERSION/$NODE_ZIP"
 $NODE_INNER    = "node-v$NODE_VERSION-win-x64"   # folder name inside zip

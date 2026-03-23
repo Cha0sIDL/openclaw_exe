@@ -1,919 +1,196 @@
-import { randomBytes, randomUUID } from "node:crypto";
-import path from "node:path";
-import fs from "node:fs";
-import os from "node:os";
-import fs$1 from "node:fs/promises";
-import { execFile, spawn } from "node:child_process";
-import process$1 from "node:process";
-import { promisify } from "node:util";
-import "tslog";
-import "json5";
-import chalk, { Chalk } from "chalk";
-//#region src/plugins/config-schema.ts
-function error(message) {
-	return {
-		success: false,
-		error: { issues: [{
-			path: [],
-			message
-		}] }
-	};
-}
-function emptyPluginConfigSchema() {
-	return {
-		safeParse(value) {
-			if (value === void 0) return {
-				success: true,
-				data: void 0
-			};
-			if (!value || typeof value !== "object" || Array.isArray(value)) return error("expected config object");
-			if (Object.keys(value).length > 0) return error("config must be empty");
-			return {
-				success: true,
-				data: value
-			};
-		},
-		jsonSchema: {
-			type: "object",
-			additionalProperties: false,
-			properties: {}
-		}
-	};
-}
-//#endregion
-//#region src/plugin-sdk/provider-auth-result.ts
-function buildOauthProviderAuthResult(params) {
-	const email = params.email ?? void 0;
-	return {
-		profiles: [{
-			profileId: `${params.profilePrefix ?? params.providerId}:${email ?? "default"}`,
-			credential: {
-				type: "oauth",
-				provider: params.providerId,
-				access: params.access,
-				...params.refresh ? { refresh: params.refresh } : {},
-				...Number.isFinite(params.expires) ? { expires: params.expires } : {},
-				...email ? { email } : {},
-				...params.credentialExtra
-			}
-		}],
-		configPatch: params.configPatch ?? { agents: { defaults: { models: { [params.defaultModel]: {} } } } },
-		defaultModel: params.defaultModel,
-		notes: params.notes
-	};
-}
-//#endregion
-//#region src/shared/device-auth.ts
-function normalizeDeviceAuthScopes(scopes) {
-	if (!Array.isArray(scopes)) return [];
-	const out = /* @__PURE__ */ new Set();
-	for (const scope of scopes) {
-		const trimmed = scope.trim();
-		if (trimmed) out.add(trimmed);
-	}
-	return [...out].toSorted();
-}
-//#endregion
-//#region src/infra/home-dir.ts
-function normalize(value) {
-	const trimmed = value?.trim();
-	return trimmed ? trimmed : void 0;
-}
-function resolveEffectiveHomeDir(env = process.env, homedir = os.homedir) {
-	const raw = resolveRawHomeDir(env, homedir);
-	return raw ? path.resolve(raw) : void 0;
-}
-function resolveRawHomeDir(env, homedir) {
-	const explicitHome = normalize(env.OPENCLAW_HOME);
-	if (explicitHome) {
-		if (explicitHome === "~" || explicitHome.startsWith("~/") || explicitHome.startsWith("~\\")) {
-			const fallbackHome = normalize(env.HOME) ?? normalize(env.USERPROFILE) ?? normalizeSafe(homedir);
-			if (fallbackHome) return explicitHome.replace(/^~(?=$|[\\/])/, fallbackHome);
-			return;
-		}
-		return explicitHome;
-	}
-	const envHome = normalize(env.HOME);
-	if (envHome) return envHome;
-	const userProfile = normalize(env.USERPROFILE);
-	if (userProfile) return userProfile;
-	return normalizeSafe(homedir);
-}
-function normalizeSafe(homedir) {
-	try {
-		return normalize(homedir());
-	} catch {
-		return;
-	}
-}
-function resolveRequiredHomeDir(env = process.env, homedir = os.homedir) {
-	return resolveEffectiveHomeDir(env, homedir) ?? path.resolve(process.cwd());
-}
-function expandHomePrefix(input, opts) {
-	if (!input.startsWith("~")) return input;
-	const home = normalize(opts?.home) ?? resolveEffectiveHomeDir(opts?.env ?? process.env, opts?.homedir ?? os.homedir);
-	if (!home) return input;
-	return input.replace(/^~(?=$|[\\/])/, home);
-}
-//#endregion
-//#region src/config/paths.ts
-/**
-* Nix mode detection: When OPENCLAW_NIX_MODE=1, the gateway is running under Nix.
-* In this mode:
-* - No auto-install flows should be attempted
-* - Missing dependencies should produce actionable Nix-specific error messages
-* - Config is managed externally (read-only from Nix perspective)
-*/
-function resolveIsNixMode(env = process.env) {
-	return env.OPENCLAW_NIX_MODE === "1";
-}
-resolveIsNixMode();
-const LEGACY_STATE_DIRNAMES = [
-	".clawdbot",
-	".moldbot",
-	".moltbot"
-];
-const NEW_STATE_DIRNAME = ".openclaw";
-const CONFIG_FILENAME = "openclaw.json";
-const LEGACY_CONFIG_FILENAMES = [
-	"clawdbot.json",
-	"moldbot.json",
-	"moltbot.json"
-];
-function resolveDefaultHomeDir() {
-	return resolveRequiredHomeDir(process.env, os.homedir);
-}
-/** Build a homedir thunk that respects OPENCLAW_HOME for the given env. */
-function envHomedir(env) {
-	return () => resolveRequiredHomeDir(env, os.homedir);
-}
-function legacyStateDirs(homedir = resolveDefaultHomeDir) {
-	return LEGACY_STATE_DIRNAMES.map((dir) => path.join(homedir(), dir));
-}
-function newStateDir(homedir = resolveDefaultHomeDir) {
-	return path.join(homedir(), NEW_STATE_DIRNAME);
-}
-/**
-* State directory for mutable data (sessions, logs, caches).
-* Can be overridden via OPENCLAW_STATE_DIR.
-* Default: ~/.openclaw
-*/
-function resolveStateDir(env = process.env, homedir = envHomedir(env)) {
-	const effectiveHomedir = () => resolveRequiredHomeDir(env, homedir);
-	const override = env.OPENCLAW_STATE_DIR?.trim() || env.CLAWDBOT_STATE_DIR?.trim();
-	if (override) return resolveUserPath(override, env, effectiveHomedir);
-	const newDir = newStateDir(effectiveHomedir);
-	if (env.OPENCLAW_TEST_FAST === "1") return newDir;
-	const legacyDirs = legacyStateDirs(effectiveHomedir);
-	if (fs.existsSync(newDir)) return newDir;
-	const existingLegacy = legacyDirs.find((dir) => {
-		try {
-			return fs.existsSync(dir);
-		} catch {
-			return false;
-		}
-	});
-	if (existingLegacy) return existingLegacy;
-	return newDir;
-}
-function resolveUserPath(input, env = process.env, homedir = envHomedir(env)) {
-	const trimmed = input.trim();
-	if (!trimmed) return trimmed;
-	if (trimmed.startsWith("~")) {
-		const expanded = expandHomePrefix(trimmed, {
-			home: resolveRequiredHomeDir(env, homedir),
-			env,
-			homedir
-		});
-		return path.resolve(expanded);
-	}
-	return path.resolve(trimmed);
-}
-resolveStateDir();
-/**
-* Config file path (JSON5).
-* Can be overridden via OPENCLAW_CONFIG_PATH.
-* Default: ~/.openclaw/openclaw.json (or $OPENCLAW_STATE_DIR/openclaw.json)
-*/
-function resolveCanonicalConfigPath(env = process.env, stateDir = resolveStateDir(env, envHomedir(env))) {
-	const override = env.OPENCLAW_CONFIG_PATH?.trim() || env.CLAWDBOT_CONFIG_PATH?.trim();
-	if (override) return resolveUserPath(override, env, envHomedir(env));
-	return path.join(stateDir, CONFIG_FILENAME);
-}
-/**
-* Resolve the active config path by preferring existing config candidates
-* before falling back to the canonical path.
-*/
-function resolveConfigPathCandidate(env = process.env, homedir = envHomedir(env)) {
-	if (env.OPENCLAW_TEST_FAST === "1") return resolveCanonicalConfigPath(env, resolveStateDir(env, homedir));
-	const existing = resolveDefaultConfigCandidates(env, homedir).find((candidate) => {
-		try {
-			return fs.existsSync(candidate);
-		} catch {
-			return false;
-		}
-	});
-	if (existing) return existing;
-	return resolveCanonicalConfigPath(env, resolveStateDir(env, homedir));
-}
-resolveConfigPathCandidate();
-/**
-* Resolve default config path candidates across default locations.
-* Order: explicit config path → state-dir-derived paths → new default.
-*/
-function resolveDefaultConfigCandidates(env = process.env, homedir = envHomedir(env)) {
-	const effectiveHomedir = () => resolveRequiredHomeDir(env, homedir);
-	const explicit = env.OPENCLAW_CONFIG_PATH?.trim() || env.CLAWDBOT_CONFIG_PATH?.trim();
-	if (explicit) return [resolveUserPath(explicit, env, effectiveHomedir)];
-	const candidates = [];
-	const openclawStateDir = env.OPENCLAW_STATE_DIR?.trim() || env.CLAWDBOT_STATE_DIR?.trim();
-	if (openclawStateDir) {
-		const resolved = resolveUserPath(openclawStateDir, env, effectiveHomedir);
-		candidates.push(path.join(resolved, CONFIG_FILENAME));
-		candidates.push(...LEGACY_CONFIG_FILENAMES.map((name) => path.join(resolved, name)));
-	}
-	const defaultDirs = [newStateDir(effectiveHomedir), ...legacyStateDirs(effectiveHomedir)];
-	for (const dir of defaultDirs) {
-		candidates.push(path.join(dir, CONFIG_FILENAME));
-		candidates.push(...LEGACY_CONFIG_FILENAMES.map((name) => path.join(dir, name)));
-	}
-	return candidates;
-}
-//#endregion
-//#region src/infra/json-files.ts
-async function readJsonFile(filePath) {
-	try {
-		const raw = await fs$1.readFile(filePath, "utf8");
-		return JSON.parse(raw);
-	} catch {
-		return null;
-	}
-}
-async function writeJsonAtomic(filePath, value, options) {
-	await writeTextAtomic(filePath, JSON.stringify(value, null, 2), {
-		mode: options?.mode,
-		ensureDirMode: options?.ensureDirMode,
-		appendTrailingNewline: options?.trailingNewline
-	});
-}
-async function writeTextAtomic(filePath, content, options) {
-	const mode = options?.mode ?? 384;
-	const payload = options?.appendTrailingNewline && !content.endsWith("\n") ? `${content}\n` : content;
-	const mkdirOptions = { recursive: true };
-	if (typeof options?.ensureDirMode === "number") mkdirOptions.mode = options.ensureDirMode;
-	await fs$1.mkdir(path.dirname(filePath), mkdirOptions);
-	const tmp = `${filePath}.${randomUUID()}.tmp`;
-	try {
-		await fs$1.writeFile(tmp, payload, "utf8");
-		try {
-			await fs$1.chmod(tmp, mode);
-		} catch {}
-		await fs$1.rename(tmp, filePath);
-		try {
-			await fs$1.chmod(filePath, mode);
-		} catch {}
-	} finally {
-		await fs$1.rm(tmp, { force: true }).catch(() => void 0);
-	}
-}
-function createAsyncLock() {
-	let lock = Promise.resolve();
-	return async function withLock(fn) {
-		const prev = lock;
-		let release;
-		lock = new Promise((resolve) => {
-			release = resolve;
-		});
-		await prev;
-		try {
-			return await fn();
-		} finally {
-			release?.();
-		}
-	};
-}
-//#endregion
-//#region src/infra/pairing-files.ts
-function resolvePairingPaths(baseDir, subdir) {
-	const root = baseDir ?? resolveStateDir();
-	const dir = path.join(root, subdir);
-	return {
-		dir,
-		pendingPath: path.join(dir, "pending.json"),
-		pairedPath: path.join(dir, "paired.json")
-	};
-}
-function pruneExpiredPending(pendingById, nowMs, ttlMs) {
-	for (const [id, req] of Object.entries(pendingById)) if (nowMs - req.ts > ttlMs) delete pendingById[id];
-}
-//#endregion
-//#region src/infra/pairing-pending.ts
-async function rejectPendingPairingRequest(params) {
-	const state = await params.loadState();
-	const pending = state.pendingById[params.requestId];
-	if (!pending) return null;
-	delete state.pendingById[params.requestId];
-	await params.persistState(state);
-	return {
-		requestId: params.requestId,
-		[params.idKey]: params.getId(pending)
-	};
-}
-function generatePairingToken() {
-	return randomBytes(32).toString("base64url");
-}
-//#endregion
-//#region src/infra/device-pairing.ts
-const PENDING_TTL_MS = 300 * 1e3;
-const withLock = createAsyncLock();
-async function loadState(baseDir) {
-	const { pendingPath, pairedPath } = resolvePairingPaths(baseDir, "devices");
-	const [pending, paired] = await Promise.all([readJsonFile(pendingPath), readJsonFile(pairedPath)]);
-	const state = {
-		pendingById: pending ?? {},
-		pairedByDeviceId: paired ?? {}
-	};
-	pruneExpiredPending(state.pendingById, Date.now(), PENDING_TTL_MS);
-	return state;
-}
-async function persistState(state, baseDir) {
-	const { pendingPath, pairedPath } = resolvePairingPaths(baseDir, "devices");
-	await Promise.all([writeJsonAtomic(pendingPath, state.pendingById), writeJsonAtomic(pairedPath, state.pairedByDeviceId)]);
-}
-function normalizeRole(role) {
-	const trimmed = role?.trim();
-	return trimmed ? trimmed : null;
-}
-function mergeRoles(...items) {
-	const roles = /* @__PURE__ */ new Set();
-	for (const item of items) {
-		if (!item) continue;
-		if (Array.isArray(item)) for (const role of item) {
-			const trimmed = role.trim();
-			if (trimmed) roles.add(trimmed);
-		}
-		else {
-			const trimmed = item.trim();
-			if (trimmed) roles.add(trimmed);
-		}
-	}
-	if (roles.size === 0) return;
-	return [...roles];
-}
-function mergeScopes(...items) {
-	const scopes = /* @__PURE__ */ new Set();
-	for (const item of items) {
-		if (!item) continue;
-		for (const scope of item) {
-			const trimmed = scope.trim();
-			if (trimmed) scopes.add(trimmed);
-		}
-	}
-	if (scopes.size === 0) return;
-	return [...scopes];
-}
-function newToken() {
-	return generatePairingToken();
-}
-async function listDevicePairing(baseDir) {
-	const state = await loadState(baseDir);
-	return {
-		pending: Object.values(state.pendingById).toSorted((a, b) => b.ts - a.ts),
-		paired: Object.values(state.pairedByDeviceId).toSorted((a, b) => b.approvedAtMs - a.approvedAtMs)
-	};
-}
-async function approveDevicePairing(requestId, baseDir) {
-	return await withLock(async () => {
-		const state = await loadState(baseDir);
-		const pending = state.pendingById[requestId];
-		if (!pending) return null;
-		const now = Date.now();
-		const existing = state.pairedByDeviceId[pending.deviceId];
-		const roles = mergeRoles(existing?.roles, existing?.role, pending.roles, pending.role);
-		const approvedScopes = mergeScopes(existing?.approvedScopes ?? existing?.scopes, pending.scopes);
-		const tokens = existing?.tokens ? { ...existing.tokens } : {};
-		const roleForToken = normalizeRole(pending.role);
-		if (roleForToken) {
-			const existingToken = tokens[roleForToken];
-			const requestedScopes = normalizeDeviceAuthScopes(pending.scopes);
-			const nextScopes = requestedScopes.length > 0 ? requestedScopes : normalizeDeviceAuthScopes(existingToken?.scopes ?? approvedScopes ?? existing?.approvedScopes ?? existing?.scopes);
-			const now = Date.now();
-			tokens[roleForToken] = {
-				token: newToken(),
-				role: roleForToken,
-				scopes: nextScopes,
-				createdAtMs: existingToken?.createdAtMs ?? now,
-				rotatedAtMs: existingToken ? now : void 0,
-				revokedAtMs: void 0,
-				lastUsedAtMs: existingToken?.lastUsedAtMs
-			};
-		}
-		const device = {
-			deviceId: pending.deviceId,
-			publicKey: pending.publicKey,
-			displayName: pending.displayName,
-			platform: pending.platform,
-			deviceFamily: pending.deviceFamily,
-			clientId: pending.clientId,
-			clientMode: pending.clientMode,
-			role: pending.role,
-			roles,
-			scopes: approvedScopes,
-			approvedScopes,
-			remoteIp: pending.remoteIp,
-			tokens,
-			createdAtMs: existing?.createdAtMs ?? now,
-			approvedAtMs: now
-		};
-		delete state.pendingById[requestId];
-		state.pairedByDeviceId[device.deviceId] = device;
-		await persistState(state, baseDir);
-		return {
-			requestId,
-			device
-		};
-	});
-}
-async function rejectDevicePairing(requestId, baseDir) {
-	return await withLock(async () => {
-		return await rejectPendingPairingRequest({
-			requestId,
-			idKey: "deviceId",
-			loadState: () => loadState(baseDir),
-			persistState: (state) => persistState(state, baseDir),
-			getId: (pending) => pending.deviceId
-		});
-	});
-}
-//#endregion
-//#region src/infra/tmp-openclaw-dir.ts
-const POSIX_OPENCLAW_TMP_DIR = "/tmp/openclaw";
-const TMP_DIR_ACCESS_MODE = fs.constants.W_OK | fs.constants.X_OK;
-function isNodeErrorWithCode(err, code) {
-	return typeof err === "object" && err !== null && "code" in err && err.code === code;
-}
-function resolvePreferredOpenClawTmpDir(options = {}) {
-	const accessSync = options.accessSync ?? fs.accessSync;
-	const chmodSync = options.chmodSync ?? fs.chmodSync;
-	const lstatSync = options.lstatSync ?? fs.lstatSync;
-	const mkdirSync = options.mkdirSync ?? fs.mkdirSync;
-	const warn = options.warn ?? ((message) => console.warn(message));
-	const getuid = options.getuid ?? (() => {
-		try {
-			return typeof process.getuid === "function" ? process.getuid() : void 0;
-		} catch {
-			return;
-		}
-	});
-	const tmpdir = options.tmpdir ?? os.tmpdir;
-	const uid = getuid();
-	const isSecureDirForUser = (st) => {
-		if (uid === void 0) return true;
-		if (typeof st.uid === "number" && st.uid !== uid) return false;
-		if (typeof st.mode === "number" && (st.mode & 18) !== 0) return false;
-		return true;
-	};
-	const fallback = () => {
-		const base = tmpdir();
-		const suffix = uid === void 0 ? "openclaw" : `openclaw-${uid}`;
-		return path.join(base, suffix);
-	};
-	const isTrustedTmpDir = (st) => {
-		return st.isDirectory() && !st.isSymbolicLink() && isSecureDirForUser(st);
-	};
-	const resolveDirState = (candidatePath) => {
-		try {
-			if (!isTrustedTmpDir(lstatSync(candidatePath))) return "invalid";
-			accessSync(candidatePath, TMP_DIR_ACCESS_MODE);
-			return "available";
-		} catch (err) {
-			if (isNodeErrorWithCode(err, "ENOENT")) return "missing";
-			return "invalid";
-		}
-	};
-	const tryRepairWritableBits = (candidatePath) => {
-		try {
-			const st = lstatSync(candidatePath);
-			if (!st.isDirectory() || st.isSymbolicLink()) return false;
-			if (uid !== void 0 && typeof st.uid === "number" && st.uid !== uid) return false;
-			if (typeof st.mode !== "number" || (st.mode & 18) === 0) return false;
-			chmodSync(candidatePath, 448);
-			warn(`[openclaw] tightened permissions on temp dir: ${candidatePath}`);
-			return resolveDirState(candidatePath) === "available";
-		} catch {
-			return false;
-		}
-	};
-	const ensureTrustedFallbackDir = () => {
-		const fallbackPath = fallback();
-		const state = resolveDirState(fallbackPath);
-		if (state === "available") return fallbackPath;
-		if (state === "invalid") {
-			if (tryRepairWritableBits(fallbackPath)) return fallbackPath;
-			throw new Error(`Unsafe fallback OpenClaw temp dir: ${fallbackPath}`);
-		}
-		try {
-			mkdirSync(fallbackPath, {
-				recursive: true,
-				mode: 448
-			});
-			chmodSync(fallbackPath, 448);
-		} catch {
-			throw new Error(`Unable to create fallback OpenClaw temp dir: ${fallbackPath}`);
-		}
-		if (resolveDirState(fallbackPath) !== "available" && !tryRepairWritableBits(fallbackPath)) throw new Error(`Unsafe fallback OpenClaw temp dir: ${fallbackPath}`);
-		return fallbackPath;
-	};
-	const existingPreferredState = resolveDirState(POSIX_OPENCLAW_TMP_DIR);
-	if (existingPreferredState === "available") return POSIX_OPENCLAW_TMP_DIR;
-	if (existingPreferredState === "invalid") {
-		if (tryRepairWritableBits("/tmp/openclaw")) return POSIX_OPENCLAW_TMP_DIR;
-		return ensureTrustedFallbackDir();
-	}
-	try {
-		accessSync("/tmp", TMP_DIR_ACCESS_MODE);
-		mkdirSync(POSIX_OPENCLAW_TMP_DIR, {
-			recursive: true,
-			mode: 448
-		});
-		chmodSync(POSIX_OPENCLAW_TMP_DIR, 448);
-		if (resolveDirState("/tmp/openclaw") !== "available" && !tryRepairWritableBits("/tmp/openclaw")) return ensureTrustedFallbackDir();
-		return POSIX_OPENCLAW_TMP_DIR;
-	} catch {
-		return ensureTrustedFallbackDir();
-	}
-}
-//#endregion
-//#region src/logging/node-require.ts
-function resolveNodeRequireFromMeta(metaUrl) {
-	const getBuiltinModule = process.getBuiltinModule;
-	if (typeof getBuiltinModule !== "function") return null;
-	try {
-		const moduleNamespace = getBuiltinModule("module");
-		const createRequire = typeof moduleNamespace.createRequire === "function" ? moduleNamespace.createRequire : null;
-		return createRequire ? createRequire(metaUrl) : null;
-	} catch {
-		return null;
-	}
-}
-//#endregion
-//#region src/logging/logger.ts
-const DEFAULT_LOG_DIR = resolvePreferredOpenClawTmpDir();
-path.join(DEFAULT_LOG_DIR, "openclaw.log");
-resolveNodeRequireFromMeta(import.meta.url);
-//#endregion
-//#region src/terminal/palette.ts
-const LOBSTER_PALETTE = {
-	accent: "#FF5A2D",
-	accentBright: "#FF7A3D",
-	accentDim: "#D14A22",
-	info: "#FF8A5B",
-	success: "#2FBF71",
-	warn: "#FFB020",
-	error: "#E23D2D",
-	muted: "#8B7F77"
-};
-//#endregion
-//#region src/terminal/theme.ts
-const hasForceColor = typeof process.env.FORCE_COLOR === "string" && process.env.FORCE_COLOR.trim().length > 0 && process.env.FORCE_COLOR.trim() !== "0";
-const baseChalk = process.env.NO_COLOR && !hasForceColor ? new Chalk({ level: 0 }) : chalk;
-const hex = (value) => baseChalk.hex(value);
-const theme = {
-	accent: hex(LOBSTER_PALETTE.accent),
-	accentBright: hex(LOBSTER_PALETTE.accentBright),
-	accentDim: hex(LOBSTER_PALETTE.accentDim),
-	info: hex(LOBSTER_PALETTE.info),
-	success: hex(LOBSTER_PALETTE.success),
-	warn: hex(LOBSTER_PALETTE.warn),
-	error: hex(LOBSTER_PALETTE.error),
-	muted: hex(LOBSTER_PALETTE.muted),
-	heading: baseChalk.bold.hex(LOBSTER_PALETTE.accent),
-	command: hex(LOBSTER_PALETTE.accentBright),
-	option: hex(LOBSTER_PALETTE.warn)
-};
-theme.success;
-theme.warn;
-theme.info;
-theme.error;
-//#endregion
-//#region src/terminal/progress-line.ts
-let activeStream = null;
-function clearActiveProgressLine() {
-	if (!activeStream?.isTTY) return;
-	activeStream.write("\r\x1B[2K");
-}
-//#endregion
-//#region src/runtime.ts
-function shouldEmitRuntimeLog(env = process.env) {
-	if (env.VITEST !== "true") return true;
-	if (env.OPENCLAW_TEST_RUNTIME_LOG === "1") return true;
-	return typeof console.log.mock === "object";
-}
-function createRuntimeIo() {
-	return {
-		log: (...args) => {
-			if (!shouldEmitRuntimeLog()) return;
-			clearActiveProgressLine();
-			console.log(...args);
-		},
-		error: (...args) => {
-			clearActiveProgressLine();
-			console.error(...args);
-		}
-	};
-}
-({ ...createRuntimeIo() });
-//#endregion
-//#region src/terminal/ansi.ts
-const ANSI_SGR_PATTERN = "\\x1b\\[[0-9;]*m";
-const OSC8_PATTERN = "\\x1b\\]8;;.*?\\x1b\\\\|\\x1b\\]8;;\\x1b\\\\";
-new RegExp(ANSI_SGR_PATTERN, "g");
-new RegExp(OSC8_PATTERN, "g");
-resolveNodeRequireFromMeta(import.meta.url);
-(() => {
-	const getBuiltinModule = process.getBuiltinModule;
-	if (typeof getBuiltinModule !== "function") return null;
-	try {
-		const utilNamespace = getBuiltinModule("util");
-		return typeof utilNamespace.inspect === "function" ? utilNamespace.inspect : null;
-	} catch {
-		return null;
-	}
-})();
-//#endregion
-//#region src/process/spawn-utils.ts
-function resolveCommandStdio(params) {
-	return [
-		params.hasInput ? "pipe" : params.preferInherit ? "inherit" : "pipe",
-		"pipe",
-		"pipe"
-	];
-}
-promisify(execFile);
-const WINDOWS_UNSAFE_CMD_CHARS_RE = /[&|<>^%\r\n]/;
-function isWindowsBatchCommand(resolvedCommand) {
-	if (process$1.platform !== "win32") return false;
-	const ext = path.extname(resolvedCommand).toLowerCase();
-	return ext === ".cmd" || ext === ".bat";
-}
-function escapeForCmdExe(arg) {
-	if (WINDOWS_UNSAFE_CMD_CHARS_RE.test(arg)) throw new Error(`Unsafe Windows cmd.exe argument detected: ${JSON.stringify(arg)}. Pass an explicit shell-wrapper argv at the call site instead.`);
-	if (!arg.includes(" ") && !arg.includes("\"")) return arg;
-	return `"${arg.replace(/"/g, "\"\"")}"`;
-}
-function buildCmdExeCommandLine(resolvedCommand, args) {
-	return [escapeForCmdExe(resolvedCommand), ...args.map(escapeForCmdExe)].join(" ");
-}
-/**
-* On Windows, Node 18.20.2+ (CVE-2024-27980) rejects spawning .cmd/.bat directly
-* without shell, causing EINVAL. Resolve npm/npx to node + cli script so we
-* spawn node.exe instead of npm.cmd.
-*/
-function resolveNpmArgvForWindows(argv) {
-	if (process$1.platform !== "win32" || argv.length === 0) return null;
-	const basename = path.basename(argv[0]).toLowerCase().replace(/\.(cmd|exe|bat)$/, "");
-	const cliName = basename === "npx" ? "npx-cli.js" : basename === "npm" ? "npm-cli.js" : null;
-	if (!cliName) return null;
-	const nodeDir = path.dirname(process$1.execPath);
-	const cliPath = path.join(nodeDir, "node_modules", "npm", "bin", cliName);
-	if (!fs.existsSync(cliPath)) {
-		const command = argv[0] ?? "";
-		return [path.extname(command).toLowerCase() ? command : `${command}.cmd`, ...argv.slice(1)];
-	}
-	return [
-		process$1.execPath,
-		cliPath,
-		...argv.slice(1)
-	];
-}
-/**
-* Resolves a command for Windows compatibility.
-* On Windows, non-.exe commands (like pnpm, yarn) are resolved to .cmd; npm/npx
-* are handled by resolveNpmArgvForWindows to avoid spawn EINVAL (no direct .cmd).
-*/
-function resolveCommand(command) {
-	if (process$1.platform !== "win32") return command;
-	const basename = path.basename(command).toLowerCase();
-	if (path.extname(basename)) return command;
-	if (["pnpm", "yarn"].includes(basename)) return `${command}.cmd`;
-	return command;
-}
-function shouldSpawnWithShell(params) {
-	return false;
-}
-function resolveCommandEnv(params) {
-	const baseEnv = params.baseEnv ?? process$1.env;
-	const argv = params.argv;
-	const shouldSuppressNpmFund = (() => {
-		const cmd = path.basename(argv[0] ?? "");
-		if (cmd === "npm" || cmd === "npm.cmd" || cmd === "npm.exe") return true;
-		if (cmd === "node" || cmd === "node.exe") return (argv[1] ?? "").includes("npm-cli.js");
-		return false;
-	})();
-	const mergedEnv = params.env ? {
-		...baseEnv,
-		...params.env
-	} : { ...baseEnv };
-	const resolvedEnv = Object.fromEntries(Object.entries(mergedEnv).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)]));
-	if (shouldSuppressNpmFund) {
-		if (resolvedEnv.NPM_CONFIG_FUND == null) resolvedEnv.NPM_CONFIG_FUND = "false";
-		if (resolvedEnv.npm_config_fund == null) resolvedEnv.npm_config_fund = "false";
-	}
-	return resolvedEnv;
-}
-async function runCommandWithTimeout(argv, optionsOrTimeout) {
-	const options = typeof optionsOrTimeout === "number" ? { timeoutMs: optionsOrTimeout } : optionsOrTimeout;
-	const { timeoutMs, cwd, input, env, noOutputTimeoutMs } = options;
-	const { windowsVerbatimArguments } = options;
-	const hasInput = input !== void 0;
-	const resolvedEnv = resolveCommandEnv({
-		argv,
-		env
-	});
-	const stdio = resolveCommandStdio({
-		hasInput,
-		preferInherit: true
-	});
-	const finalArgv = process$1.platform === "win32" ? resolveNpmArgvForWindows(argv) ?? argv : argv;
-	const resolvedCommand = finalArgv !== argv ? finalArgv[0] ?? "" : resolveCommand(argv[0] ?? "");
-	const useCmdWrapper = isWindowsBatchCommand(resolvedCommand);
-	const child = spawn(useCmdWrapper ? process$1.env.ComSpec ?? "cmd.exe" : resolvedCommand, useCmdWrapper ? [
-		"/d",
-		"/s",
-		"/c",
-		buildCmdExeCommandLine(resolvedCommand, finalArgv.slice(1))
-	] : finalArgv.slice(1), {
-		stdio,
-		cwd,
-		env: resolvedEnv,
-		windowsVerbatimArguments: useCmdWrapper ? true : windowsVerbatimArguments,
-		...shouldSpawnWithShell({
-			resolvedCommand,
-			platform: process$1.platform
-		}) ? { shell: true } : {}
-	});
-	return await new Promise((resolve, reject) => {
-		let stdout = "";
-		let stderr = "";
-		let settled = false;
-		let timedOut = false;
-		let noOutputTimedOut = false;
-		let noOutputTimer = null;
-		const shouldTrackOutputTimeout = typeof noOutputTimeoutMs === "number" && Number.isFinite(noOutputTimeoutMs) && noOutputTimeoutMs > 0;
-		const clearNoOutputTimer = () => {
-			if (!noOutputTimer) return;
-			clearTimeout(noOutputTimer);
-			noOutputTimer = null;
-		};
-		const armNoOutputTimer = () => {
-			if (!shouldTrackOutputTimeout || settled) return;
-			clearNoOutputTimer();
-			noOutputTimer = setTimeout(() => {
-				if (settled) return;
-				noOutputTimedOut = true;
-				if (typeof child.kill === "function") child.kill("SIGKILL");
-			}, Math.floor(noOutputTimeoutMs));
-		};
-		const timer = setTimeout(() => {
-			timedOut = true;
-			if (typeof child.kill === "function") child.kill("SIGKILL");
-		}, timeoutMs);
-		armNoOutputTimer();
-		if (hasInput && child.stdin) {
-			child.stdin.write(input ?? "");
-			child.stdin.end();
-		}
-		child.stdout?.on("data", (d) => {
-			stdout += d.toString();
-			armNoOutputTimer();
-		});
-		child.stderr?.on("data", (d) => {
-			stderr += d.toString();
-			armNoOutputTimer();
-		});
-		child.on("error", (err) => {
-			if (settled) return;
-			settled = true;
-			clearTimeout(timer);
-			clearNoOutputTimer();
-			reject(err);
-		});
-		child.on("close", (code, signal) => {
-			if (settled) return;
-			settled = true;
-			clearTimeout(timer);
-			clearNoOutputTimer();
-			const termination = noOutputTimedOut ? "no-output-timeout" : timedOut ? "timeout" : signal != null ? "signal" : "exit";
-			resolve({
-				pid: child.pid ?? void 0,
-				stdout,
-				stderr,
-				code,
-				signal,
-				killed: child.killed,
-				termination,
-				noOutputTimedOut
-			});
-		});
-	});
-}
-//#endregion
-//#region src/plugin-sdk/run-command.ts
-async function runPluginCommandWithTimeout(options) {
-	const [command] = options.argv;
-	if (!command) return {
-		code: 1,
-		stdout: "",
-		stderr: "command is required"
-	};
-	try {
-		const result = await runCommandWithTimeout(options.argv, {
-			timeoutMs: options.timeoutMs,
-			cwd: options.cwd,
-			env: options.env
-		});
-		const timedOut = result.termination === "timeout" || result.termination === "no-output-timeout";
-		return {
-			code: result.code ?? 1,
-			stdout: result.stdout,
-			stderr: timedOut ? result.stderr || `command timed out after ${options.timeoutMs}ms` : result.stderr
-		};
-	} catch (error) {
-		return {
-			code: 1,
-			stdout: "",
-			stderr: error instanceof Error ? error.message : String(error)
-		};
-	}
-}
-//#endregion
-//#region src/shared/gateway-bind-url.ts
-function resolveGatewayBindUrl(params) {
-	const bind = params.bind ?? "loopback";
-	if (bind === "custom") {
-		const host = params.customBindHost?.trim();
-		if (host) return {
-			url: `${params.scheme}://${host}:${params.port}`,
-			source: "gateway.bind=custom"
-		};
-		return { error: "gateway.bind=custom requires gateway.customBindHost." };
-	}
-	if (bind === "tailnet") {
-		const host = params.pickTailnetHost();
-		if (host) return {
-			url: `${params.scheme}://${host}:${params.port}`,
-			source: "gateway.bind=tailnet"
-		};
-		return { error: "gateway.bind=tailnet set, but no tailnet IP was found." };
-	}
-	if (bind === "lan") {
-		const host = params.pickLanHost();
-		if (host) return {
-			url: `${params.scheme}://${host}:${params.port}`,
-			source: "gateway.bind=lan"
-		};
-		return { error: "gateway.bind=lan set, but no private LAN IP was found." };
-	}
-	return null;
-}
-//#endregion
-//#region src/shared/tailscale-status.ts
-const TAILSCALE_STATUS_COMMAND_CANDIDATES = ["tailscale", "/Applications/Tailscale.app/Contents/MacOS/Tailscale"];
-function parsePossiblyNoisyJsonObject(raw) {
-	const start = raw.indexOf("{");
-	const end = raw.lastIndexOf("}");
-	if (start === -1 || end <= start) return {};
-	try {
-		return JSON.parse(raw.slice(start, end + 1));
-	} catch {
-		return {};
-	}
-}
-function extractTailnetHostFromStatusJson(raw) {
-	const parsed = parsePossiblyNoisyJsonObject(raw);
-	const self = typeof parsed.Self === "object" && parsed.Self !== null ? parsed.Self : void 0;
-	const dns = typeof self?.DNSName === "string" ? self.DNSName : void 0;
-	if (dns && dns.length > 0) return dns.replace(/\.$/, "");
-	const ips = Array.isArray(self?.TailscaleIPs) ? self.TailscaleIPs : [];
-	return ips.length > 0 ? ips[0] ?? null : null;
-}
-async function resolveTailnetHostWithRunner(runCommandWithTimeout) {
-	if (!runCommandWithTimeout) return null;
-	for (const candidate of TAILSCALE_STATUS_COMMAND_CANDIDATES) try {
-		const result = await runCommandWithTimeout([
-			candidate,
-			"status",
-			"--json"
-		], { timeoutMs: 5e3 });
-		if (result.code !== 0) continue;
-		const raw = result.stdout.trim();
-		if (!raw) continue;
-		const host = extractTailnetHostFromStatusJson(raw);
-		if (host) return host;
-	} catch {
-		continue;
-	}
-	return null;
-}
-//#endregion
-export { approveDevicePairing, buildOauthProviderAuthResult, emptyPluginConfigSchema, listDevicePairing, rejectDevicePairing, resolveGatewayBindUrl, resolvePreferredOpenClawTmpDir, resolveTailnetHostWithRunner, runPluginCommandWithTimeout };
+import "../redact-BDinS1q9.js";
+import "../errors-BxyFnvP3.js";
+import "../unhandled-rejections-CDJ8dOVP.js";
+import "../logger-kwZIqwuw.js";
+import "../paths-ViKUYWUK.js";
+import "../tmp-openclaw-dir-idKIOMmb.js";
+import "../theme-CdOoMzRk.js";
+import "../globals-DBUMOBZ8.js";
+import "../subsystem-DISldKSB.js";
+import "../ansi-BEJF8NKS.js";
+import "../boolean-C3GkJetE.js";
+import "../env-Dnra1IpT.js";
+import "../warning-filter-CBhOcgHd.js";
+import "../utils-CS0Ikux6.js";
+import "../links-8xRhWBQL.js";
+import "../paths-BFl2-hCf.js";
+import "../auth-profiles-CERaUUqX.js";
+import { _ as normalizeAccountId, d as resolveThreadSessionKeys, g as DEFAULT_ACCOUNT_ID } from "../session-key-DAhnzjyr.js";
+import { n as normalizeHyphenSlug, t as normalizeAtHashSlug } from "../string-normalization-CohoSMRS.js";
+import "../boundary-path-Dm0QJ7-y.js";
+import "../boundary-file-read-DcZxlWD8.js";
+import "../logger-BmpSCz93.js";
+import "../exec-B5_AYfQG.js";
+import "../workspace-D4K6QX9X.js";
+import "../agent-scope-DoT9OqaV.js";
+import "../model-selection-B6ao45a4.js";
+import "../io-cPs4dU7X.js";
+import "../host-env-security-DEKL50zA.js";
+import "../shell-env-BKuVS72k.js";
+import "../safe-text-DIDDfQyI.js";
+import "../version-BpHNkJed.js";
+import { o as isSecretRef } from "../types.secrets-DiT8-OyD.js";
+import "../env-substitution-B8NFl2Jd.js";
+import "../includes-CCK6fRRs.js";
+import "../zod-schema.providers-core-DLPfih2y.js";
+import "../legacy-web-search-CTvir-Bl.js";
+import { r as getChatChannelMeta } from "../registry-xyHjVLxh.js";
+import "../config-state-Dx9-tLPS.js";
+import "../min-host-version-xbc6BJ_K.js";
+import "../manifest-registry-D5E7Gxgl.js";
+import "../runtime-guard-QGt7fm0l.js";
+import "../avatar-policy-DVf9B9eu.js";
+import "../ip-DIgtRRTW.js";
+import "../zod-schema.agent-runtime-C659GPl8.js";
+import "../zod-schema.core-yLTNC4-K.js";
+import "../config-CB4aYWqd.js";
+import "../file-lock-DoKDW8jx.js";
+import "../audit-fs-CEN00XrG.js";
+import "../resolve-uXRpJb-M.js";
+import "../profiles-Cyg58FCO.js";
+import "../tailscale-CSUwCuE9.js";
+import "../tailnet-BVzEE6AW.js";
+import "../net-Dk658jWW.js";
+import "../auth-C_pTuZtn.js";
+import "../credentials-CO55Yx_u.js";
+import "../message-channel-DUrzQUcI.js";
+import "../store-D_eNuCKK.js";
+import "../runtime-C8dQugND.js";
+import "../plugins-DGdgUNcN.js";
+import "../sessions-C8WesgCl.js";
+import "../paths-BPfguEtH.js";
+import "../session-write-lock-bE2vQvvO.js";
+import "../method-scopes-BWG4Q18M.js";
+import "../call-VZCb020X.js";
+import "../prompt-style-MhFLSlua.js";
+import "../ports-lsof-C3NOmuKA.js";
+import "../restart-stale-pids-CQbYk99d.js";
+import "../ports-CQIuVpXl.js";
+import "../logging-C2L37N2X.js";
+import "../commands-CrPoYX9r.js";
+import "../issue-format-CP-gqjZB.js";
+import "../identity-D8H54Ni5.js";
+import "../heartbeat-FZaB85hC.js";
+import { A_ as createChannelPluginBase, F_ as stripTargetKindPrefix, I_ as resolveTailnetHostWithRunner, L_ as resolveGatewayBindUrl, M_ as defineChannelPluginEntry, N_ as defineSetupPluginEntry, P_ as stripChannelTargetPrefix, Yy as delegateCompactionToRuntime, j_ as createChatChannelPlugin, k_ as buildChannelOutboundSessionRoute } from "../pi-embedded-D3aYWCrT.js";
+import "../internal-hooks-D4lZfNM5.js";
+import "../multimodal-De3qv_72.js";
+import "../memory-search-DRm4OVlH.js";
+import "../provider-catalog-7bUKai5_.js";
+import "../secret-input-BNBMqe2K.js";
+import "../bindings-RcwGGOd3.js";
+import { t as buildAgentSessionKey } from "../resolve-route-DbP_XX4E.js";
+import "../routing-B37UwRwq.js";
+import "../identity-file-CCks_qJo.js";
+import "../outbound-runtime-oDjCAP7B.js";
+import "../provider-env-vars-Bhzl_gIs.js";
+import "../provider-auth-input-DxjPWsSV.js";
+import "../provider-model-minimax-XdwKeUOE.js";
+import "../provider-models-DfgBoVpf.js";
+import "../anthropic-vertex-provider-e_sRR8fp.js";
+import "../models-config.providers.discovery-Ch23kOpG.js";
+import "../text-runtime-B9_24WY5.js";
+import "../tool-catalog-6VPSKPp9.js";
+import "../docker-YL21-mX4.js";
+import "../sandbox-Dy3vKrxx.js";
+import "../common-De-BVwIv.js";
+import "../image-ops-BLXW6hKm.js";
+import "../thinking-CSfcimRZ.js";
+import "../path-alias-guards-CgP-6a1d.js";
+import "../sandbox-paths-Bk2ZwMsR.js";
+import { c as optionalStringEnum, l as stringEnum, o as channelTargetSchema, s as channelTargetsSchema } from "../channel-actions-BzT1SAu9.js";
+import "../mime-D7Q9o2pi.js";
+import "../ssrf-rHmQXFZ4.js";
+import "../fetch-guard-BH3MjZoA.js";
+import "../provider-web-search-DYdDI2c9.js";
+import "../manager-CTkU8M9E.js";
+import { n as enqueueKeyedTask, t as KeyedAsyncQueue } from "../keyed-async-queue-CIys7o93.js";
+import { t as emptyPluginConfigSchema } from "../config-schema-WTc54khc.js";
+import { a as migrateBaseNameToDefaultAccount, t as applyAccountNameToChannelSection } from "../setup-helpers-CLK_iaLL.js";
+import { r as buildChannelConfigSchema } from "../config-schema-Bpwy_blm.js";
+import { n as deleteAccountFromConfigSection, r as setAccountEnabledInConfigSection, t as clearAccountEntryFields } from "../channel-plugin-common-COvcxNrG.js";
+import { n as formatPairingApproveHint, r as parseOptionalDelimitedEntries } from "../helpers-CdtBVdE4.js";
+import "../status-helpers-Dd-hr4j4.js";
+import "../conversation-runtime-CqOm9f5F.js";
+import "../runtime-whatsapp-boundary-CWceJs-_.js";
+import "../pairing-store-ClZkWB4v.js";
+import "../json-store-Ju23bywi.js";
+import { t as definePluginEntry } from "../plugin-entry-BNczxv7M.js";
+import { i as tryReadSecretFileSync, n as loadSecretFileSync, r as readSecretFileSync, t as DEFAULT_SECRET_FILE_MAX_BYTES } from "../secret-file-Ctk8Gt6Y.js";
+import "../channel-config-schema-DGuU5OU5.js";
+import "../setup-binary-DXdzcWG_.js";
+import "../archive-Bk8HKpaY.js";
+import "../fs-safe-Dvzkbqib.js";
+import "../signal-cli-install-BJB9N18P.js";
+import "../setup-wizard-proxy-D0W3ulU0.js";
+import "../setup-BYrV6xB7.js";
+import "../dm-policy-shared-DSMJu_ZS.js";
+import "../hook-runtime-DEbp5SYL.js";
+import "../diagnostic-DNoCLiOo.js";
+import "../templating-BueU7auS.js";
+import "../channel-reply-pipeline-C0iCnI2R.js";
+import "../reply-history-BVE7m0XA.js";
+import "../commands-registry.data-Dr5wKe-o.js";
+import "../commands-registry-C-vLUx3f.js";
+import "../frontmatter-DUZeCF_V.js";
+import "../env-overrides-DbK0fm-W.js";
+import "../skills-CreXENx9.js";
+import "../skills-remote-Ctc3qkkj.js";
+import "../workspace-dirs-CKrvld61.js";
+import "../pairing-token-CT1j20jA.js";
+import "../skill-commands-DDonxE3L.js";
+import "../level-overrides-pDiOPsgd.js";
+import "../config-BkPtspys.js";
+import "../routes-BbrNKa8i.js";
+import "../ssh-tunnel-CnI7n7iv.js";
+import "../server-middleware-DcKqo5DB.js";
+import "../logging-CSCaAwMS.js";
+import "../config-runtime-ST43sCMq.js";
+import "../exec-approvals-CVzy3Vfp.js";
+import "../webhook-ingress-BcLBvsy0.js";
+import "../system-events-D9mayVHC.js";
+import "../ssrf-policy-C4n9geuA.js";
+import "../provider-auth-ref-D7iRHU8I.js";
+import "../provider-auth-helpers-BeqTsaJO.js";
+import "../provider-api-key-auth-BRg5733-.js";
+import "../runtime-env-CjqWVeEh.js";
+import "../pairing-labels-BOG3E444.js";
+import "../directory-runtime-Dv9ukfmB.js";
+import "../read-only-account-inspect-CI8Acn7V.js";
+import "../src-BtOJllZl.js";
+import "../web-media-DiWkPbmA.js";
+import "../temp-path-DWrivwFl.js";
+import "../media-understanding-Dq7oUfcD.js";
+import "../web-media-BR4PzU9s.js";
+import "../state-paths-DCS7oDHS.js";
+import "../llm-task-DPBJEtc9.js";
+import "../pi-model-discovery-CnIuFJqz.js";
+import "../exec-inline-eval-D-f8HFse.js";
+import "../target-registry-OPF22cyh.js";
+import "../external-content-EaiMEyB5.js";
+import "../brave-D0M7h2uu.js";
+import "../duckduckgo-BGywj4mG.js";
+import "../exa-Ck55X5yZ.js";
+import "../security-runtime-BgVUCAQn.js";
+import "../provider-usage-BQ76VwEQ.js";
+import "../provider-onboard-BIL4F3N4.js";
+import "../perplexity-CHeba5ua.js";
+import "../stagger-CmrcNovb.js";
+import "../command-secret-targets-C0ZVtvSJ.js";
+import "../delivery-queue-ogw66DXo.js";
+import "../channel-summary-TN23o1-D.js";
+import "../session-system-events-N0UUhzUH.js";
+import "../tool-policy-match-CwxOHp7o.js";
+import "../runtime-CyQWw2V0.js";
+import "../channel-status-CKxclc13.js";
+import "../discord-core-D8UAKzsj.js";
+import "../cli-runtime-FV2YwWah.js";
+import "../config-presence-g2roOSEE.js";
+import "../query-expansion-B8XjXGEW.js";
+import "../search-manager-ln9SNtGS.js";
+import "../acp-runtime-CB1LKa-8.js";
+import "../telegram-core-CEsvkNyG.js";
+import "../audit-CChGpjlz.js";
+import "../gateway-runtime-B5M5_sR0.js";
+import "../connection-auth-DKVFW_D7.js";
+import "../mcp-config-egoiCJ68.js";
+export { DEFAULT_ACCOUNT_ID, DEFAULT_SECRET_FILE_MAX_BYTES, KeyedAsyncQueue, applyAccountNameToChannelSection, buildAgentSessionKey, buildChannelConfigSchema, buildChannelOutboundSessionRoute, channelTargetSchema, channelTargetsSchema, clearAccountEntryFields, createChannelPluginBase, createChatChannelPlugin, defineChannelPluginEntry, definePluginEntry, defineSetupPluginEntry, delegateCompactionToRuntime, deleteAccountFromConfigSection, emptyPluginConfigSchema, enqueueKeyedTask, formatPairingApproveHint, getChatChannelMeta, isSecretRef, loadSecretFileSync, migrateBaseNameToDefaultAccount, normalizeAccountId, normalizeAtHashSlug, normalizeHyphenSlug, optionalStringEnum, parseOptionalDelimitedEntries, readSecretFileSync, resolveGatewayBindUrl, resolveTailnetHostWithRunner, resolveThreadSessionKeys, setAccountEnabledInConfigSection, stringEnum, stripChannelTargetPrefix, stripTargetKindPrefix, tryReadSecretFileSync };
