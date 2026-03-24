@@ -3,7 +3,7 @@
 
 #define MyAppName "OpenClaw"
 #define MyAppVersion "2026.3.22-beta.1"
-#define MyAppPublisher "lys46001"
+#define MyAppPublisher "hys47527"
 #define MyAppURL "https://github.com/openclaw/openclaw"
 #define MyAppExeName "start-gateway.bat"
 
@@ -19,7 +19,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputDir=D:\openclaw_exe\Output
+OutputDir=D:\code\openclaw_exe\Output
 OutputBaseFilename=OpenClaw-Setup
 ; SetupIconFile is set by build.ps1 if openclaw.ico is found
 Compression=lzma2/ultra64
@@ -40,12 +40,12 @@ Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription
 
 [Files]
 ; Application files from pnpm deploy staging
-Source: "D:\openclaw_exe\staging\*"; DestDir: "{app}\app"; Flags: recursesubdirs ignoreversion createallsubdirs
+Source: "D:\code\openclaw_exe\staging\*"; DestDir: "{app}\app"; Flags: recursesubdirs ignoreversion createallsubdirs
 ; Portable Node.js runtime
-Source: "D:\openclaw_exe\runtime\node\*"; DestDir: "{app}\node"; Flags: recursesubdirs ignoreversion createallsubdirs
+Source: "D:\code\openclaw_exe\runtime\node\*"; DestDir: "{app}\node"; Flags: recursesubdirs ignoreversion createallsubdirs
 ; Launcher scripts
-Source: "D:\openclaw_exe\installer\openclaw.cmd"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "D:\openclaw_exe\installer\start-gateway.bat"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "D:\code\openclaw_exe\installer\openclaw.cmd"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "D:\code\openclaw_exe\installer\start-gateway.bat"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\OpenClaw Gateway"; Filename: "{app}\bin\start-gateway.bat"; WorkingDir: "{app}"; Comment: "Start OpenClaw Gateway on port 18789"
@@ -147,6 +147,7 @@ function InitializeSetup(): Boolean;
 begin
   Result := True;
 end;
+
 
 
 

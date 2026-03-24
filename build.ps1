@@ -24,7 +24,7 @@ foreach ($p in @('D:\nodejs', 'C:\Users\Administrator\AppData\Roaming\npm', 'E:\
 }
 
 # ── Constants ────────────────────────────────────────────────────────────────
-$ROOT          = 'D:\openclaw_exe'
+$ROOT          = 'D:\code\openclaw_exe'
 $SRC_DIR       = "$ROOT\src"
 $STAGING_DIR   = "$ROOT\staging"
 $RUNTIME_DIR   = "$ROOT\runtime\node"
@@ -37,7 +37,7 @@ $NODE_ZIP      = "node-v$NODE_VERSION-win-x64.zip"
 $NODE_URL      = "https://nodejs.org/dist/v$NODE_VERSION/$NODE_ZIP"
 $NODE_INNER    = "node-v$NODE_VERSION-win-x64"   # folder name inside zip
 
-$INNO_URL      = 'https://files.jrsoftware.org/is/6/innosetup-6.4.3.exe'
+$INNO_URL      = 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_1/innosetup-6.7.1.exe'
 $INNO_INST     = "$TOOLS_DIR\innosetup-installer.exe"
 $INNO_DIR      = "$TOOLS_DIR\innosetup"
 $ISCC          = "$INNO_DIR\ISCC.exe"
