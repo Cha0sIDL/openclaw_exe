@@ -4,12 +4,12 @@
     OpenClaw Windows Offline Installer Build Script
 .DESCRIPTION
     Builds OpenClaw-Setup.exe by:
-      A) Cloning and building the OpenClaw project
+      A) Syncing the latest release tag and building the OpenClaw project
       B) Downloading portable Node.js 22 (Windows x64)
       C) Downloading and installing Inno Setup 6
       D) Compiling the installer with Inno Setup
 .NOTES
-    Run from D:\openclaw_exe\ with: .\build.ps1
+    Run from this directory with: .\build.ps1
     Requires: Git, Node.js 22+, pnpm, internet access (first run only)
 #>
 
@@ -24,7 +24,14 @@ foreach ($p in @('D:\nodejs', 'C:\Users\Administrator\AppData\Roaming\npm', 'E:\
 }
 
 # ── Constants ────────────────────────────────────────────────────────────────
-$ROOT          = 'D:\code\openclaw_exe'
+$SCRIPT_DIR   = if ($PSScriptRoot) {
+    $PSScriptRoot
+} elseif ($MyInvocation.MyCommand.Path) {
+    Split-Path -Parent $MyInvocation.MyCommand.Path
+} else {
+    (Get-Location).Path
+}
+$ROOT          = (Resolve-Path -LiteralPath $SCRIPT_DIR).Path
 $SRC_DIR       = "$ROOT\src"
 $STAGING_DIR   = "$ROOT\staging"
 $RUNTIME_DIR   = "$ROOT\runtime\node"
@@ -61,6 +68,14 @@ function Write-OK($msg) {
 
 function Write-Warn($msg) {
     Write-Host "  WARN: $msg" -ForegroundColor Yellow
+}
+
+function Get-LatestReleaseTag {
+    $tag = git tag -l 'v*' --sort=-version:refname | Select-Object -First 1
+    if (-not $tag) {
+        throw "No release tags found in $SRC_DIR"
+    }
+    return $tag
 }
 
 function Require-Command($cmd) {
@@ -105,20 +120,29 @@ Require-Command 'pnpm'
 Write-OK "All prerequisites found"
 
 # ════════════════════════════════════════════════════════════════════════════
-# Phase A: Clone and build OpenClaw
+# Phase A: Sync latest tag and build OpenClaw
 # ════════════════════════════════════════════════════════════════════════════
-Write-Step 'A' 'Clone and build OpenClaw'
+Write-Step 'A' 'Sync latest tag and build OpenClaw'
 
 if (Test-Path "$SRC_DIR\.git") {
-    Write-Info "Repository already cloned, pulling latest changes..."
+    Write-Info "Repository already cloned, fetching latest tags..."
     Push-Location $SRC_DIR
-    git pull --ff-only
+    git fetch --tags --force --prune origin
     Pop-Location
 } else {
     Write-Info "Cloning $REPO_URL ..."
     if (Test-Path $SRC_DIR) { Remove-Item $SRC_DIR -Recurse -Force }
     git clone $REPO_URL $SRC_DIR
+    Push-Location $SRC_DIR
+    git fetch --tags --force --prune origin
+    Pop-Location
 }
+
+Push-Location $SRC_DIR
+$latestTag = Get-LatestReleaseTag
+Write-Info "Checking out latest tag: $latestTag"
+git checkout --force $latestTag
+Pop-Location
 Write-OK "Repository ready"
 
 Push-Location $SRC_DIR
@@ -281,7 +305,7 @@ $issContent = $issContent -replace '#define MyAppVersion ".*"', ('#define MyAppV
 
 if ($icoFound) {
     $issContent = $issContent -replace '; SetupIconFile is set by build\.ps1 if openclaw\.ico is found',
-        ('SetupIconFile=' + $INSTALLER_DIR + '\openclaw.ico')
+        'SetupIconFile=openclaw.ico'
 }
 
 Set-Content $SETUP_ISS $issContent -Encoding UTF8
