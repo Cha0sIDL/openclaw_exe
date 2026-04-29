@@ -1,3 +1,5 @@
 */node_modules/*
 Output/OpenClaw-Setup.exe
 runtime/node/node.exe
+.claude/
+staging/

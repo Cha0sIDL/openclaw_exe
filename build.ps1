@@ -1,4 +1,7 @@
 #Requires -Version 5.1
+param(
+    [switch]$Local
+)
 <#
 .SYNOPSIS
     OpenClaw Windows Offline Installer Build Script
@@ -8,8 +11,12 @@
       B) Downloading portable Node.js 22 (Windows x64)
       C) Downloading and installing Inno Setup 6
       D) Compiling the installer with Inno Setup
+.PARAMETER Local
+    Skip git fetch/checkout and use the current src/ directory as-is.
+    Useful when you have local modifications you want to build directly.
 .NOTES
     Run from this directory with: .\build.ps1
+    Use -Local to skip remote sync: .\build.ps1 -Local
     Requires: Git, Node.js 22+, pnpm, internet access (first run only)
 #>
 
@@ -71,11 +78,24 @@ function Write-Warn($msg) {
 }
 
 function Get-LatestReleaseTag {
-    $tag = git tag -l 'v*' --sort=-version:refname | Select-Object -First 1
-    if (-not $tag) {
+    $tags = git tag -l 'v*' --sort=-version:refname
+
+    if (-not $tags) {
         throw "No release tags found in $SRC_DIR"
     }
-    return $tag
+
+    # 预发布关键字（按你的实际情况增删）
+    $prePattern = '^(?i)v\d+(\.\d+)*-(alpha|beta|rc|preview)([.\-]\d+)?$'
+
+    # 1) 优先选“非预发布”的最新 tag（包含 v2026.3.13-1 这种）
+    $stable = $tags | Where-Object { $_ -notmatch $prePattern } | Select-Object -First 1
+    if ($stable) { return $stable }
+
+    # 2) 没有稳定版时才选预发布里最新的
+    $pre = $tags | Where-Object { $_ -match $prePattern } | Select-Object -First 1
+    if ($pre) { return $pre }
+
+    throw "No release tags found in $SRC_DIR"
 }
 
 function Require-Command($cmd) {
@@ -124,26 +144,30 @@ Write-OK "All prerequisites found"
 # ════════════════════════════════════════════════════════════════════════════
 Write-Step 'A' 'Sync latest tag and build OpenClaw'
 
-if (Test-Path "$SRC_DIR\.git") {
-    Write-Info "Repository already cloned, fetching latest tags..."
-    Push-Location $SRC_DIR
-    git fetch --tags --force --prune origin
-    Pop-Location
+if ($Local) {
+    Write-Info "Local mode: skipping remote sync, using current src/ as-is"
 } else {
-    Write-Info "Cloning $REPO_URL ..."
-    if (Test-Path $SRC_DIR) { Remove-Item $SRC_DIR -Recurse -Force }
-    git clone $REPO_URL $SRC_DIR
-    Push-Location $SRC_DIR
-    git fetch --tags --force --prune origin
-    Pop-Location
-}
+    if (Test-Path "$SRC_DIR\.git") {
+        Write-Info "Repository already cloned, fetching latest tags..."
+        Push-Location $SRC_DIR
+        git fetch --tags --force --prune origin
+        Pop-Location
+    } else {
+        Write-Info "Cloning $REPO_URL ..."
+        if (Test-Path $SRC_DIR) { Remove-Item $SRC_DIR -Recurse -Force }
+        git clone $REPO_URL $SRC_DIR
+        Push-Location $SRC_DIR
+        git fetch --tags --force --prune origin
+        Pop-Location
+    }
 
-Push-Location $SRC_DIR
-$latestTag = Get-LatestReleaseTag
-Write-Info "Checking out latest tag: $latestTag"
-git checkout --force $latestTag
-Pop-Location
-Write-OK "Repository ready"
+    Push-Location $SRC_DIR
+    $latestTag = Get-LatestReleaseTag
+    Write-Info "Checking out latest tag: $latestTag"
+    git checkout --force $latestTag
+    Pop-Location
+    Write-OK "Repository ready"
+}
 
 Push-Location $SRC_DIR
 
@@ -170,9 +194,13 @@ Write-Info "Deploying to staging directory (pnpm deploy)..."
 if (Test-Path $STAGING_DIR) { Remove-Item $STAGING_DIR -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $STAGING_DIR | Out-Null
 
-pnpm deploy --filter=. --legacy $STAGING_DIR
+pnpm deploy --filter=. --legacy --config.allow-unused-patches=true $STAGING_DIR
 if ($LASTEXITCODE -ne 0) { throw "pnpm deploy failed" }
 Write-OK "Deployed to $STAGING_DIR"
+
+if (Test-Path "$SRC_DIR\patches") {
+    Copy-Item "$SRC_DIR\patches" $STAGING_DIR -Recurse -Force
+}
 
 Pop-Location
 
@@ -184,13 +212,51 @@ Write-Info "Rebuilding staging node_modules with shamefully-hoist (flat, no syml
 Remove-Item "$STAGING_DIR\node_modules" -Recurse -Force -ErrorAction SilentlyContinue
 
 # Write .npmrc that forces flat node_modules
-Set-Content "$STAGING_DIR\.npmrc" "shamefully-hoist=true`nnode-linker=hoisted" -Encoding UTF8
+Set-Content "$STAGING_DIR\.npmrc" "shamefully-hoist=true`nnode-linker=hoisted`nallow-unused-patches=true" -Encoding UTF8
 
 Push-Location $STAGING_DIR
-pnpm install --prod --ignore-scripts 2>&1 | Write-Host
+pnpm install --prod --ignore-scripts --config.allow-unused-patches=true
 if ($LASTEXITCODE -ne 0) { throw "pnpm install --prod in staging failed" }
+
+# We intentionally skip lifecycle scripts above, so run the bundled plugin
+# postinstall explicitly to materialize runtime deps needed by root dist chunks.
+Write-Info "Installing bundled plugin runtime dependencies in staging..."
+$previousEagerBundledPluginDeps = $env:OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS
+$env:OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS = '1'
+try {
+    node scripts/postinstall-bundled-plugins.mjs
+    if ($LASTEXITCODE -ne 0) { throw "bundled plugin postinstall failed in staging" }
+} finally {
+    if ($null -eq $previousEagerBundledPluginDeps) {
+        Remove-Item Env:\OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS -ErrorAction SilentlyContinue
+    } else {
+        $env:OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS = $previousEagerBundledPluginDeps
+    }
+}
+
+Write-Info "Verifying bundled plugin runtime dependencies in staging root node_modules..."
+$verifyBundledDepsScript = @'
+import { discoverBundledPluginRuntimeDeps } from './scripts/postinstall-bundled-plugins.mjs';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+const missing = discoverBundledPluginRuntimeDeps().filter(
+  (dep) => !existsSync(join(process.cwd(), dep.sentinelPath)),
+);
+
+if (missing.length > 0) {
+  const specs = missing.map((dep) => dep.name + '@' + dep.version).join(', ');
+  console.error('Missing bundled plugin runtime deps at root node_modules: ' + specs);
+  process.exit(1);
+}
+
+console.log('[postinstall] bundled plugin runtime deps present at root node_modules');
+'@
+node --input-type=module -e $verifyBundledDepsScript
+if ($LASTEXITCODE -ne 0) { throw "bundled plugin runtime dependency verification failed in staging" }
+
 Pop-Location
-Write-OK "Staging node_modules rebuilt (flat, symlink-free)"
+Write-OK "Staging node_modules rebuilt (flat, symlink-free, bundled deps verified)"
 
 # Verify staging output
 foreach ($p in @("$STAGING_DIR\dist", "$STAGING_DIR\openclaw.mjs")) {

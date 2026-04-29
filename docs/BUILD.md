@@ -219,6 +219,18 @@ pnpm deploy --filter=. --legacy $STAGING_DIR
 
 ---
 
+## 安装前配置备份
+
+- `setup.iss` 在 `Select Additional Tasks` 页面新增了 `backupconfig` 任务项：
+  `Back up existing OpenClaw configuration before install`
+- 用户勾选该任务后，安装器会在 `PrepareToInstall` 阶段执行备份，再开始复制应用文件
+- 备份源目录为当前用户的 `C:\Users\<用户>\.openclaw`
+- 备份目标目录为 `C:\Users\<用户>\.openclaw-backups\install-backup-YYYYMMDD-HHMMSS`
+- 安装器仅保留最新 2 份 `install-backup-*` 目录；新的备份完成后会自动清理更旧的备份
+- 如果 `.openclaw` 不存在、用户目录解析失败、或备份中途失败，安装会继续，不会阻塞用户安装流程
+
+---
+
 ## 安装包内容清单（setup.iss）
 
 | 源路径 | 目标路径 |
